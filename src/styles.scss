@@ -63,7 +63,7 @@ html {
   --transition-fast: 0.3s ease;
 }
 
-// 3. Reset and base typography
+// Reset and base typography
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -112,7 +112,7 @@ p {
   color: var(--color-medium-grey);
 }
 
-// 4. Global layout utilities
+// Global layout utilities
 .container {
   max-width: var(--layout-max-width);
   margin-left: auto;
@@ -128,5 +128,72 @@ p {
   @media (max-width: 768px) {
     padding-top: var(--section-padding-mobile);
     padding-bottom: var(--section-padding-mobile);
+  }
+}
+
+// Button system
+.btn-base,
+button.btn-primary,
+button.btn-secondary,
+button.btn-outline,
+button.btn-soft,
+a.btn-primary,
+a.btn-secondary,
+a.btn-outline,
+a.btn-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--btn-height);
+  padding: var(--btn-padding);
+  border-radius: var(--btn-border-radius);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-body);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  box-sizing: border-box;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+// Variant 1: Primary action (Dark Green)
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
+
+  &:hover {
+    background-color: var(--color-primary-hover) !important;
+  }
+}
+
+// Variant 2: Secondary action (Dark Grey)
+.btn-secondary {
+  background-color: var(--color-dark-grey) !important;
+  color: var(--color-white) !important;
+
+  &:hover {
+    background-color: var(--color-dark-grey-hover) !important;
+  }
+}
+
+// Variant 3: Outline / Tertiary
+.btn-outline {
+  background-color: var(--color-white) !important;
+  border: 2px solid var(--color-dark-grey) !important;
+  color: var(--color-dark-grey) !important;
+
+  &:hover {
+    background-color: var(--color-light-grey) !important;
+  }
+}
+
+// Variant 4: Soft / Card action (10% Primary Tint)
+.btn-soft {
+  background-color: var(--color-primary-soft) !important;
+  color: var(--color-primary) !important;
+
+  &:hover {
+    background-color: #dce5e0 !important;
   }
 }
