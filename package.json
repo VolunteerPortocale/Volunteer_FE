@@ -6,21 +6,21 @@
     "start": "ng serve",
     "start:test": "ng serve --configuration test",
     "start:prod": "ng serve --configuration production",
-
     "build": "ng build",
     "build:test": "ng build --configuration test",
     "build:prod": "ng build --configuration production",
-    
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:volunteerio": "node dist/volunteerio/server/server.mjs"
   },
   "private": true,
   "dependencies": {
+    "@angular/cdk": "^21.2.14",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",
     "@angular/forms": "^21.2.0",
+    "@angular/material": "^21.2.14",
     "@angular/platform-browser": "^21.2.0",
     "@angular/platform-server": "^21.2.0",
     "@angular/router": "^21.2.0",
