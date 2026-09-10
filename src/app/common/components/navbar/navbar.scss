@@ -26,11 +26,10 @@
   text-decoration: none;
   color: var(--color-primary);
 
-  .brand-icon {
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
-    color: var(--color-primary);
+  .brand-logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
   }
 
   .brand-title {
