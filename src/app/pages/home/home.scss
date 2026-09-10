@@ -1,0 +1,17 @@
+.hero-section {
+  margin-bottom: 40px;
+  text-align: center;
+
+  .hero-subtitle {
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--color-medium-grey);
+    font-size: var(--font-size-body);
+  }
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--layout-grid-gap);
+}
