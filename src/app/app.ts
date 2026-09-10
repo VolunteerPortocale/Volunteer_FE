@@ -2,11 +2,10 @@ import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { environment } from '../environments/environment';
 import { NavbarComponent } from './common/components/navbar/navbar';
-import { ProjectCardComponent } from './common/components/project-card/project-card';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, ProjectCardComponent],
+  imports: [RouterOutlet, NavbarComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
