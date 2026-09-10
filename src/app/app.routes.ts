@@ -6,6 +6,9 @@ export const routes: Routes = [
         path: APP_ROUTES.HOME,
         loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent)
     },
+
+
+    // fallback route
     {
         path: APP_ROUTES.NOT_FOUND,
         redirectTo: APP_ROUTES.HOME,
