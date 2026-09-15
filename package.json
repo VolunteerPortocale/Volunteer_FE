@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "api": "node scripts/mock-api.mjs",
     "start:test": "ng serve --configuration test",
     "start:prod": "ng serve --configuration production",
     "build": "ng build",
@@ -25,9 +26,13 @@
     "@angular/platform-server": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@angular/ssr": "^21.2.23",
+    "@apollo/client": "^4.2.12",
+    "apollo-angular": "^14.2.0",
     "express": "^5.1.0",
+    "graphql": "^17.0.2",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.3"
   },
   "devDependencies": {
     "@angular/build": "^21.2.23",
