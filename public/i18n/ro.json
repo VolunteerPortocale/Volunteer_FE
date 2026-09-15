@@ -1,0 +1,14 @@
+{
+  "NAV": {
+    "PROJECTS": "Proiecte",
+    "ABOUT": "Despre noi",
+    "ORGANIZATIONS": "Organizații",
+    "LOGIN": "Loghează-te",
+    "BECOME_VOLUNTEER": "Devino voluntar"
+  },
+  "HOME": {
+    "TITLE": "Proiecte de Voluntariat în Moldova",
+    "SUBTITLE": "Descoperă oportunități de implicare activă în comunitatea ta și ajută la crearea unui viitor mai bun.",
+    "CARD_ACTION": "Află mai mult"
+  }
+}

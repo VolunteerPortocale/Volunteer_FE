@@ -3,21 +3,40 @@
     <div class="container toolbar-content">
       <!-- Brand Logo -->
       <a routerLink="/" class="brand-logo">
-        <img src="favicon.ico" alt="Volunteerio Logo" class="brand-logo-img /">
+        <img src="favicon.ico" alt="Volunteerio Logo" class="brand-logo-img" />
         <span class="brand-title">VOLUNTEERIO</span>
       </a>
 
-      <!-- Navigation Links -->
+      <!-- Navigation Links (Translated) -->
       <nav class="nav-links">
-        <a routerLink="/proiecte" class="nav-link">Proiecte</a>
-        <a routerLink="/despre" class="nav-link">Despre noi</a>
-        <a routerLink="/organizatii" class="nav-link">Organizații</a>
+        <a routerLink="/proiecte" class="nav-link">{{ 'NAV.PROJECTS' | translate }}</a>
+        <a routerLink="/despre" class="nav-link">{{ 'NAV.ABOUT' | translate }}</a>
+        <a routerLink="/organizatii" class="nav-link">{{ 'NAV.ORGANIZATIONS' | translate }}</a>
       </nav>
 
-      <!-- Action Buttons (Brandbook pill styles) -->
+      <!-- Action Buttons & Language Switcher -->
       <div class="header-actions">
-        <button mat-button class="btn-outline">Log in</button>
-        <button mat-button class="btn-primary">Devino voluntar</button>
+        <!-- Language Dropdown -->
+        <button mat-button [matMenuTriggerFor]="langMenu" class="lang-selector-btn">
+          <mat-icon class="lang-icon">language</mat-icon>
+          <span class="lang-code">{{ translationService.currentLang() | uppercase }}</span>
+          <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+        </button>
+
+        <mat-menu #langMenu="matMenu" class="lang-dropdown-menu">
+          <button mat-menu-item (click)="changeLanguage('ro')">
+            <span>🇲🇩 Română (RO)</span>
+          </button>
+          <button mat-menu-item (click)="changeLanguage('en')">
+            <span>🇬🇧 English (EN)</span>
+          </button>
+          <button mat-menu-item (click)="changeLanguage('ru')">
+            <span>🇷🇺 Русский (RU)</span>
+          </button>
+        </mat-menu>
+
+        <button mat-button class="btn-outline">{{ 'NAV.LOGIN' | translate }}</button>
+        <button mat-button class="btn-primary">{{ 'NAV.BECOME_VOLUNTEER' | translate }}</button>
       </div>
     </div>
   </mat-toolbar>

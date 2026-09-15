@@ -1,0 +1,14 @@
+{
+  "NAV": {
+    "PROJECTS": "Projects",
+    "ABOUT": "About us",
+    "ORGANIZATIONS": "Organizations",
+    "LOGIN": "Log in",
+    "BECOME_VOLUNTEER": "Become a volunteer"
+  },
+  "HOME": {
+    "TITLE": "Volunteer Projects in Moldova",
+    "SUBTITLE": "Discover opportunities for active involvement in your community and help create a better future.",
+    "CARD_ACTION": "Learn more"
+  }
+}
