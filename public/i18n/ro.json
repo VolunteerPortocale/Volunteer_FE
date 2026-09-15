@@ -10,5 +10,25 @@
     "TITLE": "Proiecte de Voluntariat în Moldova",
     "SUBTITLE": "Descoperă oportunități de implicare activă în comunitatea ta și ajută la crearea unui viitor mai bun.",
     "CARD_ACTION": "Află mai mult"
+  },
+  "PROJECTS": {
+    "CARD_1": {
+      "TITLE": "Plantăm păduri comunitare",
+      "CATEGORY": "Ecologie",
+      "LOCATION": "Strășeni, Moldova",
+      "DESCRIPTION": "Alătură-te echipei noastre pentru a planta peste 2.000 de puieți și a revitaliza spațiile verzi locale."
+    },
+    "CARD_2": {
+      "TITLE": "Educație digitală pentru seniori",
+      "CATEGORY": "Educație",
+      "LOCATION": "Chișinău, Moldova",
+      "DESCRIPTION": "Îndrumă persoanele în etate să învețe utilizarea serviciilor digitale, a smartphone-urilor și a internetului."
+    },
+    "CARD_3": {
+      "TITLE": "Sprijin pentru adăposturile de animale",
+      "CATEGORY": "Protecția Animalelor",
+      "LOCATION": "Bălți, Moldova",
+      "DESCRIPTION": "Ajută la îngrijirea, hrănirea și găsirea de familii adoptive pentru animalele abandonate din adăpost."
+    }
   }
 }

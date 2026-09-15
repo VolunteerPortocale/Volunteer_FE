@@ -10,5 +10,25 @@
     "TITLE": "Volunteer Projects in Moldova",
     "SUBTITLE": "Discover opportunities for active involvement in your community and help create a better future.",
     "CARD_ACTION": "Learn more"
+  },
+  "PROJECTS": {
+    "CARD_1": {
+      "TITLE": "Planting Community Forests",
+      "CATEGORY": "Ecology",
+      "LOCATION": "Strășeni, Moldova",
+      "DESCRIPTION": "Join our team to plant over 2,000 saplings and revitalize local green spaces."
+    },
+    "CARD_2": {
+      "TITLE": "Digital Literacy for Seniors",
+      "CATEGORY": "Education",
+      "LOCATION": "Chișinău, Moldova",
+      "DESCRIPTION": "Guide elderly individuals in using digital public services, smartphones, and the internet."
+    },
+    "CARD_3": {
+      "TITLE": "Shelter Animal Support",
+      "CATEGORY": "Animal Care",
+      "LOCATION": "Bălți, Moldova",
+      "DESCRIPTION": "Help care for, feed, and find loving adoptive families for abandoned shelter animals."
+    }
   }
 }
