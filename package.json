@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "api": "node scripts/mock-api.mjs",
     "start:test": "ng serve --configuration test",
     "start:prod": "ng serve --configuration production",
     "build": "ng build",
@@ -26,19 +27,27 @@
     "@angular/platform-server": "^21.2.0",
     "@angular/router": "^21.2.0",
     "@angular/ssr": "^21.2.23",
+    "@apollo/client": "^4.2.12",
+    "apollo-angular": "^14.2.0",
     "express": "^5.1.0",
+    "graphql": "^17.0.2",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "^0.16.3"
   },
   "devDependencies": {
     "@angular/build": "^21.2.23",
     "@angular/cli": "^21.2.23",
     "@angular/compiler-cli": "^21.2.0",
+    "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
+    "typescript-eslint": "^8.70.0",
     "vitest": "^4.0.8"
   }
 }
