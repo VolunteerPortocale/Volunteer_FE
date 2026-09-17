@@ -1,0 +1,296 @@
+<div class="add-event-page">
+
+  <!-- ── SUCCESS SCREEN ── -->
+  @if (isSubmitted()) {
+    <div class="success-overlay">
+      <div class="success-card">
+        <div class="success-icon-wrap">
+          <mat-icon class="check-icon">check</mat-icon>
+        </div>
+        <h2>Eveniment publicat!</h2>
+        <p class="success-message">
+          Evenimentul tău a fost trimis spre aprobare și va apărea în lista de proiecte în curând.
+        </p>
+        <div class="success-actions">
+          <button mat-button class="btn-primary" (click)="resetForm()">
+            Adaugă alt eveniment
+          </button>
+          <button mat-button class="btn-outline" (click)="goBack()">
+            Înapoi la pagina principală
+          </button>
+        </div>
+      </div>
+    </div>
+  } @else {
+
+    <!-- ── TOP BAR ── -->
+    <div class="moderator-topbar">
+      <div class="topbar-container">
+        <button class="back-btn" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Înapoi</span>
+        </button>
+        <div class="topbar-divider"></div>
+        <span class="topbar-title">Panou Moderator</span>
+        <span class="badge-ngo">NGO</span>
+      </div>
+    </div>
+
+    <!-- ── MAIN FORM CONTAINER ── -->
+    <div class="form-container">
+      <div class="form-header">
+        <span class="header-role">Moderator</span>
+        <h1>Publică un eveniment nou</h1>
+        <p class="header-subtitle">
+          Completează detaliile evenimentului pentru a-l adăuga în lista de voluntariat.
+        </p>
+      </div>
+
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+
+        <!-- 1. INFORMAȚII DE BAZĂ -->
+        <div class="form-card">
+          <span class="section-badge">Informații de bază</span>
+
+          <div class="field-group">
+            <label>Titlul evenimentului</label>
+            <span class="field-hint">Un titlu clar și atractiv</span>
+            <input
+              type="text"
+              formControlName="title"
+              placeholder="ex. Curățenie în Parcul Central"
+              class="form-input"
+            />
+            @if (eventForm.get('title')?.touched && eventForm.get('title')?.invalid) {
+              <span class="error-msg">Titlul este obligatoriu (minim 5 caractere).</span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label>Descriere</label>
+            <span class="field-hint">Explică scopul, activitățile și ce vor face voluntarii</span>
+            <textarea
+              formControlName="description"
+              rows="4"
+              placeholder="Descrieți activitățile planificate, obiectivele evenimentului și ce se așteaptă de la voluntari..."
+              class="form-input textarea"
+            ></textarea>
+            @if (eventForm.get('description')?.touched && eventForm.get('description')?.invalid) {
+              <span class="error-msg">Descrierea este obligatorie (minim 20 de caractere).</span>
+            }
+          </div>
+        </div>
+
+        <!-- 2. DATA ȘI ORA -->
+        <div class="form-card">
+          <span class="section-badge">Data și ora</span>
+
+          <div class="grid-2-cols">
+            <div class="field-group">
+              <label>Început</label>
+              <span class="field-hint">Data și ora de start</span>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">calendar_today</mat-icon>
+                <input
+                  type="datetime-local"
+                  formControlName="startDateTime"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>Sfârșit</label>
+              <span class="field-hint">Data și ora de final</span>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">event</mat-icon>
+                <input
+                  type="datetime-local"
+                  formControlName="endDateTime"
+                  [min]="eventForm.get('startDateTime')?.value || ''"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Summary Pill -->
+          @if (formattedDateSummary) {
+            <div class="date-summary-banner">
+              <mat-icon class="summary-icon">schedule</mat-icon>
+              <span>{{ formattedDateSummary }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- 3. LOCAȚIE ȘI CAPACITATE -->
+        <div class="form-card">
+          <span class="section-badge">Locație și capacitate</span>
+
+          <div class="field-group">
+            <label>Locație</label>
+            <span class="field-hint">Adresa completă sau punctul de întâlnire</span>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">location_on</mat-icon>
+              <input
+                type="text"
+                formControlName="location"
+                placeholder="ex. Parcul Valea Morilor, Chișinău"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Număr de voluntari necesari</label>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">group</mat-icon>
+              <input
+                type="number"
+                min="1"
+                formControlName="volunteers"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. FILTRE ȘI CATEGORIZARE -->
+        <div class="form-card">
+          <span class="section-badge">Filtre și categorizare</span>
+
+          <div class="field-group">
+            <label>Tipul evenimentului</label>
+            <span class="field-hint">Poți selecta mai multe categorii</span>
+            <div class="event-types-grid">
+              @for (type of eventTypesList; track type) {
+                <button
+                  type="button"
+                  class="type-toggle-btn"
+                  [class.active]="selectedEventTypes().includes(type)"
+                  (click)="toggleEventType(type)"
+                >
+                  <span class="custom-checkbox" [class.checked]="selectedEventTypes().includes(type)">
+                    @if (selectedEventTypes().includes(type)) {
+                      <mat-icon>check</mat-icon>
+                    }
+                  </span>
+                  <span class="type-label">{{ type }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Dress Code -->
+          <div class="field-group">
+            <label>Cod vestimentar</label>
+            <div class="toggle-group">
+              @for (dress of dressCodesList; track dress) {
+                <button
+                  type="button"
+                  class="pill-toggle-btn"
+                  [class.active]="selectedDressCode() === dress"
+                  (click)="setDressCode(dress)"
+                >
+                  {{ dress }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Duration -->
+          <div class="field-group">
+            <label>Durata evenimentului</label>
+            <div class="duration-chips">
+              @for (dur of durationsList; track dur) {
+                <button
+                  type="button"
+                  class="duration-chip"
+                  [class.active]="selectedDuration() === dur"
+                  (click)="setDuration(dur)"
+                >
+                  {{ dur }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. CONTACT VOLUNTARI -->
+        <div class="form-card">
+          <span class="section-badge">Contact voluntari</span>
+
+          <div class="field-group">
+            <label>Metodă de contact</label>
+            <div class="toggle-group">
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedContactMethod() === 'email'"
+                (click)="setContactMethod('email')"
+              >
+                Email
+              </button>
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedContactMethod() === 'phone'"
+                (click)="setContactMethod('phone')"
+              >
+                Telefon
+              </button>
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedContactMethod() === 'both'"
+                (click)="setContactMethod('both')"
+              >
+                Ambele
+              </button>
+            </div>
+          </div>
+
+          @if (selectedContactMethod() === 'email' || selectedContactMethod() === 'both') {
+            <div class="field-group">
+              <label>Adresă de email</label>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">mail</mat-icon>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="contact@ong.md"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+          }
+
+          @if (selectedContactMethod() === 'phone' || selectedContactMethod() === 'both') {
+            <div class="field-group">
+              <label>Număr de telefon</label>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">call</mat-icon>
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="+373 69 xxx xxx"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- 6. ACTIONS -->
+        <div class="form-actions">
+          <button type="submit" class="btn-primary submit-btn">
+            Publică evenimentul
+          </button>
+          <button type="button" class="btn-outline draft-btn" (click)="goBack()">
+            Salvează ca ciornă
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>

@@ -1,0 +1,412 @@
+.add-event-page {
+  min-height: 100vh;
+  background-color: var(--color-light-grey);
+}
+
+// ── Top Bar ──
+.moderator-topbar {
+  background-color: var(--color-white);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 72px; // Sits right below the navbar
+  z-index: 10;
+
+  .topbar-container {
+    max-width: 768px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      background: transparent;
+      color: var(--color-medium-grey);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color var(--transition-fast);
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+
+    .topbar-divider {
+      width: 1px;
+      height: 16px;
+      background-color: rgba(0, 0, 0, 0.12);
+    }
+
+    .topbar-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-dark-grey);
+    }
+
+    .badge-ngo {
+      margin-left: auto;
+      background-color: var(--color-primary-soft);
+      color: var(--color-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 50px;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+// ── Form Container ──
+.form-container {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 40px 1.5rem 80px 1.5rem;
+
+  .form-header {
+    margin-bottom: 32px;
+
+    .header-role {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-primary);
+    }
+
+    h1 {
+      margin: 6px 0 8px 0;
+      font-size: 2rem;
+      color: var(--color-dark-grey);
+    }
+
+    .header-subtitle {
+      margin: 0;
+      color: var(--color-medium-grey);
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Cards ──
+.form-card {
+  background-color: var(--color-white);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+  .section-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-primary);
+  }
+}
+
+// ── Form Fields ──
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-dark-grey);
+  }
+
+  .field-hint {
+    font-size: 0.8rem;
+    color: var(--color-medium-grey);
+    margin-top: -2px;
+  }
+
+  .error-msg {
+    font-size: 0.8rem;
+    color: #d32f2f;
+    margin-top: 4px;
+  }
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background-color: var(--color-white);
+  color: var(--color-dark-grey);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(43, 76, 63, 0.12);
+  }
+
+  &.textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .prefix-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--color-medium-grey);
+    pointer-events: none;
+  }
+
+  .form-input.with-icon {
+    padding-left: 44px;
+  }
+}
+
+.grid-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.date-summary-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background-color: var(--color-light-grey);
+  font-size: 0.9rem;
+  color: var(--color-dark-grey);
+  font-weight: 500;
+
+  .summary-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+  }
+}
+
+// ── Toggles & Multi-select ──
+.event-types-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+  .type-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    background-color: var(--color-white);
+    text-align: left;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    .custom-checkbox {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        color: white;
+      }
+
+      &.checked {
+        background-color: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+    }
+
+    .type-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-dark-grey);
+    }
+
+    &.active {
+      border-color: var(--color-primary);
+      background-color: var(--color-primary-soft);
+      .type-label {
+        color: var(--color-primary);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.toggle-group {
+  display: flex;
+  gap: 12px;
+
+  .pill-toggle-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    background-color: var(--color-white);
+    color: var(--color-dark-grey);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &.active {
+      border-color: var(--color-primary);
+      background-color: var(--color-primary-soft);
+      color: var(--color-primary);
+    }
+  }
+}
+
+.duration-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .duration-chip {
+    padding: 8px 18px;
+    border-radius: 50px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    background-color: var(--color-white);
+    color: var(--color-dark-grey);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &.active {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 600;
+    }
+  }
+}
+
+// ── Actions ──
+.form-actions {
+  display: flex;
+  gap: 16px;
+  padding-top: 16px;
+
+  .submit-btn,
+  .draft-btn {
+    flex: 1;
+    height: 48px;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+// ── Success State ──
+.success-overlay {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  .success-card {
+    background-color: var(--color-white);
+    border-radius: 24px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 48px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+
+    .success-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background-color: var(--color-primary-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px auto;
+
+      .check-icon {
+        font-size: 36px;
+        width: 36px;
+        height: 36px;
+        color: var(--color-primary);
+      }
+    }
+
+    h2 {
+      margin: 0 0 12px 0;
+      color: var(--color-dark-grey);
+      font-size: 1.75rem;
+    }
+
+    .success-message {
+      color: var(--color-medium-grey);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .success-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
