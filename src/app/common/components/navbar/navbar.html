@@ -1,25 +1,22 @@
 <header class="app-header">
   <mat-toolbar class="header-toolbar">
-    <div class="container toolbar-content">
+    <div class="toolbar-content">
       <!-- Brand Logo -->
       <a routerLink="/" class="brand-logo">
         <img src="favicon.ico" alt="Volunteerio Logo" class="brand-logo-img" />
         <span class="brand-title">VOLUNTEERIO</span>
       </a>
 
-      <!-- Navigation Links (Translated) -->
+      <!-- Navigation Links (Centered, clean navigation) -->
       <nav class="nav-links">
         <a routerLink="/proiecte" class="nav-link">{{ 'NAV.PROJECTS' | translate }}</a>
         <a routerLink="/despre" class="nav-link">{{ 'NAV.ABOUT' | translate }}</a>
         <a routerLink="/organizatii" class="nav-link">{{ 'NAV.ORGANIZATIONS' | translate }}</a>
-        <a routerLink="/adauga-eveniment" class="btn-primary" style="text-decoration: none;">
-  + Adaugă eveniment
-</a>  
       </nav>
 
       <!-- Action Buttons & Language Switcher -->
       <div class="header-actions">
-        <!-- Language Dropdown -->
+        <!-- 1. Language Dropdown -->
         <button mat-button [matMenuTriggerFor]="langMenu" class="lang-selector-btn">
           <mat-icon class="lang-icon">language</mat-icon>
           <span class="lang-code">{{ translationService.currentLang() | uppercase }}</span>
@@ -38,8 +35,18 @@
           </button>
         </mat-menu>
 
+        <!-- 2. Create Event Button (Between Language and Login) -->
+        <a mat-button routerLink="/adauga-eveniment" class="btn-primary" style="text-decoration: none;">
+          + Adaugă eveniment
+        </a>
+
+        <!-- 3. Login Button -->
         <button mat-button class="btn-outline">{{ 'NAV.LOGIN' | translate }}</button>
-        <button mat-button class="btn-primary">{{ 'NAV.BECOME_VOLUNTEER' | translate }}</button>
+
+        <!-- 4. Become Volunteer / Sign Up Button -->
+        <button mat-button routerLink="/inregistrare" class="btn-primary">
+          {{ 'NAV.BECOME_VOLUNTEER' | translate }}
+        </button>
       </div>
     </div>
   </mat-toolbar>
