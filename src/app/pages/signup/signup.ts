@@ -12,14 +12,20 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_ROUTES } from '../../config/routes.config';
+import { TranslatePipe } from '../../common/pipes/translate-pipe';
 
 export type AccountRole = 'volunteer' | 'ngo';
 
-export const INTEREST_OPTIONS = [
-  'Evenimente și Festivaluri',
-  'Strângeri de Fonduri și Sport',
-  'Sănătate și Ajutor Umanitar',
-  'Muncă Ecologică',
+export interface InterestOption {
+  id: string;
+  labelKey: string;
+}
+
+export const INTEREST_OPTIONS: InterestOption[] = [
+  { id: 'events', labelKey: 'SIGNUP.INTERESTS.EVENTS' },
+  { id: 'fundraising', labelKey: 'SIGNUP.INTERESTS.FUNDRAISING' },
+  { id: 'health', labelKey: 'SIGNUP.INTERESTS.HEALTH' },
+  { id: 'ecology', labelKey: 'SIGNUP.INTERESTS.ECOLOGY' },
 ];
 
 /**
@@ -48,6 +54,7 @@ export const passwordMatchValidator: ValidatorFn = (
     RouterLink,
     MatIconModule,
     MatButtonModule,
+    TranslatePipe,
   ],
   templateUrl: './signup.html',
   styleUrl: './signup.scss',
@@ -106,15 +113,12 @@ export class SignupComponent {
     this.showPassword.update((visible) => !visible);
   }
 
-  /**
-   * Toggle interest selection in the volunteer role
-   */
-  toggleInterest(interest: string): void {
+  toggleInterest(interestId: string): void {
     const current = this.selectedInterests();
-    if (current.includes(interest)) {
-      this.selectedInterests.set(current.filter((i) => i !== interest));
+    if (current.includes(interestId)) {
+      this.selectedInterests.set(current.filter((id) => id !== interestId));
     } else {
-      this.selectedInterests.set([...current, interest]);
+      this.selectedInterests.set([...current, interestId]);
     }
   }
 
@@ -138,8 +142,6 @@ export class SignupComponent {
       interests: this.role() === 'volunteer' ? this.selectedInterests() : [],
     };
 
-    console.log('Signup form submitted:', payload);
-
-    // TODO: Connect with AuthService when backend endpoint is ready
+    console.log('Signup form payload:', payload);
   }
 }

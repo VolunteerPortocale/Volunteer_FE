@@ -4,7 +4,8 @@
     "ABOUT": "Despre noi",
     "ORGANIZATIONS": "Organizații",
     "LOGIN": "Loghează-te",
-    "BECOME_VOLUNTEER": "Devino voluntar"
+    "BECOME_VOLUNTEER": "Devino voluntar",
+    "ADD_EVENT": "+ Adaugă eveniment"
   },
   "HOME": {
     "TITLE": "Proiecte de Voluntariat în Moldova",
@@ -29,6 +30,55 @@
       "CATEGORY": "Protecția Animalelor",
       "LOCATION": "Bălți, Moldova",
       "DESCRIPTION": "Ajută la îngrijirea, hrănirea și găsirea de familii adoptive pentru animalele abandonate din adăpost."
+    }
+  },
+  "SIGNUP": {
+    "BACK": "Înapoi",
+    "HEADER_TITLE": "Înregistrare",
+    "HERO_TAG": "Alătură-te comunității",
+    "HERO_TITLE": "Creează cont",
+    "HERO_SUBTITLE": "Înregistrează-te ca voluntar sau organizație și descoperă evenimente de voluntariat.",
+    "ACCOUNT_TYPE_SECTION": "Tipul contului",
+    "REGISTER_AS": "Mă înregistrez ca",
+    "ROLE_VOLUNTEER": "Voluntar",
+    "ROLE_VOLUNTEER_DESC": "Vreau să particip la evenimente",
+    "ROLE_NGO": "Organizație",
+    "ROLE_NGO_DESC": "Vreau să public evenimente",
+    "PERSONAL_INFO_SECTION": "Informații personale",
+    "FULL_NAME": "Nume complet",
+    "CONTACT_PERSON_NAME": "Numele persoanei de contact",
+    "NAME_PLACEHOLDER": "ex. Ana Popescu",
+    "ORG_NAME": "Numele organizației",
+    "ORG_NAME_HINT": "Așa va apărea public pe platformă",
+    "ORG_NAME_PLACEHOLDER": "ex. Asociația Verde Moldova",
+    "EMAIL": "Email",
+    "EMAIL_PLACEHOLDER": "ex. ana@email.md",
+    "PASSWORD": "Parolă",
+    "PASSWORD_HINT": "Minim 8 caractere",
+    "CONFIRM_PASSWORD": "Confirmă parola",
+    "INTERESTS_SECTION": "Interese (opțional)",
+    "INTERESTS_SUBTITLE": "Ce tipuri de evenimente te interesează?",
+    "INTERESTS": {
+      "EVENTS": "Evenimente și Festivaluri",
+      "FUNDRAISING": "Strângeri de Fonduri și Sport",
+      "HEALTH": "Sănătate și Ajutor Umanitar",
+      "ECOLOGY": "Muncă Ecologică"
+    },
+    "TERMS_AGREE": "Sunt de acord cu",
+    "TERMS_LINK": "Termenii și condițiile",
+    "AND": "și cu",
+    "PRIVACY_LINK": "Politica de confidențialitate",
+    "ALREADY_HAVE_ACCOUNT": "Ai deja cont?",
+    "LOGIN_LINK": "Autentifică-te",
+    "SUBMIT_BTN": "Creează contul",
+    "ERRORS": {
+      "NAME_REQUIRED": "Numele este obligatoriu (maxim 100 de caractere).",
+      "ORG_NAME_REQUIRED": "Numele organizației este obligatoriu.",
+      "EMAIL_INVALID": "Introduceți o adresă de email validă.",
+      "PASSWORD_MIN": "Parola trebuie să conțină minim 8 caractere.",
+      "PASSWORD_MISMATCH": "Parolele nu coincid.",
+      "CONFIRM_PASSWORD_REQUIRED": "Confirmarea parolei este obligatorie.",
+      "TERMS_REQUIRED": "Trebuie să accepți termenii și condițiile."
     }
   }
 }

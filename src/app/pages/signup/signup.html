@@ -1,34 +1,35 @@
 <div class="signup-page">
-  <!-- Top Navigation Bar -->
-    <!-- Top Navigation Sub-Bar (Right below the main navbar, all along the page) -->
+  <!-- Top Navigation Sub-Bar -->
   <div class="signup-topbar">
     <div class="topbar-container">
       <a [routerLink]="['/']" class="back-btn">
         <mat-icon>arrow_back</mat-icon>
-        <span>Înapoi</span>
+        <span>{{ 'SIGNUP.BACK' | translate }}</span>
       </a>
       <div class="topbar-divider"></div>
-      <span class="topbar-title">Înregistrare</span>
-      <span class="badge-ngo">{{ role() === 'ngo' ? 'NGO' : 'Voluntar' }}</span>
+      <span class="topbar-title">{{ 'SIGNUP.HEADER_TITLE' | translate }}</span>
+      <span class="badge-ngo">
+        {{ (role() === 'ngo' ? 'SIGNUP.ROLE_NGO' : 'SIGNUP.ROLE_VOLUNTEER') | translate }}
+      </span>
     </div>
   </div>
 
   <!-- Main Content Form -->
   <main class="signup-content">
     <div class="signup-header">
-      <p class="section-tag">Alătură-te comunității</p>
-      <h1>Creează cont</h1>
+      <p class="section-tag">{{ 'SIGNUP.HERO_TAG' | translate }}</p>
+      <h1>{{ 'SIGNUP.HERO_TITLE' | translate }}</h1>
       <p class="section-desc">
-        Înregistrează-te ca voluntar sau organizație și descoperă evenimente de voluntariat.
+        {{ 'SIGNUP.HERO_SUBTITLE' | translate }}
       </p>
     </div>
 
     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form" novalidate>
       <!-- SECTION 1: Account Type Selection -->
       <section class="form-section">
-        <h2 class="section-title">Tipul contului</h2>
+        <h2 class="section-title">{{ 'SIGNUP.ACCOUNT_TYPE_SECTION' | translate }}</h2>
         <div class="field-group">
-          <label class="field-label">Mă înregistrez ca</label>
+          <label class="field-label">{{ 'SIGNUP.REGISTER_AS' | translate }}</label>
           <div class="role-grid">
             <button
               type="button"
@@ -40,8 +41,8 @@
                 <mat-icon>volunteer_activism</mat-icon>
               </div>
               <div class="role-text">
-                <span class="role-title">Voluntar</span>
-                <span class="role-subtitle">Vreau să particip la evenimente</span>
+                <span class="role-title">{{ 'SIGNUP.ROLE_VOLUNTEER' | translate }}</span>
+                <span class="role-subtitle">{{ 'SIGNUP.ROLE_VOLUNTEER_DESC' | translate }}</span>
               </div>
             </button>
 
@@ -55,8 +56,8 @@
                 <mat-icon>apartment</mat-icon>
               </div>
               <div class="role-text">
-                <span class="role-title">Organizație</span>
-                <span class="role-subtitle">Vreau să public evenimente</span>
+                <span class="role-title">{{ 'SIGNUP.ROLE_NGO' | translate }}</span>
+                <span class="role-subtitle">{{ 'SIGNUP.ROLE_NGO_DESC' | translate }}</span>
               </div>
             </button>
           </div>
@@ -65,12 +66,12 @@
 
       <!-- SECTION 2: Personal Information -->
       <section class="form-section">
-        <h2 class="section-title">Informații personale</h2>
+        <h2 class="section-title">{{ 'SIGNUP.PERSONAL_INFO_SECTION' | translate }}</h2>
 
         <!-- Contact / Full Name -->
         <div class="field-group">
           <label class="field-label" for="nameInput">
-            {{ role() === 'ngo' ? 'Numele persoanei de contact' : 'Nume complet' }}
+            {{ (role() === 'ngo' ? 'SIGNUP.CONTACT_PERSON_NAME' : 'SIGNUP.FULL_NAME') | translate }}
             <span class="required-star">*</span>
           </label>
           <div class="input-wrapper" [class.has-error]="f.name.invalid && f.name.touched">
@@ -79,12 +80,12 @@
               id="nameInput"
               type="text"
               formControlName="name"
-              placeholder="ex. Ana Popescu"
+              [placeholder]="'SIGNUP.NAME_PLACEHOLDER' | translate"
               maxlength="100"
             />
           </div>
           @if (f.name.invalid && f.name.touched) {
-            <span class="error-msg">Numele este obligatoriu (maxim 100 de caractere).</span>
+            <span class="error-msg">{{ 'SIGNUP.ERRORS.NAME_REQUIRED' | translate }}</span>
           }
         </div>
 
@@ -93,9 +94,9 @@
           <div class="field-group">
             <div class="label-with-hint">
               <label class="field-label" for="orgNameInput">
-                Numele organizației <span class="required-star">*</span>
+                {{ 'SIGNUP.ORG_NAME' | translate }} <span class="required-star">*</span>
               </label>
-              <span class="field-hint">Așa va apărea public pe platformă</span>
+              <span class="field-hint">{{ 'SIGNUP.ORG_NAME_HINT' | translate }}</span>
             </div>
             <div class="input-wrapper" [class.has-error]="f.orgName.invalid && f.orgName.touched">
               <mat-icon class="input-icon">business</mat-icon>
@@ -103,44 +104,45 @@
                 id="orgNameInput"
                 type="text"
                 formControlName="orgName"
-                placeholder="ex. Asociația Verde Moldova"
+                [placeholder]="'SIGNUP.ORG_NAME_PLACEHOLDER' | translate"
                 maxlength="100"
               />
             </div>
             @if (f.orgName.invalid && f.orgName.touched) {
-              <span class="error-msg">Numele organizației este obligatoriu.</span>
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.ORG_NAME_REQUIRED' | translate }}</span>
             }
           </div>
         }
 
         <!-- Email -->
         <div class="field-group">
-          <label class="field-label" for="emailInput">Email <span class="required-star">*</span></label>
+          <label class="field-label" for="emailInput">
+            {{ 'SIGNUP.EMAIL' | translate }} <span class="required-star">*</span>
+          </label>
           <div class="input-wrapper" [class.has-error]="f.email.invalid && f.email.touched">
             <mat-icon class="input-icon">mail</mat-icon>
             <input
               id="emailInput"
               type="email"
               formControlName="email"
-              placeholder="ex. ana@email.md"
+              [placeholder]="'SIGNUP.EMAIL_PLACEHOLDER' | translate"
               maxlength="255"
             />
           </div>
           @if (f.email.invalid && f.email.touched) {
-            <span class="error-msg">Introduceți o adresă de email validă.</span>
+            <span class="error-msg">{{ 'SIGNUP.ERRORS.EMAIL_INVALID' | translate }}</span>
           }
         </div>
 
         <!-- Password and Confirm Password -->
-               <!-- Password and Confirm Password -->
         <div class="passwords-grid">
           <!-- Password -->
           <div class="field-group">
             <div class="field-header">
               <label class="field-label" for="passwordInput">
-                Parolă <span class="required-star">*</span>
+                {{ 'SIGNUP.PASSWORD' | translate }} <span class="required-star">*</span>
               </label>
-              <span class="field-hint">Minim 8 caractere</span>
+              <span class="field-hint">{{ 'SIGNUP.PASSWORD_HINT' | translate }}</span>
             </div>
             <div class="input-wrapper" [class.has-error]="f.password.invalid && f.password.touched">
               <mat-icon class="input-icon">lock</mat-icon>
@@ -155,13 +157,12 @@
                 type="button"
                 class="toggle-password-btn"
                 (click)="toggleShowPassword()"
-                [attr.aria-label]="showPassword() ? 'Ascunde parola' : 'Arată parola'"
               >
                 <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </div>
             @if (f.password.invalid && f.password.touched) {
-              <span class="error-msg">Parola trebuie să conțină minim 8 caractere.</span>
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.PASSWORD_MIN' | translate }}</span>
             }
           </div>
 
@@ -169,7 +170,7 @@
           <div class="field-group">
             <div class="field-header">
               <label class="field-label" for="confirmPasswordInput">
-                Confirmă parola <span class="required-star">*</span>
+                {{ 'SIGNUP.CONFIRM_PASSWORD' | translate }} <span class="required-star">*</span>
               </label>
             </div>
             <div
@@ -186,9 +187,9 @@
               />
             </div>
             @if (f.confirmPassword.touched && signupForm.hasError('passwordMismatch')) {
-              <span class="error-msg">Parolele nu coincid.</span>
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.PASSWORD_MISMATCH' | translate }}</span>
             } @else if (f.confirmPassword.invalid && f.confirmPassword.touched) {
-              <span class="error-msg">Confirmarea parolei este obligatorie.</span>
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.CONFIRM_PASSWORD_REQUIRED' | translate }}</span>
             }
           </div>
         </div>
@@ -197,22 +198,22 @@
       <!-- SECTION 3: Interests (Volunteer Only) -->
       @if (role() === 'volunteer') {
         <section class="form-section">
-          <h2 class="section-title">Interese (opțional)</h2>
+          <h2 class="section-title">{{ 'SIGNUP.INTERESTS_SECTION' | translate }}</h2>
           <div class="field-group">
-            <label class="field-label">Ce tipuri de evenimente te interesează?</label>
+            <label class="field-label">{{ 'SIGNUP.INTERESTS_SUBTITLE' | translate }}</label>
             <div class="interests-grid">
-              @for (interest of interestOptions; track interest) {
+              @for (interest of interestOptions; track interest.id) {
                 <label
                   class="interest-card"
-                  [class.selected]="selectedInterests().includes(interest)"
+                  [class.selected]="selectedInterests().includes(interest.id)"
                 >
                   <input
                     type="checkbox"
                     class="checkbox-input"
-                    [checked]="selectedInterests().includes(interest)"
-                    (change)="toggleInterest(interest)"
+                    [checked]="selectedInterests().includes(interest.id)"
+                    (change)="toggleInterest(interest.id)"
                   />
-                  <span class="interest-label">{{ interest }}</span>
+                  <span class="interest-label">{{ interest.labelKey | translate }}</span>
                 </label>
               }
             </div>
@@ -229,25 +230,26 @@
             class="checkbox-input terms-checkbox"
           />
           <span class="terms-text">
-            Sunt de acord cu
-            <a href="javascript:void(0)" class="terms-link">Termenii și condițiile</a> și cu
-            <a href="javascript:void(0)" class="terms-link">Politica de confidențialitate</a>
+            {{ 'SIGNUP.TERMS_AGREE' | translate }}
+            <a href="javascript:void(0)" class="terms-link">{{ 'SIGNUP.TERMS_LINK' | translate }}</a>
+            {{ 'SIGNUP.AND' | translate }}
+            <a href="javascript:void(0)" class="terms-link">{{ 'SIGNUP.PRIVACY_LINK' | translate }}</a>
             Volunteerio.
           </span>
         </label>
         @if (f.acceptTerms.invalid && f.acceptTerms.touched) {
-          <span class="error-msg terms-error">Trebuie să accepți termenii și condițiile.</span>
+          <span class="error-msg terms-error">{{ 'SIGNUP.ERRORS.TERMS_REQUIRED' | translate }}</span>
         }
       </section>
 
       <!-- Action Footer -->
       <footer class="form-footer">
         <p class="login-prompt">
-          Ai deja cont?
-          <a [routerLink]="['/login']" class="login-link">Autentifică-te</a>
+          {{ 'SIGNUP.ALREADY_HAVE_ACCOUNT' | translate }}
+          <a [routerLink]="['/login']" class="login-link">{{ 'SIGNUP.LOGIN_LINK' | translate }}</a>
         </p>
         <button type="submit" class="submit-btn">
-          Creează contul
+          {{ 'SIGNUP.SUBMIT_BTN' | translate }}
         </button>
       </footer>
     </form>

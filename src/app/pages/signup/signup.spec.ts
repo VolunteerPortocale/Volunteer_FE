@@ -53,13 +53,13 @@ describe('SignupComponent', () => {
   });
 
   it('should toggle interests correctly', () => {
-    const interest = 'Muncă Ecologică';
-    expect(component.selectedInterests().includes(interest)).toBe(false);
+    const interestId = 'ecology';
+    expect(component.selectedInterests().includes(interestId)).toBe(false);
 
-    component.toggleInterest(interest);
-    expect(component.selectedInterests().includes(interest)).toBe(true);
+    component.toggleInterest(interestId);
+    expect(component.selectedInterests().includes(interestId)).toBe(true);
 
-    component.toggleInterest(interest);
-    expect(component.selectedInterests().includes(interest)).toBe(false);
+    component.toggleInterest(interestId);
+    expect(component.selectedInterests().includes(interestId)).toBe(false);
   });
 });
