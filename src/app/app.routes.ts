@@ -14,6 +14,14 @@ export const routes: Routes = [
         path: APP_ROUTES.SIGNUP,
         loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
     },
+    {
+        path: APP_ROUTES.SIGNUP,
+        loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
+    },
+    {
+        path: APP_ROUTES.OTP,
+        loadComponent: () => import('./pages/otp-confirmation/otp-confirmation').then(m => m.OtpConfirmationComponent)
+    },
 
     // fallback route
     {

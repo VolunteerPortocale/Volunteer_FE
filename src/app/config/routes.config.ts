@@ -6,6 +6,7 @@ export const APP_ROUTES = {
   LOGIN: 'login',
   SIGNUP: 'inregistrare',
   ADD_EVENT: 'adauga-eveniment',
+   OTP: 'confirmare-otp',
   NOT_FOUND: '**'
 } as const;
 

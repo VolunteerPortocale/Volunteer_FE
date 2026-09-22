@@ -133,15 +133,10 @@ export class SignupComponent {
 
     this.isSubmitted.set(true);
 
-    const payload = {
-      role: this.role(),
-      name: this.signupForm.value.name?.trim(),
-      orgName: this.role() === 'ngo' ? this.signupForm.value.orgName?.trim() : null,
-      email: this.signupForm.value.email?.trim(),
-      password: this.signupForm.value.password,
-      interests: this.role() === 'volunteer' ? this.selectedInterests() : [],
-    };
-
-    console.log('Signup form payload:', payload);
+    const email = this.signupForm.value.email?.trim() || '';
+    
+    this.router.navigate(['/' + this.routes.OTP], {
+      queryParams: { email }
+    });
   }
 }
