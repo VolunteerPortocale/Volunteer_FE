@@ -5,7 +5,31 @@
     "ORGANIZATIONS": "Organizații",
     "LOGIN": "Loghează-te",
     "BECOME_VOLUNTEER": "Devino membru",
-    "ADD_EVENT": "+ Adaugă eveniment"
+    "ADD_EVENT": "+ Adaugă eveniment",
+    "NOTIFICATIONS": "Notificări",
+    "MY_PROFILE": "Profilul meu",
+    "MY_PROJECTS": "Proiectele mele",
+    "SETTINGS": "Setări",
+    "LOGOUT": "Deconectare"
+  },
+  "HOME_AUTH": {
+    "GREETING": "Bine ai revenit, Pavel",
+    "TITLE": "Unde vrei să faci o schimbare?",
+    "SUBTITLE": "Descoperă oportunități pentru implicare activă în comunitatea ta și construiește un viitor mai bun.",
+    "SEARCH_PLACEHOLDER": "Caută după proiect, cauză sau localitate",
+    "RECOMMENDED_TITLE": "Proiecte recomandate",
+    "RECOMMENDED_SUBTITLE": "Selectate pentru interesele și zona ta.",
+    "FILTERS": {
+      "ALL": "Toate",
+      "ECOLOGY": "Ecologie",
+      "EDUCATION": "Educație",
+      "ANIMALS": "Animale"
+    },
+    "VIEW_PROJECT": "Vezi proiectul",
+    "SPOTS_OCCUPIED": "locuri ocupate",
+    "BOOKMARK_SAVED": "Proiect salvat",
+    "NO_PROJECTS_FOUND": "Nu au fost găsite proiecte conform filtrelor tale.",
+    "RESET_SEARCH": "Resetează căutarea"
   },
   "HOME": {
     "TITLE": "Proiecte de Voluntariat în Moldova",
