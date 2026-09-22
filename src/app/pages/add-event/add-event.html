@@ -162,23 +162,56 @@
           <div class="field-group">
             <label>{{ 'ADD_EVENT.EVENT_TYPES_LABEL' | translate }}</label>
             <span class="field-hint">{{ 'ADD_EVENT.EVENT_TYPES_HINT' | translate }}</span>
-            <div class="event-types-grid">
-              @for (type of eventTypesList; track type.id) {
-                <button
-                  type="button"
-                  class="type-toggle-btn"
-                  [class.active]="selectedEventTypes().includes(type.id)"
-                  (click)="toggleEventType(type.id)"
-                >
-                  <span class="custom-checkbox" [class.checked]="selectedEventTypes().includes(type.id)">
-                    @if (selectedEventTypes().includes(type.id)) {
-                      <mat-icon>check</mat-icon>
-                    }
-                  </span>
-                  <span class="type-label">{{ type.labelKey | translate }}</span>
-                </button>
-              }
-            </div>
+
+            <!-- Dropdown Trigger -->
+            <button
+              type="button"
+              class="category-dropdown-trigger"
+              [class.open]="categoryDropdownOpen()"
+              (click)="toggleCategoryDropdown()"
+            >
+              <span class="dropdown-label">{{ dropdownTriggerLabel }}</span>
+              <mat-icon class="dropdown-chevron" [class.rotated]="categoryDropdownOpen()">
+                expand_more
+              </mat-icon>
+            </button>
+
+            <!-- Selected Tags Preview -->
+            @if (selectedEventTypes().length > 0 && !categoryDropdownOpen()) {
+              <div class="selected-tags-row">
+                @for (type of eventTypesList; track type.id) {
+                  @if (selectedEventTypes().includes(type.id)) {
+                    <span class="selected-tag">
+                      {{ getCategoryLabel(type) }}
+                      <mat-icon class="tag-remove" (click)="toggleEventType(type.id)">close</mat-icon>
+                    </span>
+                  }
+                }
+              </div>
+            }
+
+            <!-- Collapsible Categories Grid -->
+            @if (categoryDropdownOpen()) {
+              <div class="category-dropdown-panel">
+                <div class="event-types-grid">
+                  @for (type of eventTypesList; track type.id) {
+                    <button
+                      type="button"
+                      class="type-toggle-btn"
+                      [class.active]="selectedEventTypes().includes(type.id)"
+                      (click)="toggleEventType(type.id)"
+                    >
+                      <span class="custom-checkbox" [class.checked]="selectedEventTypes().includes(type.id)">
+                        @if (selectedEventTypes().includes(type.id)) {
+                          <mat-icon>check</mat-icon>
+                        }
+                      </span>
+                      <span class="type-label">{{ getCategoryLabel(type) }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
           </div>
 
           <!-- Dress Code -->
@@ -281,7 +314,77 @@
           }
         </div>
 
-        <!-- 6. ACTIONS -->
+        <!-- 6. ATTACHMENTS & DOCUMENTS -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_ATTACHMENTS' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.ATTACHMENTS_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.ATTACHMENTS_HINT' | translate }}</span>
+
+            <!-- Dropzone Area -->
+            <div
+              class="file-dropzone"
+              [class.dragging]="isDragging()"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave($event)"
+              (drop)="onDrop($event)"
+              (click)="fileInput.click()"
+            >
+              <input
+                #fileInput
+                type="file"
+                multiple
+                class="hidden-file-input"
+                (change)="onFileSelected($event)"
+              />
+              <div class="dropzone-content">
+                <div class="dropzone-icon-wrap">
+                  <mat-icon class="dropzone-icon">cloud_upload</mat-icon>
+                </div>
+                <div class="dropzone-text">
+                  <p class="dropzone-main">
+                    {{ 'ADD_EVENT.DROPZONE_TITLE' | translate }}
+                    <span class="browse-link">{{ 'ADD_EVENT.DROPZONE_BROWSE' | translate }}</span>
+                  </p>
+                  <p class="dropzone-sub">
+                    {{ 'ADD_EVENT.DROPZONE_SUBTITLE' | translate }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attached Files List -->
+            @if (attachedFiles().length > 0) {
+              <div class="attached-files-list">
+                @for (file of attachedFiles(); track file.id) {
+                  <div class="file-item-card">
+                    <div class="file-info-group">
+                      <div class="file-icon-box">
+                        <mat-icon class="file-type-icon">{{ getFileIcon(file.name) }}</mat-icon>
+                      </div>
+                      <div class="file-details">
+                        <span class="file-name" [title]="file.name">{{ file.name }}</span>
+                        <span class="file-size">{{ file.formattedSize }}</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      class="remove-file-btn"
+                      (click)="removeFile(file.id); $event.stopPropagation()"
+                      [title]="'ADD_EVENT.REMOVE_FILE' | translate"
+                      aria-label="Remove file"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- 7. ACTIONS -->
         <div class="form-actions">
           <button type="submit" class="btn-primary submit-btn">
             {{ 'ADD_EVENT.SUBMIT_BTN' | translate }}
