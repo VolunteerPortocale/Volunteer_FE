@@ -22,6 +22,10 @@ export const routes: Routes = [
         path: APP_ROUTES.OTP,
         loadComponent: () => import('./pages/otp-confirmation/otp-confirmation').then(m => m.OtpConfirmationComponent)
     },
+    {
+        path: APP_ROUTES.HOME_AUTH,
+        loadComponent: () => import('./pages/home-auth/home-auth').then(m => m.HomeAuthComponent)
+    },
 
     // fallback route
     {
