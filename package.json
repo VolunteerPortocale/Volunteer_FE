@@ -12,6 +12,7 @@
     "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "codegen": "graphql-codegen --config codegen.ts",
     "serve:ssr:volunteerio": "node dist/volunteerio/server/server.mjs"
   },
   "private": true,
@@ -40,6 +41,10 @@
     "@angular/cli": "^21.2.23",
     "@angular/compiler-cli": "^21.2.0",
     "@eslint/js": "^10.0.1",
+    "@graphql-codegen/cli": "^7.4.2",
+    "@graphql-codegen/typescript": "^6.1.0",
+    "@graphql-codegen/typescript-apollo-angular": "^5.0.1",
+    "@graphql-codegen/typescript-operations": "^6.1.7",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "eslint": "^10.10.0",

@@ -1,0 +1,86 @@
+<div class="otp-page">
+  <!-- Top navigation bar -->
+  <div class="topbar">
+    <a [routerLink]="['/' + routes.SIGNUP]" class="back-link">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Înapoi la Înregistrare</span>
+    </a>
+  </div>
+
+  <main class="otp-content">
+    <div class="otp-card">
+      <!-- Icon badge -->
+      <div class="icon-circle">
+        <mat-icon>mark_email_read</mat-icon>
+      </div>
+
+      <h1>Confirmare Email</h1>
+      <p class="subtitle">Am trimis un cod de verificare la adresa:</p>
+      <p class="target-email">{{ email() || 'email-ul tău' }}</p>
+
+      <!-- Alert Banners -->
+      @if (errorMessage()) {
+        <div class="alert error-alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="alert success-alert">
+          <mat-icon>check_circle_outline</mat-icon>
+          <span>{{ successMessage() }}</span>
+        </div>
+      }
+
+      <!-- Form -->
+      <form (ngSubmit)="onVerify()" class="otp-form">
+        <div class="input-group">
+          <label for="otpInput">Introdu codul primit</label>
+          <input
+            id="otpInput"
+            type="text"
+            [ngModel]="otpCode()"
+            (ngModelChange)="otpCode.set($event)"
+            name="otpCode"
+            placeholder="000000"
+            maxlength="10"
+            autocomplete="one-time-code"
+            autofocus
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="isLoading() || !otpCode().trim()"
+        >
+          @if (isLoading()) {
+            <span>Se verifică...</span>
+          } @else {
+            <span>Verifică Codul</span>
+          }
+        </button>
+      </form>
+
+      <!-- Resend Section -->
+      <div class="resend-section">
+        <p>Nu ai primit email-ul?</p>
+        <button
+          type="button"
+          class="btn-resend"
+          (click)="onResend()"
+          [disabled]="resendCooldown() > 0 || isResending() || !email()"
+        >
+          @if (isResending()) {
+            <span>Se trimite...</span>
+          } @else if (resendCooldown() > 0) {
+            <span>Retrimite codul (în {{ resendCooldown() }}s)</span>
+          } @else {
+            <span>Retrimite codul</span>
+          }
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

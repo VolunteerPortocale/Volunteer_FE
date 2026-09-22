@@ -1,0 +1,88 @@
+type User {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    phoneNumber: String!
+    role: UserRole!
+    status: UserStatus!
+    createdAt: String!
+    updatedAt: String
+    eventCategoryPreferences: [EventCategory!]
+    suspendedUntil: String
+}
+
+enum UserRole {
+    ADMIN
+    MODERATOR
+    NGO
+    VOLUNTEER
+}
+
+enum CreateUserRole {
+    MODERATOR
+    NGO
+    VOLUNTEER
+}
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+}
+
+enum EventCategory {
+    SOCIAL
+    ANIMAL_CARE
+    CHILDREN_AND_YOUTH
+    EDUCATION
+    ENVIRONMENT
+    HEALTH
+    DISABILITY_SUPPORT
+    ELDERLY_CARE
+    DISASTER
+    POVERTY
+    CULTURE
+    SPORT
+    FESTIVALS
+    TECHNOLOGY
+    BUSINESS
+    EMPLOYMENT
+    SCIENCE
+    AGRICULTURE
+    CONSTRUCTION
+    RELIGION
+    HUMAN_RIGHTS
+    LEGAL
+    SAFETY
+    FAMILY
+    LGBTQ_PLUS
+    REFUGEE_SUPPORT
+    INTERNATIONAL_VOLUNTEERING
+    TOURISM
+    HERITAGE
+    MEDIA
+    GARDENING
+    PEACE
+    ADDICTION_RECOVERY
+    OTHER
+}
+
+input CreateUserInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    phoneNumber: String!
+    role: CreateUserRole!
+    eventCategoryPreferences: [EventCategory]
+    password: String!
+    companyName: String
+}
+
+input UpdateUserInput {
+    firstName: String
+    lastName: String
+    phoneNumber: String
+    eventCategoryPreferences: [EventCategory!]
+    companyName: String
+}

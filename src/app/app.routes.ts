@@ -15,6 +15,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
     },
     {
+        path: APP_ROUTES.SIGNUP,
+        loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
+    },
+    {
+        path: APP_ROUTES.OTP,
+        loadComponent: () => import('./pages/otp-confirmation/otp-confirmation').then(m => m.OtpConfirmationComponent)
+    },
+    {
         path: APP_ROUTES.HOME_AUTH,
         loadComponent: () => import('./pages/home-auth/home-auth').then(m => m.HomeAuthComponent)
     },
