@@ -7,17 +7,23 @@
         <div class="success-icon-wrap">
           <mat-icon class="check-icon">check</mat-icon>
         </div>
-        <h2>{{ 'ADD_EVENT.SUCCESS_TITLE' | translate }}</h2>
+        <h2>{{ (isEditMode() ? 'ADD_EVENT.SUCCESS_TITLE_EDIT' : 'ADD_EVENT.SUCCESS_TITLE') | translate }}</h2>
         <p class="success-message">
-          {{ 'ADD_EVENT.SUCCESS_DESC' | translate }}
+          {{ (isEditMode() ? 'ADD_EVENT.SUCCESS_DESC_EDIT' : 'ADD_EVENT.SUCCESS_DESC') | translate }}
         </p>
         <div class="success-actions">
-          <button mat-button class="btn-primary" (click)="resetForm()">
-            {{ 'ADD_EVENT.ADD_ANOTHER_BTN' | translate }}
-          </button>
-          <button mat-button class="btn-outline" (click)="goBack()">
+          <button mat-button class="btn-primary" (click)="goBack()">
             {{ 'ADD_EVENT.BACK_TO_HOME_BTN' | translate }}
           </button>
+          @if (!isEditMode()) {
+            <button mat-button class="btn-outline" (click)="resetForm()">
+              {{ 'ADD_EVENT.ADD_ANOTHER_BTN' | translate }}
+            </button>
+          } @else {
+            <button mat-button class="btn-outline" (click)="resetForm()">
+              {{ 'ADD_EVENT.CONTINUE_EDITING_BTN' | translate }}
+            </button>
+          }
         </div>
       </div>
     </div>
@@ -31,7 +37,9 @@
           <span>{{ 'ADD_EVENT.BACK' | translate }}</span>
         </button>
         <div class="topbar-divider"></div>
-        <span class="topbar-title">{{ 'ADD_EVENT.TOPBAR_TITLE' | translate }}</span>
+        <span class="topbar-title">
+          {{ (isEditMode() ? 'ADD_EVENT.TOPBAR_TITLE_EDIT' : 'ADD_EVENT.TOPBAR_TITLE') | translate }}
+        </span>
         <span class="badge-ngo">NGO</span>
       </div>
     </div>
@@ -39,10 +47,12 @@
     <!-- ── MAIN FORM CONTAINER ── -->
     <div class="form-container">
       <div class="form-header">
-        <span class="header-role">{{ 'ADD_EVENT.HEADER_ROLE' | translate }}</span>
-        <h1>{{ 'ADD_EVENT.HEADER_TITLE' | translate }}</h1>
+        <span class="header-role">
+          {{ (isEditMode() ? 'ADD_EVENT.HEADER_ROLE_EDIT' : 'ADD_EVENT.HEADER_ROLE') | translate }}
+        </span>
+        <h1>{{ (isEditMode() ? 'ADD_EVENT.HEADER_TITLE_EDIT' : 'ADD_EVENT.HEADER_TITLE') | translate }}</h1>
         <p class="header-subtitle">
-          {{ 'ADD_EVENT.HEADER_SUBTITLE' | translate }}
+          {{ (isEditMode() ? 'ADD_EVENT.HEADER_SUBTITLE_EDIT' : 'ADD_EVENT.HEADER_SUBTITLE') | translate }}
         </p>
       </div>
 
@@ -387,7 +397,7 @@
         <!-- 7. ACTIONS -->
         <div class="form-actions">
           <button type="submit" class="btn-primary submit-btn">
-            {{ 'ADD_EVENT.SUBMIT_BTN' | translate }}
+            {{ (isEditMode() ? 'ADD_EVENT.SAVE_BTN' : 'ADD_EVENT.SUBMIT_BTN') | translate }}
           </button>
           <button type="button" class="btn-outline draft-btn" (click)="goBack()">
             {{ 'ADD_EVENT.DRAFT_BTN' | translate }}

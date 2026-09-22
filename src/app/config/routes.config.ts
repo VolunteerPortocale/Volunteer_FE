@@ -6,6 +6,7 @@ export const APP_ROUTES = {
   LOGIN: 'login',
   SIGNUP: 'inregistrare',
   ADD_EVENT: 'adauga-eveniment',
+  EDIT_EVENT: 'editeaza-eveniment/:id',
   HOME_AUTH: 'home-auth',
   NOT_FOUND: '**'
 } as const;

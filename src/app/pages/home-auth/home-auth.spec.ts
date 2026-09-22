@@ -1,7 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { HomeAuthComponent } from './home-auth';
 
 describe('HomeAuthComponent', () => {
@@ -56,5 +56,13 @@ describe('HomeAuthComponent', () => {
 
     component.toggleBookmark('eco-forest');
     expect(component.isBookmarked('eco-forest')).toBe(false);
+  });
+
+  it('should navigate to edit event route when editProject is called', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    component.editProject('eco-forest');
+    expect(navigateSpy).toHaveBeenCalledWith(['/editeaza-eveniment', 'eco-forest']);
   });
 });

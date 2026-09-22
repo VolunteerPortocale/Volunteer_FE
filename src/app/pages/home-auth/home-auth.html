@@ -67,19 +67,33 @@
                 {{ project.categoryTagKey | translate }}
               </span>
 
-              <!-- Bookmark Button (Top-Right) -->
-              <button
-                type="button"
-                class="bookmark-btn"
-                [class.bookmarked]="isBookmarked(project.id)"
-                (click)="toggleBookmark(project.id, $event)"
-                [title]="'HOME_AUTH.BOOKMARK_SAVED' | translate"
-                aria-label="Bookmark project"
-              >
-                <mat-icon class="bookmark-icon">
-                  {{ isBookmarked(project.id) ? 'bookmark' : 'bookmark_border' }}
-                </mat-icon>
-              </button>
+              <!-- Action Buttons (Top-Right) -->
+              <div class="card-top-actions">
+                <!-- Edit Button (Pencil Icon) -->
+                <button
+                  type="button"
+                  class="card-icon-btn edit-btn"
+                  (click)="editProject(project.id, $event)"
+                  [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
+                  aria-label="Edit event"
+                >
+                  <mat-icon class="action-icon">edit</mat-icon>
+                </button>
+
+                <!-- Bookmark Button -->
+                <button
+                  type="button"
+                  class="card-icon-btn bookmark-btn"
+                  [class.bookmarked]="isBookmarked(project.id)"
+                  (click)="toggleBookmark(project.id, $event)"
+                  [title]="'HOME_AUTH.BOOKMARK_SAVED' | translate"
+                  aria-label="Bookmark project"
+                >
+                  <mat-icon class="action-icon">
+                    {{ isBookmarked(project.id) ? 'bookmark' : 'bookmark_border' }}
+                  </mat-icon>
+                </button>
+              </div>
             </div>
 
             <!-- Card Body Content -->
@@ -104,7 +118,7 @@
                 </div>
               </div>
 
-              <!-- Action Button -->
+              <!-- Action Buttons -->
               <div class="card-footer">
                 <button
                   type="button"
@@ -112,6 +126,15 @@
                   (click)="viewProject(project)"
                 >
                   {{ 'HOME_AUTH.VIEW_PROJECT' | translate }}
+                </button>
+                <button
+                  type="button"
+                  class="card-footer-edit-btn"
+                  (click)="editProject(project.id, $event)"
+                  [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
+                  aria-label="Edit event"
+                >
+                  <mat-icon>edit</mat-icon>
                 </button>
               </div>
             </div>
