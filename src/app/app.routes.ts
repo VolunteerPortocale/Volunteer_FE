@@ -10,6 +10,10 @@ export const routes: Routes = [
         path: APP_ROUTES.ADD_EVENT,
         loadComponent: () => import('./pages/add-event/add-event').then(m => m.AddEventComponent)
     },
+    {
+        path: APP_ROUTES.SIGNUP,
+        loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
+    },
 
     // fallback route
     {

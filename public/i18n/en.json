@@ -98,5 +98,54 @@
       "TITLE_REQUIRED": "Title is required (minimum 5 characters).",
       "DESC_REQUIRED": "Description is required (minimum 20 characters)."
     }
+  },
+  "SIGNUP": {
+    "BACK": "Back",
+    "HEADER_TITLE": "Registration",
+    "HERO_TAG": "Join the community",
+    "HERO_TITLE": "Create account",
+    "HERO_SUBTITLE": "Sign up as a volunteer or an organization and discover volunteering events.",
+    "ACCOUNT_TYPE_SECTION": "Account type",
+    "REGISTER_AS": "I am registering as",
+    "ROLE_VOLUNTEER": "Volunteer",
+    "ROLE_VOLUNTEER_DESC": "I want to participate in events",
+    "ROLE_NGO": "Organization",
+    "ROLE_NGO_DESC": "I want to publish events",
+    "PERSONAL_INFO_SECTION": "Personal information",
+    "FULL_NAME": "Full name",
+    "CONTACT_PERSON_NAME": "Contact person's name",
+    "NAME_PLACEHOLDER": "e.g. Ana Popescu",
+    "ORG_NAME": "Organization name",
+    "ORG_NAME_HINT": "This is how it will appear publicly on the platform",
+    "ORG_NAME_PLACEHOLDER": "e.g. Green Moldova Association",
+    "EMAIL": "Email",
+    "EMAIL_PLACEHOLDER": "e.g. ana@email.md",
+    "PASSWORD": "Password",
+    "PASSWORD_HINT": "Minimum 8 characters",
+    "CONFIRM_PASSWORD": "Confirm password",
+    "INTERESTS_SECTION": "Interests (optional)",
+    "INTERESTS_SUBTITLE": "What types of events are you interested in?",
+    "INTERESTS": {
+      "EVENTS": "Events & Festivals",
+      "FUNDRAISING": "Fundraising & Sports",
+      "HEALTH": "Health & Humanitarian Aid",
+      "ECOLOGY": "Environmental Work"
+    },
+    "TERMS_AGREE": "I agree to the",
+    "TERMS_LINK": "Terms and Conditions",
+    "AND": "and the",
+    "PRIVACY_LINK": "Privacy Policy",
+    "ALREADY_HAVE_ACCOUNT": "Already have an account?",
+    "LOGIN_LINK": "Log in",
+    "SUBMIT_BTN": "Create account",
+    "ERRORS": {
+      "NAME_REQUIRED": "Name is required (max 100 characters).",
+      "ORG_NAME_REQUIRED": "Organization name is required.",
+      "EMAIL_INVALID": "Please enter a valid email address.",
+      "PASSWORD_MIN": "Password must be at least 8 characters long.",
+      "PASSWORD_MISMATCH": "Passwords do not match.",
+      "CONFIRM_PASSWORD_REQUIRED": "Password confirmation is required.",
+      "TERMS_REQUIRED": "You must accept the terms and conditions."
+    }
   }
 }

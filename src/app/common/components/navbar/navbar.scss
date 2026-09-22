@@ -17,6 +17,32 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding: 0 2rem; //move favicon left and buttons right with 32px pad
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+
+  .nav-link {
+    font-size: var(--font-size-body);
+    font-weight: 500;
+    color: var(--color-dark-grey);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 }
 
 .brand-logo {

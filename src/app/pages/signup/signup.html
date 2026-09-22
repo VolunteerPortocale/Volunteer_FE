@@ -1,0 +1,257 @@
+<div class="signup-page">
+  <!-- Top Navigation Sub-Bar -->
+  <div class="signup-topbar">
+    <div class="topbar-container">
+      <a [routerLink]="['/']" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+        <span>{{ 'SIGNUP.BACK' | translate }}</span>
+      </a>
+      <div class="topbar-divider"></div>
+      <span class="topbar-title">{{ 'SIGNUP.HEADER_TITLE' | translate }}</span>
+      <span class="badge-ngo">
+        {{ (role() === 'ngo' ? 'SIGNUP.ROLE_NGO' : 'SIGNUP.ROLE_VOLUNTEER') | translate }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Main Content Form -->
+  <main class="signup-content">
+    <div class="signup-header">
+      <p class="section-tag">{{ 'SIGNUP.HERO_TAG' | translate }}</p>
+      <h1>{{ 'SIGNUP.HERO_TITLE' | translate }}</h1>
+      <p class="section-desc">
+        {{ 'SIGNUP.HERO_SUBTITLE' | translate }}
+      </p>
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form" novalidate>
+      <!-- SECTION 1: Account Type Selection -->
+      <section class="form-section">
+        <h2 class="section-title">{{ 'SIGNUP.ACCOUNT_TYPE_SECTION' | translate }}</h2>
+        <div class="field-group">
+          <label class="field-label">{{ 'SIGNUP.REGISTER_AS' | translate }}</label>
+          <div class="role-grid">
+            <button
+              type="button"
+              class="role-card"
+              [class.active]="role() === 'volunteer'"
+              (click)="setRole('volunteer')"
+            >
+              <div class="role-icon-wrapper">
+                <mat-icon>volunteer_activism</mat-icon>
+              </div>
+              <div class="role-text">
+                <span class="role-title">{{ 'SIGNUP.ROLE_VOLUNTEER' | translate }}</span>
+                <span class="role-subtitle">{{ 'SIGNUP.ROLE_VOLUNTEER_DESC' | translate }}</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              class="role-card"
+              [class.active]="role() === 'ngo'"
+              (click)="setRole('ngo')"
+            >
+              <div class="role-icon-wrapper">
+                <mat-icon>apartment</mat-icon>
+              </div>
+              <div class="role-text">
+                <span class="role-title">{{ 'SIGNUP.ROLE_NGO' | translate }}</span>
+                <span class="role-subtitle">{{ 'SIGNUP.ROLE_NGO_DESC' | translate }}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Personal Information -->
+      <section class="form-section">
+        <h2 class="section-title">{{ 'SIGNUP.PERSONAL_INFO_SECTION' | translate }}</h2>
+
+        <!-- Contact / Full Name -->
+        <div class="field-group">
+          <label class="field-label" for="nameInput">
+            {{ (role() === 'ngo' ? 'SIGNUP.CONTACT_PERSON_NAME' : 'SIGNUP.FULL_NAME') | translate }}
+            <span class="required-star">*</span>
+          </label>
+          <div class="input-wrapper" [class.has-error]="f.name.invalid && f.name.touched">
+            <mat-icon class="input-icon">person</mat-icon>
+            <input
+              id="nameInput"
+              type="text"
+              formControlName="name"
+              [placeholder]="'SIGNUP.NAME_PLACEHOLDER' | translate"
+              maxlength="100"
+            />
+          </div>
+          @if (f.name.invalid && f.name.touched) {
+            <span class="error-msg">{{ 'SIGNUP.ERRORS.NAME_REQUIRED' | translate }}</span>
+          }
+        </div>
+
+        <!-- Organization Name (NGO Only) -->
+        @if (role() === 'ngo') {
+          <div class="field-group">
+            <div class="label-with-hint">
+              <label class="field-label" for="orgNameInput">
+                {{ 'SIGNUP.ORG_NAME' | translate }} <span class="required-star">*</span>
+              </label>
+              <span class="field-hint">{{ 'SIGNUP.ORG_NAME_HINT' | translate }}</span>
+            </div>
+            <div class="input-wrapper" [class.has-error]="f.orgName.invalid && f.orgName.touched">
+              <mat-icon class="input-icon">business</mat-icon>
+              <input
+                id="orgNameInput"
+                type="text"
+                formControlName="orgName"
+                [placeholder]="'SIGNUP.ORG_NAME_PLACEHOLDER' | translate"
+                maxlength="100"
+              />
+            </div>
+            @if (f.orgName.invalid && f.orgName.touched) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.ORG_NAME_REQUIRED' | translate }}</span>
+            }
+          </div>
+        }
+
+        <!-- Email -->
+        <div class="field-group">
+          <label class="field-label" for="emailInput">
+            {{ 'SIGNUP.EMAIL' | translate }} <span class="required-star">*</span>
+          </label>
+          <div class="input-wrapper" [class.has-error]="f.email.invalid && f.email.touched">
+            <mat-icon class="input-icon">mail</mat-icon>
+            <input
+              id="emailInput"
+              type="email"
+              formControlName="email"
+              [placeholder]="'SIGNUP.EMAIL_PLACEHOLDER' | translate"
+              maxlength="255"
+            />
+          </div>
+          @if (f.email.invalid && f.email.touched) {
+            <span class="error-msg">{{ 'SIGNUP.ERRORS.EMAIL_INVALID' | translate }}</span>
+          }
+        </div>
+
+        <!-- Password and Confirm Password -->
+        <div class="passwords-grid">
+          <!-- Password -->
+          <div class="field-group">
+            <div class="field-header">
+              <label class="field-label" for="passwordInput">
+                {{ 'SIGNUP.PASSWORD' | translate }} <span class="required-star">*</span>
+              </label>
+              <span class="field-hint">{{ 'SIGNUP.PASSWORD_HINT' | translate }}</span>
+            </div>
+            <div class="input-wrapper" [class.has-error]="f.password.invalid && f.password.touched">
+              <mat-icon class="input-icon">lock</mat-icon>
+              <input
+                id="passwordInput"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="••••••••"
+                maxlength="72"
+              />
+              <button
+                type="button"
+                class="toggle-password-btn"
+                (click)="toggleShowPassword()"
+              >
+                <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </div>
+            @if (f.password.invalid && f.password.touched) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.PASSWORD_MIN' | translate }}</span>
+            }
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="field-group">
+            <div class="field-header">
+              <label class="field-label" for="confirmPasswordInput">
+                {{ 'SIGNUP.CONFIRM_PASSWORD' | translate }} <span class="required-star">*</span>
+              </label>
+            </div>
+            <div
+              class="input-wrapper"
+              [class.has-error]="(f.confirmPassword.invalid || signupForm.hasError('passwordMismatch')) && f.confirmPassword.touched"
+            >
+              <mat-icon class="input-icon">lock</mat-icon>
+              <input
+                id="confirmPasswordInput"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                placeholder="••••••••"
+                maxlength="72"
+              />
+            </div>
+            @if (f.confirmPassword.touched && signupForm.hasError('passwordMismatch')) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.PASSWORD_MISMATCH' | translate }}</span>
+            } @else if (f.confirmPassword.invalid && f.confirmPassword.touched) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.CONFIRM_PASSWORD_REQUIRED' | translate }}</span>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: Interests (Volunteer Only) -->
+      @if (role() === 'volunteer') {
+        <section class="form-section">
+          <h2 class="section-title">{{ 'SIGNUP.INTERESTS_SECTION' | translate }}</h2>
+          <div class="field-group">
+            <label class="field-label">{{ 'SIGNUP.INTERESTS_SUBTITLE' | translate }}</label>
+            <div class="interests-grid">
+              @for (interest of interestOptions; track interest.id) {
+                <label
+                  class="interest-card"
+                  [class.selected]="selectedInterests().includes(interest.id)"
+                >
+                  <input
+                    type="checkbox"
+                    class="checkbox-input"
+                    [checked]="selectedInterests().includes(interest.id)"
+                    (change)="toggleInterest(interest.id)"
+                  />
+                  <span class="interest-label">{{ interest.labelKey | translate }}</span>
+                </label>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      <!-- Terms and Conditions Card -->
+      <section class="terms-card" [class.has-error]="f.acceptTerms.invalid && f.acceptTerms.touched">
+        <label class="terms-label">
+          <input
+            type="checkbox"
+            formControlName="acceptTerms"
+            class="checkbox-input terms-checkbox"
+          />
+          <span class="terms-text">
+            {{ 'SIGNUP.TERMS_AGREE' | translate }}
+            <a href="javascript:void(0)" class="terms-link">{{ 'SIGNUP.TERMS_LINK' | translate }}</a>
+            {{ 'SIGNUP.AND' | translate }}
+            <a href="javascript:void(0)" class="terms-link">{{ 'SIGNUP.PRIVACY_LINK' | translate }}</a>
+            Volunteerio.
+          </span>
+        </label>
+        @if (f.acceptTerms.invalid && f.acceptTerms.touched) {
+          <span class="error-msg terms-error">{{ 'SIGNUP.ERRORS.TERMS_REQUIRED' | translate }}</span>
+        }
+      </section>
+
+      <!-- Action Footer -->
+      <footer class="form-footer">
+        <p class="login-prompt">
+          {{ 'SIGNUP.ALREADY_HAVE_ACCOUNT' | translate }}
+          <a [routerLink]="['/login']" class="login-link">{{ 'SIGNUP.LOGIN_LINK' | translate }}</a>
+        </p>
+        <button type="submit" class="submit-btn">
+          {{ 'SIGNUP.SUBMIT_BTN' | translate }}
+        </button>
+      </footer>
+    </form>
+  </main>
+</div>
