@@ -4,6 +4,7 @@ export const APP_ROUTES = {
   ABOUT: 'despre',
   ORGANIZATIONS: 'organizatii',
   LOGIN: 'login',
+  ADD_EVENT: 'adauga-eveniment',
   NOT_FOUND: '**'
 } as const;
 

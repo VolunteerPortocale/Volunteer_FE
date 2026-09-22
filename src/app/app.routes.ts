@@ -6,7 +6,10 @@ export const routes: Routes = [
         path: APP_ROUTES.HOME,
         loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent)
     },
-
+    {
+        path: APP_ROUTES.ADD_EVENT,
+        loadComponent: () => import('./pages/add-event/add-event').then(m => m.AddEventComponent)
+    },
 
     // fallback route
     {

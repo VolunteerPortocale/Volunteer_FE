@@ -1,0 +1,296 @@
+<div class="add-event-page">
+
+  <!-- ── SUCCESS SCREEN ── -->
+  @if (isSubmitted()) {
+    <div class="success-overlay">
+      <div class="success-card">
+        <div class="success-icon-wrap">
+          <mat-icon class="check-icon">check</mat-icon>
+        </div>
+        <h2>{{ 'ADD_EVENT.SUCCESS_TITLE' | translate }}</h2>
+        <p class="success-message">
+          {{ 'ADD_EVENT.SUCCESS_DESC' | translate }}
+        </p>
+        <div class="success-actions">
+          <button mat-button class="btn-primary" (click)="resetForm()">
+            {{ 'ADD_EVENT.ADD_ANOTHER_BTN' | translate }}
+          </button>
+          <button mat-button class="btn-outline" (click)="goBack()">
+            {{ 'ADD_EVENT.BACK_TO_HOME_BTN' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  } @else {
+
+    <!-- ── TOP BAR ── -->
+    <div class="moderator-topbar">
+      <div class="topbar-container">
+        <button class="back-btn" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          <span>{{ 'ADD_EVENT.BACK' | translate }}</span>
+        </button>
+        <div class="topbar-divider"></div>
+        <span class="topbar-title">{{ 'ADD_EVENT.TOPBAR_TITLE' | translate }}</span>
+        <span class="badge-ngo">NGO</span>
+      </div>
+    </div>
+
+    <!-- ── MAIN FORM CONTAINER ── -->
+    <div class="form-container">
+      <div class="form-header">
+        <span class="header-role">{{ 'ADD_EVENT.HEADER_ROLE' | translate }}</span>
+        <h1>{{ 'ADD_EVENT.HEADER_TITLE' | translate }}</h1>
+        <p class="header-subtitle">
+          {{ 'ADD_EVENT.HEADER_SUBTITLE' | translate }}
+        </p>
+      </div>
+
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+
+        <!-- 1. BASIC INFORMATION -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_BASIC' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.TITLE_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.TITLE_HINT' | translate }}</span>
+            <input
+              type="text"
+              formControlName="title"
+              [placeholder]="'ADD_EVENT.TITLE_PLACEHOLDER' | translate"
+              class="form-input"
+            />
+            @if (eventForm.get('title')?.touched && eventForm.get('title')?.invalid) {
+              <span class="error-msg">{{ 'ADD_EVENT.ERRORS.TITLE_REQUIRED' | translate }}</span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.DESC_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.DESC_HINT' | translate }}</span>
+            <textarea
+              formControlName="description"
+              rows="4"
+              [placeholder]="'ADD_EVENT.DESC_PLACEHOLDER' | translate"
+              class="form-input textarea"
+            ></textarea>
+            @if (eventForm.get('description')?.touched && eventForm.get('description')?.invalid) {
+              <span class="error-msg">{{ 'ADD_EVENT.ERRORS.DESC_REQUIRED' | translate }}</span>
+            }
+          </div>
+        </div>
+
+        <!-- 2. DATE AND TIME -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_DATETIME' | translate }}</span>
+
+          <div class="grid-2-cols">
+            <div class="field-group">
+              <label>{{ 'ADD_EVENT.START_LABEL' | translate }}</label>
+              <span class="field-hint">{{ 'ADD_EVENT.START_HINT' | translate }}</span>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">calendar_today</mat-icon>
+                <input
+                  type="datetime-local"
+                  formControlName="startDateTime"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>{{ 'ADD_EVENT.END_LABEL' | translate }}</label>
+              <span class="field-hint">{{ 'ADD_EVENT.END_HINT' | translate }}</span>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">event</mat-icon>
+                <input
+                  type="datetime-local"
+                  formControlName="endDateTime"
+                  [min]="eventForm.get('startDateTime')?.value || ''"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Summary Pill -->
+          @if (formattedDateSummary) {
+            <div class="date-summary-banner">
+              <mat-icon class="summary-icon">schedule</mat-icon>
+              <span>{{ formattedDateSummary }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- 3. LOCATION AND CAPACITY -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_LOCATION' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.LOCATION_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.LOCATION_HINT' | translate }}</span>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">location_on</mat-icon>
+              <input
+                type="text"
+                formControlName="location"
+                [placeholder]="'ADD_EVENT.LOCATION_PLACEHOLDER' | translate"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.VOLUNTEERS_LABEL' | translate }}</label>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">group</mat-icon>
+              <input
+                type="number"
+                min="1"
+                formControlName="volunteers"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. FILTERS AND CATEGORIZATION -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_FILTERS' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.EVENT_TYPES_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.EVENT_TYPES_HINT' | translate }}</span>
+            <div class="event-types-grid">
+              @for (type of eventTypesList; track type.id) {
+                <button
+                  type="button"
+                  class="type-toggle-btn"
+                  [class.active]="selectedEventTypes().includes(type.id)"
+                  (click)="toggleEventType(type.id)"
+                >
+                  <span class="custom-checkbox" [class.checked]="selectedEventTypes().includes(type.id)">
+                    @if (selectedEventTypes().includes(type.id)) {
+                      <mat-icon>check</mat-icon>
+                    }
+                  </span>
+                  <span class="type-label">{{ type.labelKey | translate }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Dress Code -->
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.DRESS_CODE_LABEL' | translate }}</label>
+            <div class="toggle-group">
+              @for (dress of dressCodesList; track dress.id) {
+                <button
+                  type="button"
+                  class="pill-toggle-btn"
+                  [class.active]="selectedDressCode() === dress.id"
+                  (click)="setDressCode(dress.id)"
+                >
+                  {{ dress.labelKey | translate }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Duration -->
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.DURATION_LABEL' | translate }}</label>
+            <div class="duration-chips">
+              @for (dur of durationsList; track dur.id) {
+                <button
+                  type="button"
+                  class="duration-chip"
+                  [class.active]="selectedDuration() === dur.id"
+                  (click)="setDuration(dur.id)"
+                >
+                  {{ dur.labelKey | translate }}
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. VOLUNTEER CONTACT -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_CONTACT' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.CONTACT_METHOD_LABEL' | translate }}</label>
+            <div class="toggle-group">
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedContactMethod() === 'email'"
+                (click)="setContactMethod('email')"
+              >
+                {{ 'ADD_EVENT.METHODS.EMAIL' | translate }}
+              </button>
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedContactMethod() === 'phone'"
+                (click)="setContactMethod('phone')"
+              >
+                {{ 'ADD_EVENT.METHODS.PHONE' | translate }}
+              </button>
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedContactMethod() === 'both'"
+                (click)="setContactMethod('both')"
+              >
+                {{ 'ADD_EVENT.METHODS.BOTH' | translate }}
+              </button>
+            </div>
+          </div>
+
+          @if (selectedContactMethod() === 'email' || selectedContactMethod() === 'both') {
+            <div class="field-group">
+              <label>{{ 'ADD_EVENT.EMAIL_LABEL' | translate }}</label>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">mail</mat-icon>
+                <input
+                  type="email"
+                  formControlName="email"
+                  placeholder="contact@ong.md"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+          }
+
+          @if (selectedContactMethod() === 'phone' || selectedContactMethod() === 'both') {
+            <div class="field-group">
+              <label>{{ 'ADD_EVENT.PHONE_LABEL' | translate }}</label>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">call</mat-icon>
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  placeholder="+373 69 xxx xxx"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- 6. ACTIONS -->
+        <div class="form-actions">
+          <button type="submit" class="btn-primary submit-btn">
+            {{ 'ADD_EVENT.SUBMIT_BTN' | translate }}
+          </button>
+          <button type="button" class="btn-outline draft-btn" (click)="goBack()">
+            {{ 'ADD_EVENT.DRAFT_BTN' | translate }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>

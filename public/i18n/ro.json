@@ -4,7 +4,8 @@
     "ABOUT": "Despre noi",
     "ORGANIZATIONS": "Organizații",
     "LOGIN": "Loghează-te",
-    "BECOME_VOLUNTEER": "Devino voluntar"
+    "BECOME_VOLUNTEER": "Devino membru",
+    "ADD_EVENT": "+ Adaugă eveniment"
   },
   "HOME": {
     "TITLE": "Proiecte de Voluntariat în Moldova",
@@ -29,6 +30,73 @@
       "CATEGORY": "Protecția Animalelor",
       "LOCATION": "Bălți, Moldova",
       "DESCRIPTION": "Ajută la îngrijirea, hrănirea și găsirea de familii adoptive pentru animalele abandonate din adăpost."
+    }
+  },
+  "ADD_EVENT": {
+    "BACK": "Înapoi",
+    "TOPBAR_TITLE": "Panou Moderator",
+    "HEADER_ROLE": "Moderator",
+    "HEADER_TITLE": "Publică un eveniment nou",
+    "HEADER_SUBTITLE": "Completează detaliile evenimentului pentru a-l adăuga în lista de voluntariat.",
+    "SUCCESS_TITLE": "Eveniment publicat!",
+    "SUCCESS_DESC": "Evenimentul tău a fost trimis spre aprobare și va apărea în lista de proiecte în curând.",
+    "ADD_ANOTHER_BTN": "Adaugă alt eveniment",
+    "BACK_TO_HOME_BTN": "Înapoi la pagina principală",
+    "SECTION_BASIC": "Informații de bază",
+    "TITLE_LABEL": "Titlul evenimentului",
+    "TITLE_HINT": "Un titlu clar și atractiv",
+    "TITLE_PLACEHOLDER": "ex. Curățenie în Parcul Central",
+    "DESC_LABEL": "Descriere",
+    "DESC_HINT": "Explică scopul, activitățile și ce vor face voluntarii",
+    "DESC_PLACEHOLDER": "Descrieți activitățile planificate, obiectivele evenimentului și ce se așteaptă de la voluntari...",
+    "SECTION_DATETIME": "Data și ora",
+    "START_LABEL": "Început",
+    "START_HINT": "Data și ora de start",
+    "END_LABEL": "Sfârșit",
+    "END_HINT": "Data și ora de final",
+    "SECTION_LOCATION": "Locație și capacitate",
+    "LOCATION_LABEL": "Locație",
+    "LOCATION_HINT": "Adresa completă sau punctul de întâlnire",
+    "LOCATION_PLACEHOLDER": "ex. Parcul Valea Morilor, Chișinău",
+    "VOLUNTEERS_LABEL": "Număr de voluntari necesari",
+    "SECTION_FILTERS": "Filtre și categorizare",
+    "EVENT_TYPES_LABEL": "Tipul evenimentului",
+    "EVENT_TYPES_HINT": "Poți selecta mai multe categorii",
+    "TYPES": {
+      "EVENTS": "Evenimente și Festivaluri",
+      "FUNDRAISING": "Strângeri de Fonduri și Sport",
+      "HEALTH": "Sănătate și Ajutor Umanitar",
+      "ECOLOGY": "Muncă Ecologică"
+    },
+    "DRESS_CODE_LABEL": "Cod vestimentar",
+    "DRESS_CODES": {
+      "CASUAL": "Casual",
+      "FORMAL": "Formal"
+    },
+    "DURATION_LABEL": "Durata evenimentului",
+    "DURATIONS": {
+      "1_DAY": "O zi",
+      "2_DAYS": "Două zile",
+      "3_DAYS": "Trei zile",
+      "4_DAYS": "Patru zile",
+      "5_DAYS": "Cinci zile",
+      "6_DAYS": "Șase zile",
+      "7_DAYS": "Șapte zile"
+    },
+    "SECTION_CONTACT": "Contact voluntari",
+    "CONTACT_METHOD_LABEL": "Metodă de contact",
+    "METHODS": {
+      "EMAIL": "Email",
+      "PHONE": "Telefon",
+      "BOTH": "Ambele"
+    },
+    "EMAIL_LABEL": "Adresă de email",
+    "PHONE_LABEL": "Număr de telefon",
+    "SUBMIT_BTN": "Publică evenimentul",
+    "DRAFT_BTN": "Salvează ca ciornă",
+    "ERRORS": {
+      "TITLE_REQUIRED": "Titlul este obligatoriu (minim 5 caractere).",
+      "DESC_REQUIRED": "Descrierea este obligatorie (minim 20 de caractere)."
     }
   }
 }
