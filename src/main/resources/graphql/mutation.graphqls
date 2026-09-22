@@ -1,0 +1,8 @@
+type Mutation {
+    createUser(input: CreateUserInput!): User!
+    validateRegistrationOtp(email: String!, otp: String!): User!
+    resendRegistrationOtp(email: String!): Boolean!
+    updateUser(input: UpdateUserInput!): User!
+    suspendUser(id: String!, suspendedUntil: String!): User!
+    deleteUser(id: String!): Boolean!
+}
