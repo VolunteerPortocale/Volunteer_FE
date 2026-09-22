@@ -1,0 +1,73 @@
+query GetAllUsers {
+  getAllUsers {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    role
+    status
+    createdAt
+  }
+}
+
+query GetUserById($id: String!) {
+  getUserById(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    role
+    status
+    createdAt
+    updatedAt
+    eventCategoryPreferences
+  }
+}
+
+mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    role
+    status
+    createdAt
+  }
+}
+
+mutation ValidateRegistrationOtp($email: String!, $otp: String!) {
+  validateRegistrationOtp(email: $email, otp: $otp) {
+    id
+    email
+    status
+  }
+}
+
+mutation ResendRegistrationOtp($email: String!) {
+  resendRegistrationOtp(email: $email)
+}
+
+mutation UpdateUser($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    id
+    firstName
+    lastName
+    phoneNumber
+  }
+}
+
+mutation SuspendUser($id: String!, $suspendedUntil: String!) {
+  suspendUser(id: $id, suspendedUntil: $suspendedUntil) {
+    id
+    status
+    suspendedUntil
+  }
+}
+
+mutation DeleteUser($id: String!) {
+  deleteUser(id: $id)
+}

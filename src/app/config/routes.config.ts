@@ -7,6 +7,7 @@ export const APP_ROUTES = {
   SIGNUP: 'inregistrare',
   ADD_EVENT: 'adauga-eveniment',
   EDIT_EVENT: 'editeaza-eveniment/:id',
+  OTP: 'confirmare-otp',
   HOME_AUTH: 'home-auth',
   NOT_FOUND: '**'
 } as const;
