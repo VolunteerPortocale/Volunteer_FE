@@ -4,7 +4,7 @@
     "ABOUT": "About us",
     "ORGANIZATIONS": "Organizations",
     "LOGIN": "Log in",
-    "BECOME_VOLUNTEER": "Become a volunteer",
+    "BECOME_VOLUNTEER": "Become a member",
     "ADD_EVENT": "+ Add event"
   },
   "HOME": {
@@ -30,6 +30,73 @@
       "CATEGORY": "Animal Care",
       "LOCATION": "Bălți, Moldova",
       "DESCRIPTION": "Help care for, feed, and find loving adoptive families for abandoned shelter animals."
+    }
+  },
+  "ADD_EVENT": {
+    "BACK": "Back",
+    "TOPBAR_TITLE": "Moderator Panel",
+    "HEADER_ROLE": "Moderator",
+    "HEADER_TITLE": "Publish a new event",
+    "HEADER_SUBTITLE": "Fill in the event details to add it to the volunteering catalog.",
+    "SUCCESS_TITLE": "Event published!",
+    "SUCCESS_DESC": "Your event has been submitted for review and will appear on the projects list shortly.",
+    "ADD_ANOTHER_BTN": "Add another event",
+    "BACK_TO_HOME_BTN": "Back to home page",
+    "SECTION_BASIC": "Basic information",
+    "TITLE_LABEL": "Event title",
+    "TITLE_HINT": "A clear and engaging title",
+    "TITLE_PLACEHOLDER": "e.g. Central Park Cleanup",
+    "DESC_LABEL": "Description",
+    "DESC_HINT": "Explain the purpose, activities, and expectations for volunteers",
+    "DESC_PLACEHOLDER": "Describe planned activities, event goals, and volunteer duties...",
+    "SECTION_DATETIME": "Date and time",
+    "START_LABEL": "Start",
+    "START_HINT": "Start date and time",
+    "END_LABEL": "End",
+    "END_HINT": "End date and time",
+    "SECTION_LOCATION": "Location and capacity",
+    "LOCATION_LABEL": "Location",
+    "LOCATION_HINT": "Full address or meeting point",
+    "LOCATION_PLACEHOLDER": "e.g. Valea Morilor Park, Chișinău",
+    "VOLUNTEERS_LABEL": "Number of volunteers needed",
+    "SECTION_FILTERS": "Filters and categories",
+    "EVENT_TYPES_LABEL": "Event type",
+    "EVENT_TYPES_HINT": "You can select multiple categories",
+    "TYPES": {
+      "EVENTS": "Events & Festivals",
+      "FUNDRAISING": "Fundraising & Sports",
+      "HEALTH": "Health & Humanitarian Aid",
+      "ECOLOGY": "Environmental Work"
+    },
+    "DRESS_CODE_LABEL": "Dress code",
+    "DRESS_CODES": {
+      "CASUAL": "Casual",
+      "FORMAL": "Formal"
+    },
+    "DURATION_LABEL": "Event duration",
+    "DURATIONS": {
+      "1_DAY": "One day",
+      "2_DAYS": "Two days",
+      "3_DAYS": "Three days",
+      "4_DAYS": "Four days",
+      "5_DAYS": "Five days",
+      "6_DAYS": "Six days",
+      "7_DAYS": "Seven days"
+    },
+    "SECTION_CONTACT": "Volunteer contact",
+    "CONTACT_METHOD_LABEL": "Contact method",
+    "METHODS": {
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "BOTH": "Both"
+    },
+    "EMAIL_LABEL": "Email address",
+    "PHONE_LABEL": "Phone number",
+    "SUBMIT_BTN": "Publish event",
+    "DRAFT_BTN": "Save as draft",
+    "ERRORS": {
+      "TITLE_REQUIRED": "Title is required (minimum 5 characters).",
+      "DESC_REQUIRED": "Description is required (minimum 20 characters)."
     }
   },
   "SIGNUP": {
