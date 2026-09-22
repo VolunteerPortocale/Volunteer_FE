@@ -5,7 +5,31 @@
     "ORGANIZATIONS": "Organizations",
     "LOGIN": "Log in",
     "BECOME_VOLUNTEER": "Become a member",
-    "ADD_EVENT": "+ Add event"
+    "ADD_EVENT": "+ Add event",
+    "NOTIFICATIONS": "Notifications",
+    "MY_PROFILE": "My profile",
+    "MY_PROJECTS": "My projects",
+    "SETTINGS": "Settings",
+    "LOGOUT": "Log out"
+  },
+  "HOME_AUTH": {
+    "GREETING": "Welcome back, Pavel",
+    "TITLE": "Where do you want to make a change?",
+    "SUBTITLE": "Discover opportunities for active involvement in your community and build a better future.",
+    "SEARCH_PLACEHOLDER": "Search by project, cause or location",
+    "RECOMMENDED_TITLE": "Recommended projects",
+    "RECOMMENDED_SUBTITLE": "Selected for your interests and area.",
+    "FILTERS": {
+      "ALL": "All",
+      "ECOLOGY": "Ecology",
+      "EDUCATION": "Education",
+      "ANIMALS": "Animals"
+    },
+    "VIEW_PROJECT": "View project",
+    "SPOTS_OCCUPIED": "spots occupied",
+    "BOOKMARK_SAVED": "Project saved",
+    "NO_PROJECTS_FOUND": "No projects found matching your filters.",
+    "RESET_SEARCH": "Reset search"
   },
   "HOME": {
     "TITLE": "Volunteer Projects in Moldova",

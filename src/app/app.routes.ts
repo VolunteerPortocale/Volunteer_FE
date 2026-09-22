@@ -14,6 +14,10 @@ export const routes: Routes = [
         path: APP_ROUTES.SIGNUP,
         loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
     },
+    {
+        path: APP_ROUTES.HOME_AUTH,
+        loadComponent: () => import('./pages/home-auth/home-auth').then(m => m.HomeAuthComponent)
+    },
 
     // fallback route
     {

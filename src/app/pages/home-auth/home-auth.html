@@ -1,0 +1,132 @@
+<main class="home-auth-container">
+  <!-- 1. Hero & Greeting Section -->
+  <section class="auth-hero-section">
+    <div class="greeting-lead">
+      {{ 'HOME_AUTH.GREETING' | translate }}
+    </div>
+    <h1 class="main-title">
+      {{ 'HOME_AUTH.TITLE' | translate }}
+    </h1>
+    <p class="hero-subtitle">
+      {{ 'HOME_AUTH.SUBTITLE' | translate }}
+    </p>
+
+    <!-- Search Input Bar -->
+    <div class="search-bar-wrapper">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="'HOME_AUTH.SEARCH_PLACEHOLDER' | translate"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchChange($event)"
+      />
+      @if (searchQuery()) {
+        <button type="button" class="clear-search-btn" (click)="clearSearch()" aria-label="Clear search">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- 2. Recommended Projects Section -->
+  <section class="recommended-section">
+    <!-- Header with Title & Category Filter Tabs -->
+    <div class="section-header-row">
+      <div class="section-titles">
+        <h2 class="section-heading">{{ 'HOME_AUTH.RECOMMENDED_TITLE' | translate }}</h2>
+        <p class="section-subheading">{{ 'HOME_AUTH.RECOMMENDED_SUBTITLE' | translate }}</p>
+      </div>
+
+      <!-- Filter Tabs / Pills -->
+      <div class="category-filters-pills">
+        @for (cat of filterCategories; track cat.id) {
+          <button
+            type="button"
+            class="filter-pill-btn"
+            [class.active]="selectedCategory() === cat.id"
+            (click)="setCategory(cat.id)"
+          >
+            {{ cat.labelKey | translate }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- 3. Projects Cards Grid -->
+    @if (filteredProjects().length > 0) {
+      <div class="projects-grid">
+        @for (project of filteredProjects(); track project.id) {
+          <article class="project-auth-card">
+            <!-- Card Image with Overlays -->
+            <div class="card-media">
+              <img [src]="project.imageUrl" [alt]="project.fallbackTitle" class="card-image" loading="lazy" />
+              
+              <!-- Category Badge (Top-Left) -->
+              <span class="category-badge">
+                {{ project.categoryTagKey | translate }}
+              </span>
+
+              <!-- Bookmark Button (Top-Right) -->
+              <button
+                type="button"
+                class="bookmark-btn"
+                [class.bookmarked]="isBookmarked(project.id)"
+                (click)="toggleBookmark(project.id, $event)"
+                [title]="'HOME_AUTH.BOOKMARK_SAVED' | translate"
+                aria-label="Bookmark project"
+              >
+                <mat-icon class="bookmark-icon">
+                  {{ isBookmarked(project.id) ? 'bookmark' : 'bookmark_border' }}
+                </mat-icon>
+              </button>
+            </div>
+
+            <!-- Card Body Content -->
+            <div class="card-body">
+              <span class="card-org">{{ project.organization }}</span>
+              <h3 class="card-title">{{ project.fallbackTitle }}</h3>
+              <p class="card-description">{{ project.fallbackDescription }}</p>
+
+              <!-- Meta Info Rows -->
+              <div class="card-meta-list">
+                <div class="meta-item">
+                  <mat-icon class="meta-icon">location_on</mat-icon>
+                  <span class="meta-text">{{ project.location }}</span>
+                </div>
+                <div class="meta-item">
+                  <mat-icon class="meta-icon">event</mat-icon>
+                  <span class="meta-text">{{ project.date }}</span>
+                </div>
+                <div class="meta-item">
+                  <mat-icon class="meta-icon">people_outline</mat-icon>
+                  <span class="meta-text">{{ project.spotsOccupied }}</span>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <div class="card-footer">
+                <button
+                  type="button"
+                  class="btn-primary card-action-btn"
+                  (click)="viewProject(project)"
+                >
+                  {{ 'HOME_AUTH.VIEW_PROJECT' | translate }}
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <!-- Empty State -->
+      <div class="empty-state-box">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <p class="empty-text">{{ 'HOME_AUTH.NO_PROJECTS_FOUND' | translate }}</p>
+        <button type="button" class="btn-primary" (click)="clearSearch()">
+          {{ 'HOME_AUTH.RESET_SEARCH' | translate }}
+        </button>
+      </div>
+    }
+  </section>
+</main>
