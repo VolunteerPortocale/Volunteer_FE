@@ -1,11 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
+import { EventService } from '../../service/event.service';
 
 export type ContactMethod = 'email' | 'phone' | 'both';
 
@@ -87,14 +88,20 @@ export const DURATIONS: OptionItem[] = [
   templateUrl: './add-event.html',
   styleUrl: './add-event.scss',
 })
-export class AddEventComponent {
+export class AddEventComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly eventService = inject(EventService);
   readonly translationService = inject(TranslationService);
 
   readonly eventTypesList = EVENT_TYPES;
   readonly dressCodesList = DRESS_CODES;
   readonly durationsList = DURATIONS;
+
+  // Edit Mode state
+  readonly eventId = signal<string | null>(null);
+  readonly isEditMode = computed(() => !!this.eventId());
 
   // Reactive state using Signals
   readonly isSubmitted = signal<boolean>(false);
@@ -117,6 +124,35 @@ export class AddEventComponent {
     email: ['contact@ong.ro', [Validators.email]],
     phone: ['+373 69 000 000'],
   });
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.eventId.set(id);
+      this.loadEventData(id);
+    }
+  }
+
+  private loadEventData(id: string): void {
+    const event = this.eventService.getEventById(id);
+    if (event) {
+      this.eventForm.patchValue({
+        title: event.title,
+        description: event.description,
+        startDateTime: event.startDateTime,
+        endDateTime: event.endDateTime || '',
+        location: event.location,
+        volunteers: event.volunteers,
+        email: event.email || 'contact@ong.ro',
+        phone: event.phone || '+373 69 000 000',
+      });
+      this.selectedEventTypes.set(event.eventTypes || []);
+      this.selectedDressCode.set(event.dressCode || 'casual');
+      this.selectedDuration.set(event.duration || '1_day');
+      this.selectedContactMethod.set(event.contactMethod || 'email');
+      this.attachedFiles.set(event.attachedFiles || []);
+    }
+  }
 
   toggleEventType(typeId: string): void {
     const current = this.selectedEventTypes();
@@ -267,7 +303,14 @@ export class AddEventComponent {
     }
 
     const payload = {
-      ...this.eventForm.value,
+      title: this.eventForm.value.title?.trim(),
+      description: this.eventForm.value.description?.trim(),
+      startDateTime: this.eventForm.value.startDateTime || '',
+      endDateTime: this.eventForm.value.endDateTime || '',
+      location: this.eventForm.value.location?.trim(),
+      volunteers: Number(this.eventForm.value.volunteers) || 10,
+      email: this.eventForm.value.email?.trim(),
+      phone: this.eventForm.value.phone?.trim(),
       eventTypes: this.selectedEventTypes(),
       dressCode: this.selectedDressCode(),
       duration: this.selectedDuration(),
@@ -275,11 +318,22 @@ export class AddEventComponent {
       attachedFiles: this.attachedFiles(),
     };
 
-    console.log('Event to publish:', payload);
+    if (this.isEditMode()) {
+      this.eventService.updateEvent(this.eventId()!, payload);
+    } else {
+      this.eventService.addEvent(payload);
+    }
+
     this.isSubmitted.set(true);
   }
 
   resetForm(): void {
+    if (this.isEditMode() && this.eventId()) {
+      this.loadEventData(this.eventId()!);
+      this.isSubmitted.set(false);
+      return;
+    }
+
     this.eventForm.reset({
       volunteers: 10,
       email: 'contact@ong.ro',
@@ -295,6 +349,6 @@ export class AddEventComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/home-auth']);
   }
 }

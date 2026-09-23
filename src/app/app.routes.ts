@@ -11,8 +11,8 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/add-event/add-event').then(m => m.AddEventComponent)
     },
     {
-        path: APP_ROUTES.SIGNUP,
-        loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
+        path: APP_ROUTES.EDIT_EVENT,
+        loadComponent: () => import('./pages/add-event/add-event').then(m => m.AddEventComponent)
     },
     {
         path: APP_ROUTES.SIGNUP,

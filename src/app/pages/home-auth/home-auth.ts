@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { AuthService } from '../../service/auth.service';
+import { EventService } from '../../service/event.service';
 
 export type CategoryFilter = 'all' | 'ecology' | 'education' | 'animals';
 
@@ -24,51 +25,6 @@ export interface AuthProject {
   imageUrl: string;
 }
 
-export const RECOMMENDED_PROJECTS: AuthProject[] = [
-  {
-    id: 'eco-forest',
-    categoryTagKey: 'HOME_AUTH.FILTERS.ECOLOGY',
-    categoryFilter: 'ecology',
-    organization: 'Eco Moldova',
-    titleKey: 'PROJECTS.CARD_1.TITLE',
-    fallbackTitle: 'Plantăm păduri comunitare',
-    descriptionKey: 'PROJECTS.CARD_1.DESCRIPTION',
-    fallbackDescription: 'Alătură-te echipei pentru a planta peste 2.000 de puieți și a revitaliza spațiile verzi locale.',
-    location: 'Strășeni, Moldova',
-    date: '3 octombrie 2026',
-    spotsOccupied: '32 din 40 locuri ocupate',
-    imageUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'senior-digital',
-    categoryTagKey: 'HOME_AUTH.FILTERS.EDUCATION',
-    categoryFilter: 'education',
-    organization: 'Generații Împreună',
-    titleKey: 'PROJECTS.CARD_2.TITLE',
-    fallbackTitle: 'Competențe digitale pentru seniori',
-    descriptionKey: 'PROJECTS.CARD_2.DESCRIPTION',
-    fallbackDescription: 'Ajută persoanele în vârstă să folosească servicii digitale, smartphone-uri și internetul în siguranță.',
-    location: 'Chișinău, Moldova',
-    date: '10 octombrie 2026',
-    spotsOccupied: '14 din 20 locuri ocupate',
-    imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 'shelter-animals',
-    categoryTagKey: 'HOME_AUTH.FILTERS.ANIMALS',
-    categoryFilter: 'animals',
-    organization: 'Casa Blănoșilor',
-    titleKey: 'PROJECTS.CARD_3.TITLE',
-    fallbackTitle: 'Sprijin pentru adăpostul de animale',
-    descriptionKey: 'PROJECTS.CARD_3.DESCRIPTION',
-    fallbackDescription: 'Oferă îngrijire, hrană și afecțiune animalelor abandonate care așteaptă o familie.',
-    location: 'Bălți, Moldova',
-    date: '17 octombrie 2026',
-    spotsOccupied: '18 din 25 locuri ocupate',
-    imageUrl: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80'
-  }
-];
-
 @Component({
   selector: 'app-home-auth',
   imports: [
@@ -84,8 +40,25 @@ export const RECOMMENDED_PROJECTS: AuthProject[] = [
 export class HomeAuthComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly eventService = inject(EventService);
 
-  readonly allProjects = signal<AuthProject[]>(RECOMMENDED_PROJECTS);
+  readonly allProjects = computed<AuthProject[]>(() => {
+    return this.eventService.events().map((e) => ({
+      id: e.id,
+      categoryTagKey: e.categoryTagKey || 'HOME_AUTH.FILTERS.ECOLOGY',
+      categoryFilter: (e.categoryFilter as CategoryFilter) || 'all',
+      organization: e.organization,
+      titleKey: '',
+      fallbackTitle: e.title,
+      descriptionKey: '',
+      fallbackDescription: e.description,
+      location: e.location,
+      date: e.startDateTime ? new Date(e.startDateTime).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Curând',
+      spotsOccupied: e.spotsOccupied || `${e.volunteers} locuri`,
+      imageUrl: e.imageUrl || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
+    }));
+  });
+
   readonly selectedCategory = signal<CategoryFilter>('all');
   readonly searchQuery = signal<string>('');
   readonly bookmarkedIds = signal<Set<string>>(new Set());
@@ -154,5 +127,12 @@ export class HomeAuthComponent implements OnInit {
 
   viewProject(project: AuthProject): void {
     this.router.navigate(['/proiecte']);
+  }
+
+  editProject(projectId: string, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.router.navigate(['/editeaza-eveniment', projectId]);
   }
 }
