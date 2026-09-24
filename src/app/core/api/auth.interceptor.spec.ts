@@ -19,7 +19,10 @@ describe('authInterceptor', () => {
       providers: [
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
-        provideRouter([{ path: 'login', component: class {} }]),
+        provideRouter([
+          { path: 'login', component: class {} },
+          { path: 'home-auth', component: class {} }
+        ]),
         AuthService,
         {
           provide: TranslationService,

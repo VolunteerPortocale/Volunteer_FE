@@ -8,13 +8,11 @@ import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
 import { EventService } from '../../service/event.service';
 
-export type ContactMethod = 'email' | 'phone' | 'both';
+import { OptionItem, EVENT_TYPES } from '../../config/event-categories.config';
+export type { OptionItem };
+export { EVENT_TYPES };
 
-export interface OptionItem {
-  id: string;
-  name: string;
-  labelKey: string;
-}
+export type ContactMethod = 'email' | 'phone' | 'both';
 
 export interface AttachedFile {
   id: string;
@@ -24,42 +22,6 @@ export interface AttachedFile {
   type: string;
 }
 
-export const EVENT_TYPES: OptionItem[] = [
-  { id: 'social', name: 'Social', labelKey: 'ADD_EVENT.TYPES.SOCIAL' },
-  { id: 'animal_care', name: 'Animal Care', labelKey: 'ADD_EVENT.TYPES.ANIMAL_CARE' },
-  { id: 'children_and_youth', name: 'Children & Youth', labelKey: 'ADD_EVENT.TYPES.CHILDREN_AND_YOUTH' },
-  { id: 'education', name: 'Education', labelKey: 'ADD_EVENT.TYPES.EDUCATION' },
-  { id: 'environment', name: 'Environment', labelKey: 'ADD_EVENT.TYPES.ENVIRONMENT' },
-  { id: 'health', name: 'Health', labelKey: 'ADD_EVENT.TYPES.HEALTH' },
-  { id: 'disability_support', name: 'Disability Support', labelKey: 'ADD_EVENT.TYPES.DISABILITY_SUPPORT' },
-  { id: 'elderly_care', name: 'Elderly Care', labelKey: 'ADD_EVENT.TYPES.ELDERLY_CARE' },
-  { id: 'disaster', name: 'Disaster Relief', labelKey: 'ADD_EVENT.TYPES.DISASTER' },
-  { id: 'poverty', name: 'Poverty Alleviation', labelKey: 'ADD_EVENT.TYPES.POVERTY' },
-  { id: 'culture', name: 'Culture & Arts', labelKey: 'ADD_EVENT.TYPES.CULTURE' },
-  { id: 'sport', name: 'Sport', labelKey: 'ADD_EVENT.TYPES.SPORT' },
-  { id: 'festivals', name: 'Festivals & Events', labelKey: 'ADD_EVENT.TYPES.FESTIVALS' },
-  { id: 'technology', name: 'Technology', labelKey: 'ADD_EVENT.TYPES.TECHNOLOGY' },
-  { id: 'business', name: 'Business', labelKey: 'ADD_EVENT.TYPES.BUSINESS' },
-  { id: 'employment', name: 'Employment', labelKey: 'ADD_EVENT.TYPES.EMPLOYMENT' },
-  { id: 'science', name: 'Science', labelKey: 'ADD_EVENT.TYPES.SCIENCE' },
-  { id: 'agriculture', name: 'Agriculture', labelKey: 'ADD_EVENT.TYPES.AGRICULTURE' },
-  { id: 'construction', name: 'Construction', labelKey: 'ADD_EVENT.TYPES.CONSTRUCTION' },
-  { id: 'religion', name: 'Religion', labelKey: 'ADD_EVENT.TYPES.RELIGION' },
-  { id: 'human_rights', name: 'Human Rights', labelKey: 'ADD_EVENT.TYPES.HUMAN_RIGHTS' },
-  { id: 'legal', name: 'Legal Aid', labelKey: 'ADD_EVENT.TYPES.LEGAL' },
-  { id: 'safety', name: 'Safety', labelKey: 'ADD_EVENT.TYPES.SAFETY' },
-  { id: 'family', name: 'Family', labelKey: 'ADD_EVENT.TYPES.FAMILY' },
-  { id: 'lgbtq_plus', name: 'LGBTQ+', labelKey: 'ADD_EVENT.TYPES.LGBTQ_PLUS' },
-  { id: 'refugee_support', name: 'Refugee Support', labelKey: 'ADD_EVENT.TYPES.REFUGEE_SUPPORT' },
-  { id: 'international_volunteering', name: 'International Volunteering', labelKey: 'ADD_EVENT.TYPES.INTERNATIONAL_VOLUNTEERING' },
-  { id: 'tourism', name: 'Tourism', labelKey: 'ADD_EVENT.TYPES.TOURISM' },
-  { id: 'heritage', name: 'Heritage', labelKey: 'ADD_EVENT.TYPES.HERITAGE' },
-  { id: 'media', name: 'Media & Communication', labelKey: 'ADD_EVENT.TYPES.MEDIA' },
-  { id: 'gardening', name: 'Gardening', labelKey: 'ADD_EVENT.TYPES.GARDENING' },
-  { id: 'peace', name: 'Peace & Mediation', labelKey: 'ADD_EVENT.TYPES.PEACE' },
-  { id: 'addiction_recovery', name: 'Addiction Recovery', labelKey: 'ADD_EVENT.TYPES.ADDICTION_RECOVERY' },
-  { id: 'other', name: 'Other', labelKey: 'ADD_EVENT.TYPES.OTHER' },
-];
 
 export const DRESS_CODES: OptionItem[] = [
   { id: 'casual', name: 'Casual', labelKey: 'ADD_EVENT.DRESS_CODES.CASUAL' },

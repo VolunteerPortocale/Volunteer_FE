@@ -12,7 +12,10 @@ describe('graphqlProvider ErrorLink', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideRouter([{ path: 'login', component: class {} }]),
+        provideRouter([
+          { path: 'login', component: class {} },
+          { path: 'home-auth', component: class {} }
+        ]),
         AuthService,
       ],
     });

@@ -36,83 +36,83 @@
         </mat-menu>
 
         @if (!authService.isAuthenticated()) {
-          <!-- 2. Create Event Button (Between Language and Login) -->
-          <a mat-button routerLink="/adauga-eveniment" class="btn-primary" style="text-decoration: none;">
-           {{ 'NAV.ADD_EVENT' | translate }}
-          </a>
+        <!-- 2. Create Event Button (Between Language and Login) -->
+        <a mat-button routerLink="/adauga-eveniment" class="btn-primary" style="text-decoration: none;">
+          {{ 'NAV.ADD_EVENT' | translate }}
+        </a>
 
-          <!-- 3. Login Button -->
-          <button mat-button class="btn-outline" (click)="login()">{{ 'NAV.LOGIN' | translate }}</button>
+        <!-- 3. Login Button -->
+        <button mat-button class="btn-outline" (click)="login()">{{ 'NAV.LOGIN' | translate }}</button>
 
-          <!-- 4. Become Volunteer / Sign Up Button -->
-          <button mat-button routerLink="/inregistrare" class="btn-primary">
-            {{ 'NAV.BECOME_VOLUNTEER' | translate }}
-          </button>
+        <!-- 4. Become Volunteer / Sign Up Button -->
+        <button mat-button routerLink="/inregistrare" class="btn-primary">
+          {{ 'NAV.BECOME_VOLUNTEER' | translate }}
+        </button>
         } @else {
-          <!-- Notification Bell Icon Button with Red Dot Badge -->
-          <button mat-icon-button class="notif-btn" [matMenuTriggerFor]="notifMenu" aria-label="Notifications">
-            <mat-icon class="notif-icon">notifications_none</mat-icon>
-            <span class="notif-badge-dot"></span>
+        <!-- Notification Bell Icon Button with Red Dot Badge -->
+        <button mat-icon-button class="notif-btn" [matMenuTriggerFor]="notifMenu" aria-label="Notifications">
+          <mat-icon class="notif-icon">notifications_none</mat-icon>
+          <span class="notif-badge-dot"></span>
+        </button>
+
+        <mat-menu #notifMenu="matMenu" class="notif-dropdown-menu">
+          <div class="notif-menu-header">
+            <span class="notif-title">{{ 'NAV.NOTIFICATIONS' | translate }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item>
+            <mat-icon class="notif-item-icon">park</mat-icon>
+            <div class="notif-item-text">
+              <span class="notif-item-title">Proiect nou în Ecologie</span>
+              <span class="notif-item-time">acum 2 ore</span>
+            </div>
           </button>
-
-          <mat-menu #notifMenu="matMenu" class="notif-dropdown-menu">
-            <div class="notif-menu-header">
-              <span class="notif-title">{{ 'NAV.NOTIFICATIONS' | translate }}</span>
+          <button mat-menu-item>
+            <mat-icon class="notif-item-icon">check_circle</mat-icon>
+            <div class="notif-item-text">
+              <span class="notif-item-title">Înscriere confirmată</span>
+              <span class="notif-item-time">ieri</span>
             </div>
-            <mat-divider></mat-divider>
-            <button mat-menu-item>
-              <mat-icon class="notif-item-icon">park</mat-icon>
-              <div class="notif-item-text">
-                <span class="notif-item-title">Proiect nou în Ecologie</span>
-                <span class="notif-item-time">acum 2 ore</span>
-              </div>
-            </button>
-            <button mat-menu-item>
-              <mat-icon class="notif-item-icon">check_circle</mat-icon>
-              <div class="notif-item-text">
-                <span class="notif-item-title">Înscriere confirmată</span>
-                <span class="notif-item-time">ieri</span>
-              </div>
-            </button>
-          </mat-menu>
-
-          <!-- + Adaugă eveniment Button -->
-          <a mat-button routerLink="/adauga-eveniment" class="btn-primary add-event-pill" style="text-decoration: none;">
-            {{ 'NAV.ADD_EVENT' | translate }}
-          </a>
-
-          <!-- User Profile Pill Button & Menu -->
-          <button mat-button [matMenuTriggerFor]="profileMenu" class="profile-pill-btn">
-            <div class="profile-avatar-circle">
-              {{ authService.currentUser()?.initials || 'PC' }}
-            </div>
-            <mat-icon class="profile-chevron">keyboard_arrow_down</mat-icon>
           </button>
+        </mat-menu>
 
-          <mat-menu #profileMenu="matMenu" class="profile-dropdown-menu">
-            <div class="profile-menu-info">
-              <div class="profile-menu-name">{{ authService.currentUser()?.name || 'Pavel' }}</div>
-              <div class="profile-menu-email">{{ authService.currentUser()?.email || 'pavel@example.com' }}</div>
-            </div>
-            <mat-divider></mat-divider>
-            <button mat-menu-item routerLink="/home-auth">
-              <mat-icon>person</mat-icon>
-              <span>{{ 'NAV.MY_PROFILE' | translate }}</span>
-            </button>
-            <button mat-menu-item routerLink="/proiecte">
-              <mat-icon>list_alt</mat-icon>
-              <span>{{ 'NAV.MY_PROJECTS' | translate }}</span>
-            </button>
-            <button mat-menu-item>
-              <mat-icon>settings</mat-icon>
-              <span>{{ 'NAV.SETTINGS' | translate }}</span>
-            </button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item (click)="logout()" class="logout-menu-item">
-              <mat-icon color="warn">logout</mat-icon>
-              <span>{{ 'NAV.LOGOUT' | translate }}</span>
-            </button>
-          </mat-menu>
+        <!-- + Adaugă eveniment Button -->
+        <a mat-button routerLink="/adauga-eveniment" class="btn-primary add-event-pill" style="text-decoration: none;">
+          {{ 'NAV.ADD_EVENT' | translate }}
+        </a>
+
+        <!-- User Profile Pill Button & Menu -->
+        <button mat-button [matMenuTriggerFor]="profileMenu" class="profile-pill-btn">
+          <div class="profile-avatar-circle">
+            {{ authService.currentUser()?.initials || 'PC' }}
+          </div>
+          <mat-icon class="profile-chevron">keyboard_arrow_down</mat-icon>
+        </button>
+
+        <mat-menu #profileMenu="matMenu" class="profile-dropdown-menu">
+          <div class="profile-menu-info">
+            <div class="profile-menu-name">{{ authService.currentUser()?.name || 'Pavel' }}</div>
+            <div class="profile-menu-email">{{ authService.currentUser()?.email || 'pavel@example.com' }}</div>
+          </div>
+          <mat-divider></mat-divider>
+          <button mat-menu-item routerLink="/home-auth">
+            <mat-icon>person</mat-icon>
+            <span>{{ 'NAV.MY_PROFILE' | translate }}</span>
+          </button>
+          <button mat-menu-item routerLink="/proiecte">
+            <mat-icon>list_alt</mat-icon>
+            <span>{{ 'NAV.MY_PROJECTS' | translate }}</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>settings</mat-icon>
+            <span>{{ 'NAV.SETTINGS' | translate }}</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()" class="logout-menu-item">
+            <mat-icon color="warn">logout</mat-icon>
+            <span>{{ 'NAV.LOGOUT' | translate }}</span>
+          </button>
+        </mat-menu>
         }
       </div>
     </div>
