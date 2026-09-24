@@ -12,21 +12,12 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_ROUTES } from '../../config/routes.config';
+import { EVENT_TYPES, OptionItem } from '../../config/event-categories.config';
+import { EventCategory } from '../../core/graphql/types';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
+import { TranslationService } from '../../service/translation.service';
 
 export type AccountRole = 'volunteer' | 'ngo';
-
-export interface InterestOption {
-  id: string;
-  labelKey: string;
-}
-
-export const INTEREST_OPTIONS: InterestOption[] = [
-  { id: 'events', labelKey: 'SIGNUP.INTERESTS.EVENTS' },
-  { id: 'fundraising', labelKey: 'SIGNUP.INTERESTS.FUNDRAISING' },
-  { id: 'health', labelKey: 'SIGNUP.INTERESTS.HEALTH' },
-  { id: 'ecology', labelKey: 'SIGNUP.INTERESTS.ECOLOGY' },
-];
 
 /**
  * Cross-field validator to ensure password and confirmPassword match
@@ -62,20 +53,23 @@ export const passwordMatchValidator: ValidatorFn = (
 export class SignupComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  readonly translationService = inject(TranslationService);
 
   readonly routes = APP_ROUTES;
-  readonly interestOptions = INTEREST_OPTIONS;
+  readonly eventTypesList = EVENT_TYPES;
 
   // UI state signals
   readonly role = signal<AccountRole>('volunteer');
   readonly showPassword = signal<boolean>(false);
   readonly selectedInterests = signal<string[]>([]);
+  readonly categoryDropdownOpen = signal<boolean>(false);
   readonly isSubmitted = signal<boolean>(false);
 
   // Reactive form group with validators
   readonly signupForm = this.fb.group(
     {
-      name: ['', [Validators.required, Validators.maxLength(100)]],
+      firstName: ['', [Validators.required, Validators.maxLength(50)]],
+      lastName: ['', [Validators.required, Validators.maxLength(50)]],
       orgName: ['', [Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72)]],
@@ -113,6 +107,16 @@ export class SignupComponent {
     this.showPassword.update((visible) => !visible);
   }
 
+  /**
+   * Toggle dropdown open state for categories/interests
+   */
+  toggleCategoryDropdown(): void {
+    this.categoryDropdownOpen.set(!this.categoryDropdownOpen());
+  }
+
+  /**
+   * Toggle an interest/category selection
+   */
   toggleInterest(interestId: string): void {
     const current = this.selectedInterests();
     if (current.includes(interestId)) {
@@ -120,6 +124,37 @@ export class SignupComponent {
     } else {
       this.selectedInterests.set([...current, interestId]);
     }
+  }
+
+  /**
+   * Resolve translated label for category item
+   */
+  getCategoryLabel(type: OptionItem): string {
+    const translated = this.translationService.translate(type.labelKey);
+    return translated && translated !== type.labelKey ? translated : type.name;
+  }
+
+  /**
+   * Dropdown trigger button label
+   */
+  get dropdownTriggerLabel(): string {
+    const count = this.selectedInterests().length;
+    if (count === 0) {
+      const trans = this.translationService.translate('ADD_EVENT.CATEGORIES_DROPDOWN');
+      return trans && trans !== 'ADD_EVENT.CATEGORIES_DROPDOWN' ? trans : 'Categorii';
+    }
+    const suffix = this.translationService.translate('ADD_EVENT.CATEGORIES_COUNT');
+    const validSuffix = suffix && suffix !== 'ADD_EVENT.CATEGORIES_COUNT' ? suffix : 'categorii selectate';
+    return `${count} ${validSuffix}`;
+  }
+
+  /**
+   * Returns selected category enums matching GraphQL EventCategory
+   */
+  getSelectedCategories(): EventCategory[] {
+    return this.selectedInterests()
+      .map((id) => this.eventTypesList.find((item) => item.id === id)?.category)
+      .filter((cat): cat is EventCategory => Boolean(cat));
   }
 
   /**

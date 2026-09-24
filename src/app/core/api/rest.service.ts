@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 export class RestService {
   private http = inject(HttpClient);
 
-  getUsers(): Observable<any> {
+  getUsers(): Observable<unknown> {
     return this.http.get(`${environment.apiUrl}/v1/users`);
   }
 }
