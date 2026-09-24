@@ -1,5 +1,7 @@
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
+import { APP_ROUTES } from '../config/routes.config';
 
 export interface UserProfile {
   name: string;
@@ -20,10 +22,13 @@ const DEFAULT_USER: UserProfile = {
 })
 export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
   private readonly storageKey = 'volunteerio_auth_state';
 
   readonly currentUser = signal<UserProfile | null>(DEFAULT_USER);
   readonly isAuthenticated = signal<boolean>(this.getInitialAuthState());
+
+  private isRedirecting = false;
 
   login(user: UserProfile = DEFAULT_USER): void {
     this.currentUser.set(user);
@@ -35,8 +40,10 @@ export class AuthService {
 
   logout(): void {
     this.isAuthenticated.set(false);
+    this.currentUser.set(null);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(this.storageKey);
+      localStorage.removeItem('access_token');
     }
   }
 
@@ -48,6 +55,33 @@ export class AuthService {
     }
   }
 
+  /**
+   * Called globally when any REST or GraphQL request returns a 401 or UNAUTHENTICATED error.
+   */
+  handleUnauthorized(): void {
+    if (this.isRedirecting) {
+      return;
+    }
+    this.isRedirecting = true;
+
+    this.logout();
+
+    if (isPlatformBrowser(this.platformId)) {
+      const currentUrl = this.router.url;
+      const targetLoginRoute = `/${APP_ROUTES.LOGIN}`;
+
+      this.router.navigate([targetLoginRoute], {
+        queryParams: currentUrl && currentUrl !== targetLoginRoute && currentUrl !== '/'
+          ? { returnUrl: currentUrl }
+          : undefined
+      }).finally(() => {
+        this.isRedirecting = false;
+      });
+    } else {
+      this.isRedirecting = false;
+    }
+  }
+
   private getInitialAuthState(): boolean {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem(this.storageKey) === 'true';
@@ -55,3 +89,4 @@ export class AuthService {
     return false;
   }
 }
+
