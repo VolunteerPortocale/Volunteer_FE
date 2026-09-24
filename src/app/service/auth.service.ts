@@ -2,6 +2,8 @@ import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../config/routes.config';
+import Keycloak from 'keycloak-js';
+import { environment } from '../../environments/environment';
 
 export interface UserProfile {
   name: string;
@@ -10,13 +12,6 @@ export interface UserProfile {
   role?: string;
 }
 
-const DEFAULT_USER: UserProfile = {
-  name: 'Pavel',
-  initials: 'PC',
-  email: 'pavel@example.com',
-  role: 'Voluntar',
-};
-
 @Injectable({
   providedIn: 'root'
 })
@@ -24,9 +19,10 @@ export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   private readonly storageKey = 'volunteerio_auth_state';
+  private keycloak: Keycloak | null = null;
 
-  readonly currentUser = signal<UserProfile | null>(DEFAULT_USER);
-  readonly isAuthenticated = signal<boolean>(this.getInitialAuthState());
+  readonly currentUser = signal<UserProfile | null>(null);
+  readonly isAuthenticated = signal<boolean>(false);
 
   private isRedirecting = false;
 
@@ -35,58 +31,106 @@ export class AuthService {
     this.isAuthenticated.set(true);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem(this.storageKey, 'true');
+  async init(): Promise<boolean> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    this.keycloak = new Keycloak({
+      url: environment.keycloak.url,
+      realm: environment.keycloak.realm,
+      clientId: environment.keycloak.clientId
+    });
+
+    try {
+      const authenticated = await this.keycloak.init({
+        onLoad: 'check-sso',
+        pkceMethod: 'S256',
+        checkLoginIframe: false
+      });
+
+      this.isAuthenticated.set(authenticated);
+
+      if (authenticated) {
+        if (this.keycloak.token) {
+          localStorage.setItem('access_token', this.keycloak.token);
+        }
+        this.updateCurrentUser();
+      } else {
+        localStorage.removeItem('access_token');
+        this.currentUser.set(null);
+      }
+
+      return authenticated;
+    } catch (error) {
+      console.error('Keycloak initialization failed:', error);
+      return false;
     }
   }
 
-  logout(): void {
+  async login(redirectUri?: string): Promise<void> {
+    if (isPlatformBrowser(this.platformId) && this.keycloak) {
+      await this.keycloak.login({
+        redirectUri: redirectUri || `${window.location.origin}/home-auth`
+      });
+    }
+  }
+
+  async logout(redirectUri?: string): Promise<void> {
+    this.currentUser.set(null);
     this.isAuthenticated.set(false);
     this.currentUser.set(null);
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.storageKey);
       localStorage.removeItem('access_token');
+      if (this.keycloak) {
+        await this.keycloak.logout({
+          redirectUri: redirectUri || `${window.location.origin}/`
+        });
+      }
     }
   }
 
-  toggleAuth(): void {
-    if (this.isAuthenticated()) {
-      this.logout();
-    } else {
-      this.login();
+  async getToken(): Promise<string | null> {
+    if (!isPlatformBrowser(this.platformId) || !this.keycloak || !this.isAuthenticated()) {
+      return null;
+    }
+
+    try {
+      const refreshed = await this.keycloak.updateToken(30);
+      if (refreshed && this.keycloak.token) {
+        localStorage.setItem('access_token', this.keycloak.token);
+      }
+      return this.keycloak.token ?? null;
+    } catch (err) {
+      console.warn('Failed to refresh token, logging out', err);
+      await this.logout();
+      return null;
     }
   }
 
-  /**
-   * Called globally when any REST or GraphQL request returns a 401 or UNAUTHENTICATED error.
-   */
-  handleUnauthorized(): void {
-    if (this.isRedirecting) {
-      return;
-    }
-    this.isRedirecting = true;
+  private updateCurrentUser(): void {
+    if (!this.keycloak) return;
 
-    this.logout();
+    const token = this.keycloak.tokenParsed as Record<string, any> | undefined;
+    const givenName = token?.['given_name'] || '';
+    const familyName = token?.['family_name'] || '';
+    const username = token?.['preferred_username'] || '';
+    const email = token?.['email'] || '';
 
-    if (isPlatformBrowser(this.platformId)) {
-      const currentUrl = this.router.url;
-      const targetLoginRoute = `/${APP_ROUTES.LOGIN}`;
+    const name = givenName && familyName
+      ? `${givenName} ${familyName}`
+      : givenName || familyName || username || 'Utilizator';
 
-      this.router.navigate([targetLoginRoute], {
-        queryParams: currentUrl && currentUrl !== targetLoginRoute && currentUrl !== '/'
-          ? { returnUrl: currentUrl }
-          : undefined
-      }).finally(() => {
-        this.isRedirecting = false;
-      });
-    } else {
-      this.isRedirecting = false;
-    }
-  }
+    const initials = givenName && familyName
+      ? `${givenName[0]}${familyName[0]}`.toUpperCase()
+      : name.substring(0, Math.min(2, name.length)).toUpperCase();
 
-  private getInitialAuthState(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(this.storageKey) === 'true';
-    }
-    return false;
+    const realmRoles = (token?.['realm_access']?.['roles'] as string[]) || [];
+    const appRoles = realmRoles.filter(
+      (r) => !['default-roles-volunteer', 'offline_access', 'uma_authorization'].includes(r)
+    );
+    const role = appRoles[0] ? appRoles[0].charAt(0).toUpperCase() + appRoles[0].slice(1).toLowerCase() : 'Voluntar';
+
+    this.currentUser.set({ name, initials, email, role });
   }
 }
-
