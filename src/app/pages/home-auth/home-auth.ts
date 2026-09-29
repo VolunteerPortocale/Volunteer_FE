@@ -38,7 +38,7 @@ export interface AuthProject {
   styleUrl: './home-auth.scss'
 })
 export class HomeAuthComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+  readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
 

@@ -2,18 +2,40 @@ import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Keycloak from 'keycloak-js';
 import { environment } from '../../environments/environment';
+import { EVENT_MANAGEMENT_ROLES, USER_ROLES } from '../config/roles.config';
+
 
 export interface UserProfile {
   name: string;
   initials: string;
   email: string;
-  role?: string;
+  role?: string; //for display
+  roles?: string[]; //for permsissions
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
+  const user = this.currentUser();
+  if (!user) return false;
+  const rolesList: readonly string[] = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
+  const allowed = rolesList.map(r => r.toLowerCase().trim());
+  const userRoles = [
+    user.role?.toLowerCase().trim(),
+    ...(user.roles?.map(r => r.toLowerCase().trim()) || [])
+  ].filter(Boolean) as string[];
+  return allowed.some(target => {
+    if (target === USER_ROLES.VOLUNTEER && userRoles.includes('voluntar')) return true;
+    if (target === USER_ROLES.NGO && userRoles.includes('ong')) return true;
+    return userRoles.includes(target);
+  });
+}
+canManageEvents(): boolean {
+  return this.hasRole(EVENT_MANAGEMENT_ROLES);
+}
+
   private readonly platformId = inject(PLATFORM_ID);
   private keycloak: Keycloak | null = null;
 
@@ -119,6 +141,6 @@ export class AuthService {
     );
     const role = appRoles[0] ? appRoles[0].charAt(0).toUpperCase() + appRoles[0].slice(1).toLowerCase() : 'Voluntar';
 
-    this.currentUser.set({ name, initials, email, role });
+    this.currentUser.set({ name, initials, email, role, roles: appRoles });
   }
 }

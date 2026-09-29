@@ -70,15 +70,15 @@
               <!-- Action Buttons (Top-Right) -->
               <div class="card-top-actions">
                 <!-- Edit Button (Pencil Icon) -->
+                @if (authService.canManageEvents()) {
                 <button
                   type="button"
                   class="card-icon-btn edit-btn"
                   (click)="editProject(project.id, $event)"
-                  [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
-                  aria-label="Edit event"
                 >
                   <mat-icon class="action-icon">edit</mat-icon>
                 </button>
+              }
 
                 <!-- Bookmark Button -->
                 <button

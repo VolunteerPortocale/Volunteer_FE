@@ -75,11 +75,13 @@
               </div>
             </button>
           </mat-menu>
-
+          
           <!-- + Adaugă eveniment Button -->
-          <a mat-button routerLink="/adauga-eveniment" class="btn-primary add-event-pill" style="text-decoration: none;">
-            {{ 'NAV.ADD_EVENT' | translate }}
-          </a>
+           @if (authService.canManageEvents()){
+            <a mat-button routerLink="/adauga-eveniment" class="btn-primary add-event-pill" style="text-decoration: none;">
+             {{ 'NAV.ADD_EVENT' | translate }}
+            </a>
+           }
 
           <!-- User Profile Pill Button & Menu -->
           <button mat-button [matMenuTriggerFor]="profileMenu" class="profile-pill-btn">
