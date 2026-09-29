@@ -68,25 +68,49 @@
       <section class="form-section">
         <h2 class="section-title">{{ 'SIGNUP.PERSONAL_INFO_SECTION' | translate }}</h2>
 
-        <!-- Contact / Full Name -->
-        <div class="field-group">
-          <label class="field-label" for="nameInput">
-            {{ (role() === 'ngo' ? 'SIGNUP.CONTACT_PERSON_NAME' : 'SIGNUP.FULL_NAME') | translate }}
-            <span class="required-star">*</span>
-          </label>
-          <div class="input-wrapper" [class.has-error]="f.name.invalid && f.name.touched">
-            <mat-icon class="input-icon">person</mat-icon>
-            <input
-              id="nameInput"
-              type="text"
-              formControlName="name"
-              [placeholder]="'SIGNUP.NAME_PLACEHOLDER' | translate"
-              maxlength="100"
-            />
+        <!-- First and Last Name (2-Column Grid) -->
+        <div class="name-grid">
+          <!-- First Name -->
+          <div class="field-group">
+            <label class="field-label" for="firstNameInput">
+              {{ (role() === 'ngo' ? 'SIGNUP.CONTACT_FIRST_NAME' : 'SIGNUP.FIRST_NAME') | translate }}
+              <span class="required-star">*</span>
+            </label>
+            <div class="input-wrapper" [class.has-error]="f.firstName.invalid && f.firstName.touched">
+              <mat-icon class="input-icon">person</mat-icon>
+              <input
+                id="firstNameInput"
+                type="text"
+                formControlName="firstName"
+                [placeholder]="'SIGNUP.FIRST_NAME_PLACEHOLDER' | translate"
+                maxlength="50"
+              />
+            </div>
+            @if (f.firstName.invalid && f.firstName.touched) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.FIRST_NAME_REQUIRED' | translate }}</span>
+            }
           </div>
-          @if (f.name.invalid && f.name.touched) {
-            <span class="error-msg">{{ 'SIGNUP.ERRORS.NAME_REQUIRED' | translate }}</span>
-          }
+
+          <!-- Last Name -->
+          <div class="field-group">
+            <label class="field-label" for="lastNameInput">
+              {{ (role() === 'ngo' ? 'SIGNUP.CONTACT_LAST_NAME' : 'SIGNUP.LAST_NAME') | translate }}
+              <span class="required-star">*</span>
+            </label>
+            <div class="input-wrapper" [class.has-error]="f.lastName.invalid && f.lastName.touched">
+              <mat-icon class="input-icon">person_outline</mat-icon>
+              <input
+                id="lastNameInput"
+                type="text"
+                formControlName="lastName"
+                [placeholder]="'SIGNUP.LAST_NAME_PLACEHOLDER' | translate"
+                maxlength="50"
+              />
+            </div>
+            @if (f.lastName.invalid && f.lastName.touched) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.LAST_NAME_REQUIRED' | translate }}</span>
+            }
+          </div>
         </div>
 
         <!-- Organization Name (NGO Only) -->
@@ -195,28 +219,63 @@
         </div>
       </section>
 
-      <!-- SECTION 3: Interests (Volunteer Only) -->
+      <!-- SECTION 3: Interests / Categories (Volunteer Only) -->
       @if (role() === 'volunteer') {
         <section class="form-section">
           <h2 class="section-title">{{ 'SIGNUP.INTERESTS_SECTION' | translate }}</h2>
           <div class="field-group">
             <label class="field-label">{{ 'SIGNUP.INTERESTS_SUBTITLE' | translate }}</label>
-            <div class="interests-grid">
-              @for (interest of interestOptions; track interest.id) {
-                <label
-                  class="interest-card"
-                  [class.selected]="selectedInterests().includes(interest.id)"
-                >
-                  <input
-                    type="checkbox"
-                    class="checkbox-input"
-                    [checked]="selectedInterests().includes(interest.id)"
-                    (change)="toggleInterest(interest.id)"
-                  />
-                  <span class="interest-label">{{ interest.labelKey | translate }}</span>
-                </label>
-              }
-            </div>
+            <span class="field-hint">{{ 'ADD_EVENT.EVENT_TYPES_HINT' | translate }}</span>
+
+            <!-- Dropdown Trigger -->
+            <button
+              type="button"
+              class="category-dropdown-trigger"
+              [class.open]="categoryDropdownOpen()"
+              (click)="toggleCategoryDropdown()"
+            >
+              <span class="dropdown-label">{{ dropdownTriggerLabel }}</span>
+              <mat-icon class="dropdown-chevron" [class.rotated]="categoryDropdownOpen()">
+                expand_more
+              </mat-icon>
+            </button>
+
+            <!-- Selected Tags Preview -->
+            @if (selectedInterests().length > 0 && !categoryDropdownOpen()) {
+              <div class="selected-tags-row">
+                @for (type of eventTypesList; track type.id) {
+                  @if (selectedInterests().includes(type.id)) {
+                    <span class="selected-tag">
+                      {{ getCategoryLabel(type) }}
+                      <mat-icon class="tag-remove" (click)="toggleInterest(type.id)">close</mat-icon>
+                    </span>
+                  }
+                }
+              </div>
+            }
+
+            <!-- Collapsible Categories Grid Panel -->
+            @if (categoryDropdownOpen()) {
+              <div class="category-dropdown-panel">
+                <div class="event-types-grid">
+                  @for (type of eventTypesList; track type.id) {
+                    <button
+                      type="button"
+                      class="type-toggle-btn"
+                      [class.active]="selectedInterests().includes(type.id)"
+                      (click)="toggleInterest(type.id)"
+                    >
+                      <span class="custom-checkbox" [class.checked]="selectedInterests().includes(type.id)">
+                        @if (selectedInterests().includes(type.id)) {
+                          <mat-icon>check</mat-icon>
+                        }
+                      </span>
+                      <span class="type-label">{{ getCategoryLabel(type) }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
           </div>
         </section>
       }

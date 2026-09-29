@@ -5,7 +5,7 @@ export const environment = {
   graphqlUrl: 'https://volunteer-be-rs60.onrender.com/graphql',
   basicAuth: 'YWRtaW46cGFzc3dvcmQxMjM=',
   keycloak: {
-    url: 'https://volunteer-kc.duckdns.org/',
+    url: 'https://volunteer-kc.duckdns.org',
     realm: 'volunteer',
     clientId: 'volunteer-fe'
   }

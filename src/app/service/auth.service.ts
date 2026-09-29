@@ -4,43 +4,51 @@ import Keycloak from 'keycloak-js';
 import { environment } from '../../environments/environment';
 import { EVENT_MANAGEMENT_ROLES, USER_ROLES } from '../config/roles.config';
 
-
 export interface UserProfile {
   name: string;
   initials: string;
   email: string;
-  role?: string; //for display
-  roles?: string[]; //for permsissions
+  role?: string;    // for display
+  roles?: string[]; // for permissions
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
-  const user = this.currentUser();
-  if (!user) return false;
-  const rolesList: readonly string[] = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
-  const allowed = rolesList.map(r => r.toLowerCase().trim());
-  const userRoles = [
-    user.role?.toLowerCase().trim(),
-    ...(user.roles?.map(r => r.toLowerCase().trim()) || [])
-  ].filter(Boolean) as string[];
-  return allowed.some(target => {
-    if (target === USER_ROLES.VOLUNTEER && userRoles.includes('voluntar')) return true;
-    if (target === USER_ROLES.NGO && userRoles.includes('ong')) return true;
-    return userRoles.includes(target);
-  });
-}
-canManageEvents(): boolean {
-  return this.hasRole(EVENT_MANAGEMENT_ROLES);
-}
-
   private readonly platformId = inject(PLATFORM_ID);
   private keycloak: Keycloak | null = null;
 
   readonly currentUser = signal<UserProfile | null>(null);
   readonly isAuthenticated = signal<boolean>(false);
+
+  /**
+   * Check if current user has any of the specified roles (case-insensitive)
+   */
+  hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
+    const user = this.currentUser();
+    if (!user) return false;
+
+    const rolesList: readonly string[] = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
+    const allowed = rolesList.map(r => r.toLowerCase().trim());
+    const userRoles = [
+      user.role?.toLowerCase().trim(),
+      ...(user.roles?.map(r => r.toLowerCase().trim()) || [])
+    ].filter(Boolean) as string[];
+
+    return allowed.some(target => {
+      if (target === USER_ROLES.VOLUNTEER && userRoles.includes('voluntar')) return true;
+      if (target === USER_ROLES.NGO && userRoles.includes('ong')) return true;
+      return userRoles.includes(target);
+    });
+  }
+
+  /**
+   * Volunteers cannot create, edit, or moderate events; NGO and Moderator can.
+   */
+  canManageEvents(): boolean {
+    return this.hasRole(EVENT_MANAGEMENT_ROLES);
+  }
 
   async init(): Promise<boolean> {
     if (!isPlatformBrowser(this.platformId)) {
@@ -116,6 +124,10 @@ canManageEvents(): boolean {
       await this.logout();
       return null;
     }
+  }
+
+  async handleUnauthorized(): Promise<void> {
+    await this.logout();
   }
 
   private updateCurrentUser(): void {
