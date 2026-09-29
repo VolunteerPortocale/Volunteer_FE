@@ -2,12 +2,17 @@ import { Injectable, inject } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { Observable, map } from 'rxjs';
 
-const GET_USERS = gql`
+export const GET_USERS = gql`
   query GetAllUsers {
     getAllUsers {
       id
-      name
-      age
+      firstName
+      lastName
+      email
+      phoneNumber
+      role
+      status
+      createdAt
     }
   }
 `;
@@ -19,11 +24,11 @@ export class GraphqlService {
   private apollo = inject(Apollo);
 
   getUsers(): Observable<unknown> {
-    return this.apollo.watchQuery({
+    return this.apollo.watchQuery<{ getAllUsers: unknown[] }>({
       query: GET_USERS,
     })
     .valueChanges.pipe(
-      map((result: any) => result.data?.getAllUsers ?? [])
+      map((result) => result.data?.getAllUsers ?? [])
     );
   }
 }
