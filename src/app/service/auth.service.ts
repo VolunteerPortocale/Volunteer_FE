@@ -1,91 +1,158 @@
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router } from '@angular/router';
-import { APP_ROUTES } from '../config/routes.config';
+import Keycloak from 'keycloak-js';
+import { environment } from '../../environments/environment';
+import { EVENT_MANAGEMENT_ROLES, USER_ROLES } from '../config/roles.config';
 
 export interface UserProfile {
   name: string;
   initials: string;
   email: string;
-  role?: string;
+  role?: string;    // for display
+  roles?: string[]; // for permissions
 }
-
-const DEFAULT_USER: UserProfile = {
-  name: 'Pavel',
-  initials: 'PC',
-  email: 'pavel@example.com',
-  role: 'Voluntar',
-};
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly router = inject(Router);
-  private readonly storageKey = 'volunteerio_auth_state';
+  private keycloak: Keycloak | null = null;
 
-  readonly currentUser = signal<UserProfile | null>(DEFAULT_USER);
-  readonly isAuthenticated = signal<boolean>(this.getInitialAuthState());
+  readonly currentUser = signal<UserProfile | null>(null);
+  readonly isAuthenticated = signal<boolean>(false);
 
-  private isRedirecting = false;
+  /**
+   * Check if current user has any of the specified roles (case-insensitive)
+   */
+  hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
+    const user = this.currentUser();
+    if (!user) return false;
 
-  login(user: UserProfile = DEFAULT_USER): void {
-    this.currentUser.set(user);
-    this.isAuthenticated.set(true);
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(this.storageKey, 'true');
-    }
-  }
+    const rolesList: readonly string[] = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
+    const allowed = rolesList.map(r => r.toLowerCase().trim());
+    const userRoles = [
+      user.role?.toLowerCase().trim(),
+      ...(user.roles?.map(r => r.toLowerCase().trim()) || [])
+    ].filter(Boolean) as string[];
 
-  logout(): void {
-    this.isAuthenticated.set(false);
-    this.currentUser.set(null);
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.storageKey);
-      localStorage.removeItem('access_token');
-    }
-  }
-
-  toggleAuth(): void {
-    if (this.isAuthenticated()) {
-      this.logout();
-    } else {
-      this.login();
-    }
+    return allowed.some(target => {
+      if (target === USER_ROLES.VOLUNTEER && userRoles.includes('voluntar')) return true;
+      if (target === USER_ROLES.NGO && userRoles.includes('ong')) return true;
+      return userRoles.includes(target);
+    });
   }
 
   /**
-   * Called globally when any REST or GraphQL request returns a 401 or UNAUTHENTICATED error.
+   * Volunteers cannot create, edit, or moderate events; NGO and Moderator can.
    */
-  handleUnauthorized(): void {
-    if (this.isRedirecting) {
-      return;
+  canManageEvents(): boolean {
+    return this.hasRole(EVENT_MANAGEMENT_ROLES);
+  }
+
+  async init(): Promise<boolean> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
     }
-    this.isRedirecting = true;
 
-    this.logout();
+    this.keycloak = new Keycloak({
+      url: environment.keycloak.url,
+      realm: environment.keycloak.realm,
+      clientId: environment.keycloak.clientId
+    });
 
-    if (isPlatformBrowser(this.platformId)) {
-      const currentUrl = this.router.url;
-      const targetLoginRoute = `/${APP_ROUTES.HOME_AUTH}`;
-
-      this.router.navigate([targetLoginRoute], {
-        queryParams: currentUrl && currentUrl !== targetLoginRoute && currentUrl !== '/'
-          ? { returnUrl: currentUrl }
-          : undefined
-      }).finally(() => {
-        this.isRedirecting = false;
+    try {
+      const authenticated = await this.keycloak.init({
+        onLoad: 'check-sso',
+        pkceMethod: 'S256',
+        checkLoginIframe: false
       });
-    } else {
-      this.isRedirecting = false;
+
+      this.isAuthenticated.set(authenticated);
+
+      if (authenticated) {
+        if (this.keycloak.token) {
+          localStorage.setItem('access_token', this.keycloak.token);
+        }
+        this.updateCurrentUser();
+      } else {
+        localStorage.removeItem('access_token');
+        this.currentUser.set(null);
+      }
+
+      return authenticated;
+    } catch (error) {
+      console.error('Keycloak initialization failed:', error);
+      return false;
     }
   }
 
-  private getInitialAuthState(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(this.storageKey) === 'true';
+  async login(redirectUri?: string): Promise<void> {
+    if (isPlatformBrowser(this.platformId) && this.keycloak) {
+      await this.keycloak.login({
+        redirectUri: redirectUri || `${window.location.origin}/home-auth`
+      });
     }
-    return false;
+  }
+
+  async logout(redirectUri?: string): Promise<void> {
+    this.currentUser.set(null);
+    this.isAuthenticated.set(false);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('access_token');
+      if (this.keycloak) {
+        await this.keycloak.logout({
+          redirectUri: redirectUri || `${window.location.origin}/`
+        });
+      }
+    }
+  }
+
+  async getToken(): Promise<string | null> {
+    if (!isPlatformBrowser(this.platformId) || !this.keycloak || !this.isAuthenticated()) {
+      return null;
+    }
+
+    try {
+      const refreshed = await this.keycloak.updateToken(30);
+      if (refreshed && this.keycloak.token) {
+        localStorage.setItem('access_token', this.keycloak.token);
+      }
+      return this.keycloak.token ?? null;
+    } catch (err) {
+      console.warn('Failed to refresh token, logging out', err);
+      await this.logout();
+      return null;
+    }
+  }
+
+  async handleUnauthorized(): Promise<void> {
+    await this.logout();
+  }
+
+  private updateCurrentUser(): void {
+    if (!this.keycloak) return;
+
+    const token = this.keycloak.tokenParsed as Record<string, any> | undefined;
+    const givenName = token?.['given_name'] || '';
+    const familyName = token?.['family_name'] || '';
+    const username = token?.['preferred_username'] || '';
+    const email = token?.['email'] || '';
+
+    const name = givenName && familyName
+      ? `${givenName} ${familyName}`
+      : givenName || familyName || username || 'Utilizator';
+
+    const initials = givenName && familyName
+      ? `${givenName[0]}${familyName[0]}`.toUpperCase()
+      : name.substring(0, Math.min(2, name.length)).toUpperCase();
+
+    const realmRoles = (token?.['realm_access']?.['roles'] as string[]) || [];
+    const appRoles = realmRoles.filter(
+      (r) => !['default-roles-volunteer', 'offline_access', 'uma_authorization'].includes(r)
+    );
+    const role = appRoles[0] ? appRoles[0].charAt(0).toUpperCase() + appRoles[0].slice(1).toLowerCase() : 'Voluntar';
+
+    this.currentUser.set({ name, initials, email, role, roles: appRoles });
   }
 }
