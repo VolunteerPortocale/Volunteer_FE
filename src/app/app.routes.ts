@@ -27,6 +27,18 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/add-event/add-event').then(m => m.AddEventComponent)
   },
   {
+    path: APP_ROUTES.ADMIN_EVENT,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR] },
+    loadComponent: () => import('./pages/event-admin/event-admin').then(m => m.EventAdminComponent)
+  },
+  {
+    path: APP_ROUTES.ADMIN_EVENT_DEFAULT,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR] },
+    loadComponent: () => import('./pages/event-admin/event-admin').then(m => m.EventAdminComponent)
+  },
+  {
     path: APP_ROUTES.SIGNUP,
     loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
   },

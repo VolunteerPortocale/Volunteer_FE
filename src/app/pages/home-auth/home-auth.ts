@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
+import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
 import { EventService } from '../../service/event.service';
 
@@ -32,7 +33,8 @@ export interface AuthProject {
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    TranslatePipe
+    TranslatePipe,
+    FooterComponent
   ],
   templateUrl: './home-auth.html',
   styleUrl: './home-auth.scss'
@@ -135,4 +137,12 @@ export class HomeAuthComponent implements OnInit {
     }
     this.router.navigate(['/editeaza-eveniment', projectId]);
   }
+
+  administerProject(projectId: string, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.router.navigate(['/administrare-eveniment', projectId]);
+  }
 }
+

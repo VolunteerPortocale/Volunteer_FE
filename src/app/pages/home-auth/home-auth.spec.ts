@@ -65,4 +65,12 @@ describe('HomeAuthComponent', () => {
     component.editProject('eco-forest');
     expect(navigateSpy).toHaveBeenCalledWith(['/editeaza-eveniment', 'eco-forest']);
   });
+
+  it('should navigate to admin event route when administerProject is called', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    component.administerProject('eco-forest');
+    expect(navigateSpy).toHaveBeenCalledWith(['/administrare-eveniment', 'eco-forest']);
+  });
 });

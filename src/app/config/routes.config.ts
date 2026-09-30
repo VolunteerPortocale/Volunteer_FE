@@ -7,6 +7,8 @@ export const APP_ROUTES = {
   SIGNUP: 'inregistrare',
   ADD_EVENT: 'adauga-eveniment',
   EDIT_EVENT: 'editeaza-eveniment/:id',
+  ADMIN_EVENT: 'administrare-eveniment/:id',
+  ADMIN_EVENT_DEFAULT: 'administrare-eveniment',
   MODERATION: 'moderare',
   OTP: 'confirmare-otp',
   HOME_AUTH: 'home-auth',
@@ -30,4 +32,6 @@ export const ROUTE_HELPERS = {
   addEvent: () => `/${APP_ROUTES.ADD_EVENT}`,
   moderation: () => `/${APP_ROUTES.MODERATION}`,
   editEvent: (id: string | number) => `/${APP_ROUTES.EDIT_EVENT.replace(':id', String(id))}`,
-} as const;
+  adminEvent: (id?: string | number) =>
+    id ? `/${APP_ROUTES.ADMIN_EVENT.replace(':id', String(id))}` : `/${APP_ROUTES.ADMIN_EVENT_DEFAULT}`,
+} as const;

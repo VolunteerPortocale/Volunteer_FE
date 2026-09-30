@@ -1,0 +1,672 @@
+<div class="event-admin-page">
+  <!-- BREADCRUMBS & PHASE SWITCHER TABS -->
+  <div class="top-nav-bar">
+    <div class="nav-container">
+      <div class="breadcrumbs">
+        <a [routerLink]="routes.homeAuth()" class="breadcrumb-link">Proiectele mele</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">{{ eventData()?.title || 'Plantăm păduri comunitare' }}</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-active">Contact și Administrare</span>
+      </div>
+
+      <!-- Navigation Tabs Between Story 1 (Contact & Manage) and Story 2 (Post-Event) -->
+      <div class="phase-switcher">
+        <button type="button" class="phase-tab active">
+          <mat-icon class="tab-icon">group</mat-icon>
+          <span>Contact & Administrare (Live)</span>
+        </button>
+        <button type="button" class="phase-tab inactive" title="Disponibil după finalizarea evenimentului">
+          <mat-icon class="tab-icon">verified</mat-icon>
+          <span>Post-Eveniment & Evaluare (Finalizat)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENT MANAGEMENT BANNER -->
+  <main class="main-content">
+    <!-- Top Hero Banner Card with Brand Deep Green -->
+    <div class="hero-banner">
+      <div class="glow-orb"></div>
+
+      <div class="banner-content">
+        <div class="banner-left">
+          <div class="badge-row">
+            <span class="status-badge">Eveniment activ</span>
+            <span class="meta-item">
+              <mat-icon class="meta-icon">place</mat-icon>
+              {{ eventData()?.location || 'Strășeni, Moldova' }}
+            </span>
+            <span class="meta-item">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ eventData()?.startDateTime || '3 Octombrie 2026, 09:00' }}
+            </span>
+          </div>
+
+          <h1 class="event-title">{{ eventData()?.title || 'Plantăm păduri comunitare' }}</h1>
+          <p class="event-desc">
+            {{ eventData()?.description || 'Gestionare înscrieri, comunicare cu participanții și confirmarea prezenței la fața locului pentru acțiunea de voluntariat.' }}
+          </p>
+
+          <!-- Capacity & Attendance Mini Progress -->
+          <div class="mini-stats-row">
+            <div class="mini-stat-pill">
+              <span class="stat-highlight">{{ totalCount() }} din {{ eventData()?.volunteers || 40 }}</span>
+              <span class="stat-label">voluntari înscriși</span>
+            </div>
+            <div class="mini-stat-pill">
+              <span class="stat-highlight">{{ checkedCount() }} din {{ totalCount() }}</span>
+              <span class="stat-label">prezenți confirmați QR</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="banner-actions">
+          <!-- Action 1: Message all volunteers -->
+          <button type="button" class="btn-action btn-broadcast" (click)="openMessageAllModal()">
+            <mat-icon class="btn-icon">mail</mat-icon>
+            <span>Mesaj către toți</span>
+          </button>
+
+          <!-- Action 3: Invite an individual volunteer -->
+          <button type="button" class="btn-action btn-invite" (click)="openInviteModal()">
+            <mat-icon class="btn-icon">person_add</mat-icon>
+            <span>Invită voluntar</span>
+          </button>
+
+          <!-- Action 5: Confirm volunteer participation on-sight using QR codes -->
+          <button type="button" class="btn-action btn-qr-scan" (click)="openQRScannerModal()">
+            <mat-icon class="btn-icon">qr_code_scanner</mat-icon>
+            <span>Scanează QR Prezență</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN INTERACTIVE SECTION: Filters, Table & Stats Sidebar -->
+    <div class="dashboard-grid">
+      <!-- Left: Table & Controls -->
+      <div class="table-section">
+        <!-- Search Bar and Status Filter Tabs -->
+        <div class="control-bar">
+          <!-- Search Input -->
+          <div class="search-wrap">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input
+              type="text"
+              class="search-input"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event)"
+              placeholder="Caută voluntar după nume, email sau rol..."
+            />
+            @if (searchQuery()) {
+              <button type="button" class="clear-btn" (click)="searchQuery.set('')">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </div>
+
+          <!-- Status Filter Tabs -->
+          <div class="filter-tabs">
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="currentFilter() === 'all'"
+              (click)="setFilter('all')"
+            >
+              Toți (<span>{{ totalCount() }}</span>)
+            </button>
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="currentFilter() === 'checked-in'"
+              (click)="setFilter('checked-in')"
+            >
+              Prezenți (<span>{{ checkedCount() }}</span>)
+            </button>
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="currentFilter() === 'pending'"
+              (click)="setFilter('pending')"
+            >
+              În așteptare (<span>{{ pendingCount() }}</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- Volunteers Table Card -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="volunteers-table">
+              <thead>
+                <tr>
+                  <th scope="col">Voluntar</th>
+                  <th scope="col" class="hide-mobile">Contact</th>
+                  <th scope="col" class="hide-sm">Rol / Echipă</th>
+                  <th scope="col">Stare Prezență</th>
+                  <th scope="col" class="text-right">Acțiuni</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (volunteer of filteredVolunteers(); track volunteer.id) {
+                  <tr class="table-row">
+                    <!-- Volunteer Info -->
+                    <td>
+                      <div class="volunteer-profile">
+                        <img [src]="volunteer.avatar" [alt]="volunteer.name" class="volunteer-avatar" />
+                        <div>
+                          <div class="volunteer-name">{{ volunteer.name }}</div>
+                          <div class="volunteer-email hide-md-inline">{{ volunteer.email }}</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Contact -->
+                    <td class="hide-mobile">
+                      <div class="contact-phone">{{ volunteer.phone }}</div>
+                      <div class="contact-email">{{ volunteer.email }}</div>
+                    </td>
+
+                    <!-- Role Badge -->
+                    <td class="hide-sm">
+                      <span class="role-badge" [ngClass]="{
+                        'role-leader': volunteer.role === 'Leader of the group',
+                        'role-logistics': volunteer.role === 'Echipa Logistică',
+                        'role-checkin': volunteer.role === 'Asistență Check-in',
+                        'role-general': volunteer.role === 'Voluntar general'
+                      }">
+                        {{ volunteer.role }}
+                      </span>
+                    </td>
+
+                    <!-- Attendance Status -->
+                    <td>
+                      @if (volunteer.status === 'checked-in') {
+                        <span class="status-pill status-checked">
+                          <mat-icon class="status-icon">check</mat-icon>
+                          <span>Confirmat QR</span>
+                          @if (volunteer.checkInTime) {
+                            <span class="status-time">({{ volunteer.checkInTime.replace('Astăzi, ', '') }})</span>
+                          }
+                        </span>
+                      } @else {
+                        <span class="status-pill status-pending">
+                          <span class="status-dot"></span>
+                          <span>În așteptare</span>
+                        </span>
+                      }
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="text-right">
+                      <div class="row-actions">
+                        <button
+                          type="button"
+                          class="action-btn-row btn-dm"
+                          (click)="openMessageIndividualModal(volunteer)"
+                          title="Trimite mesaj direct"
+                        >
+                          <mat-icon>chat</mat-icon>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn-row btn-kick"
+                          (click)="openKickOutModal(volunteer)"
+                          title="Elimină din proiect"
+                        >
+                          <mat-icon>person_remove</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="empty-table-cell">
+                      <mat-icon class="empty-icon">search_off</mat-icon>
+                      <p>Niciun voluntar găsit conform criteriilor de căutare.</p>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Footer -->
+          <div class="table-footer">
+            <div class="footer-count">Afișează {{ filteredVolunteers().length }} voluntari</div>
+            <div class="pagination-controls">
+              <button type="button" class="page-btn disabled" disabled>Anterior</button>
+              <button type="button" class="page-btn active">1</button>
+              <button type="button" class="page-btn">2</button>
+              <button type="button" class="page-btn">Următor</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Sidebar Stats & Live Feed -->
+      <aside class="sidebar-section">
+        <!-- Attendance Stats Card -->
+        <div class="sidebar-card">
+          <h2 class="card-heading">
+            <mat-icon class="heading-icon">bar_chart</mat-icon>
+            <span>Statistici Prezență</span>
+          </h2>
+
+          <div class="stats-counter-grid">
+            <div class="stat-box stat-box-checked">
+              <div class="stat-number text-emerald">{{ checkedCount() }}</div>
+              <div class="stat-caption">Prezenți la fața locului</div>
+            </div>
+            <div class="stat-box stat-box-pending">
+              <div class="stat-number text-amber">{{ pendingCount() }}</div>
+              <div class="stat-caption">În așteptare</div>
+            </div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-header">
+              <span>Rată de participare:</span>
+              <span class="rate-val">{{ attendanceRate() }}</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" [style.width]="attendanceRate()"></div>
+            </div>
+            <p class="progress-hint">
+              Prezența se validează la intrare prin scanarea codului QR generat în aplicația fiecărui voluntar.
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Help Card -->
+        <div class="sidebar-card help-card">
+          <div class="help-title">
+            <mat-icon class="help-icon">info</mat-icon>
+            <span>Ghid rapid organizator</span>
+          </div>
+          <ul class="help-list">
+            <li>• Folosește <strong>Scanează QR</strong> de pe telefon sau tabletă pentru check-in instantaneu la intrare.</li>
+            <li>• <strong>Mesaj către toți</strong> transmite actualizări urgente simultan prin notificări push și email.</li>
+            <li>• În caz de neprezentare sau cerere de retragere, poți elibera locul cu butonul de eliminare.</li>
+          </ul>
+        </div>
+
+        <!-- Live Activity Feed -->
+        <div class="sidebar-card activity-card">
+          <div class="card-heading space-between">
+            <span>Activitate recentă</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <div class="activity-feed-list custom-scrollbar">
+            @for (log of activityFeed(); track log.id) {
+              <div class="activity-item">
+                <span class="activity-icon" [ngClass]="log.type">
+                  @if (log.type === 'check-in') { ✓ }
+                  @else if (log.type === 'message') { ✉ }
+                  @else if (log.type === 'invite') { + }
+                  @else { ✕ }
+                </span>
+                <div class="activity-text-wrap">
+                  <p class="activity-text">{{ log.text }}</p>
+                  <span class="activity-time">{{ log.time }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 1: MESSAGE ALL VOLUNTEERS                               -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'messageAll') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle emerald">
+              <mat-icon>mail</mat-icon>
+            </div>
+            <div>
+              <h3>Mesaj către toți voluntarii</h3>
+              <p>Transmite un anunț simultan către cei {{ totalCount() }} de voluntari înscriși.</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-field">
+            <label class="field-label">Canale de transmitere</label>
+            <div class="channels-grid">
+              <label class="channel-card" [class.selected]="broadcastPush()">
+                <input type="checkbox" [checked]="broadcastPush()" (change)="broadcastPush.set(!broadcastPush())" />
+                <span>Notificare Push (App)</span>
+              </label>
+              <label class="channel-card" [class.selected]="broadcastEmail()">
+                <input type="checkbox" [checked]="broadcastEmail()" (change)="broadcastEmail.set(!broadcastEmail())" />
+                <span>Email Voluntari</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Subiect anunț</label>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="ex: Reamintire echipament & actualizare orar"
+              [ngModel]="broadcastSubject()"
+              (ngModelChange)="broadcastSubject.set($event)"
+            />
+          </div>
+
+          <div class="form-field">
+            <div class="field-label-row">
+              <label class="field-label">Conținut mesaj</label>
+              <span class="field-vars">Variabile: &#123;nume&#125;, &#123;ora&#125;</span>
+            </div>
+            <textarea
+              rows="4"
+              class="textarea-input"
+              [ngModel]="broadcastBody()"
+              (ngModelChange)="broadcastBody.set($event)"
+            ></textarea>
+          </div>
+
+          <div class="alert-box amber">
+            <mat-icon class="alert-icon">warning_amber</mat-icon>
+            <span>Mesajul va fi trimis ca anunț oficial din partea organizației «{{ eventData()?.organization || 'Eco Moldova' }}».</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Anulează</button>
+          <button type="button" class="btn-confirm" (click)="sendBroadcastMessage()">Trimite anunțul</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 2: MESSAGE INDIVIDUAL VOLUNTEER                          -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'messageIndividual') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog modal-sm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <img [src]="targetVolunteer()?.avatar" [alt]="targetVolunteer()?.name" class="modal-avatar" />
+            <div>
+              <h3>{{ targetVolunteer()?.name }}</h3>
+              <p>{{ targetVolunteer()?.email }}</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="quick-templates">
+            <label class="field-label-sm">Șabloane rapide</label>
+            <div class="templates-row">
+              <button type="button" class="template-chip" (click)="insertTemplate('Salut! Ai nevoie de transport până la locație?')">Transport?</button>
+              <button type="button" class="template-chip" (click)="insertTemplate('Te rugăm să confirmi dacă ajungi la ora 09:00.')">Confirmare oră</button>
+              <button type="button" class="template-chip" (click)="insertTemplate('Echipa ta a fost repartizată la Sectorul A.')">Sector repartizat</button>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Mesaj direct</label>
+            <textarea
+              rows="4"
+              class="textarea-input"
+              placeholder="Scrie mesajul pentru voluntar..."
+              [ngModel]="dmMessageText()"
+              (ngModelChange)="dmMessageText.set($event)"
+            ></textarea>
+          </div>
+
+          <p class="modal-hint">
+            Voluntarul va primi notificarea în aplicația Volunteerio și pe adresa de email înregistrată.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Închide</button>
+          <button type="button" class="btn-confirm" (click)="sendIndividualMessage()">Trimite mesajul</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 3: INVITE INDIVIDUAL VOLUNTEER                           -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'invite') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle emerald">
+              <mat-icon>person_add</mat-icon>
+            </div>
+            <div>
+              <h3>Invită un voluntar</h3>
+              <p>Trimite o invitație nominală prin email sau căutare în comunitate.</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-field">
+            <label class="field-label">Email sau Nume utilizator Volunteerio</label>
+            <input
+              type="text"
+              class="text-input"
+              placeholder="ex: maria.popa@gmail.com sau @mariap"
+              [ngModel]="inviteContact()"
+              (ngModelChange)="inviteContact.set($event)"
+            />
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Rol / Echipă atribuită</label>
+              <select class="select-input" [ngModel]="inviteRole()" (ngModelChange)="inviteRole.set($event)">
+                <option value="Voluntar general">Voluntar general</option>
+                <option value="Leader of the group">Leader of the group</option>
+                <option value="Echipa Logistică">Echipa Logistică</option>
+                <option value="Asistență Check-in">Asistență Check-in</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">Alocare loc garantat</label>
+              <label class="checkbox-box">
+                <input type="checkbox" [checked]="reserveSlot()" (change)="reserveSlot.set(!reserveSlot())" />
+                <span>Rezervă loc din cele {{ eventData()?.volunteers || 40 }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Mesaj de invitație personalizat (opțional)</label>
+            <textarea
+              rows="2"
+              class="textarea-input"
+              placeholder="ex: Te invităm cu drag în echipa noastră de voluntariat!"
+              [ngModel]="inviteNote()"
+              (ngModelChange)="inviteNote.set($event)"
+            ></textarea>
+          </div>
+
+          <!-- Shareable Link Box -->
+          <div class="share-link-box">
+            <div class="share-text-wrap">
+              <span class="share-title">Sau copiază link-ul direct</span>
+              <span class="share-url">volunteerio.md/join/{{ eventId() }}?inv=pc42</span>
+            </div>
+            <button type="button" class="btn-copy-link" (click)="copyInviteLink()">Copiază</button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Anulează</button>
+          <button type="button" class="btn-confirm" (click)="sendInvite()">Trimite invitația</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 4: KICK OUT VOLUNTEER                                    -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'kickOut') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog modal-sm border-danger" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle red">
+              <mat-icon>person_remove</mat-icon>
+            </div>
+            <div>
+              <h3>Elimină voluntarul din proiect</h3>
+              <p>Ești pe cale să revoci participarea acestui voluntar.</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="warning-volunteer-card">
+            <img [src]="targetVolunteer()?.avatar" [alt]="targetVolunteer()?.name" class="volunteer-avatar-warn" />
+            <div>
+              <strong>{{ targetVolunteer()?.name }}</strong>
+              <p>Locul va deveni disponibil pentru alte persoane interesate.</p>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Motiv eliminare (opțional)</label>
+            <select class="select-input" [ngModel]="kickReasonSelect()" (ngModelChange)="kickReasonSelect.set($event)">
+              <option value="Solicitare din partea voluntarului (retragere)">Solicitare din partea voluntarului (retragere)</option>
+              <option value="Neprezentare la ora stabilită fără justificare">Neprezentare la ora stabilită fără justificare</option>
+              <option value="Neîndeplinire cerințe de vârstă / echipament">Neîndeplinire cerințe de vârstă / echipament</option>
+              <option value="Comportament neadecvat / nerespectare regulament">Comportament neadecvat / nerespectare regulament</option>
+              <option value="Alt motiv">Alt motiv...</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Detalii adiționale pentru notificare (opțional)</label>
+            <textarea
+              rows="2"
+              class="textarea-input"
+              placeholder="Scrie detalii suplimentare transmise voluntarului..."
+              [ngModel]="kickReasonText()"
+              (ngModelChange)="kickReasonText.set($event)"
+            ></textarea>
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" [checked]="notifyKickVolunteer()" (change)="notifyKickVolunteer.set(!notifyKickVolunteer())" />
+            <span>Trimite notificare pe email voluntarului cu motivul eliminării</span>
+          </label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">Anulează</button>
+          <button type="button" class="btn-danger" (click)="confirmKickOut()">Elimină din proiect</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 5: ON-SIGHT QR CODE ATTENDANCE SCANNER                   -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'qrScanner') {
+    <div class="modal-backdrop dark" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle emerald">
+              <mat-icon>qr_code_scanner</mat-icon>
+            </div>
+            <div>
+              <h3>Validare Prezență QR la Fața Locului</h3>
+              <p>Scanează codul din aplicația Volunteerio a voluntarului.</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Live QR Scanner Viewport Simulation -->
+          <div class="scanner-viewport">
+            <div class="scanner-reticle">
+              <div class="laser-scan-line"></div>
+              <span class="reticle-label">Îndreaptă camera spre codul QR al voluntarului</span>
+            </div>
+
+            <div class="scanner-controls-bar">
+              <span class="camera-status">
+                <span class="pulse-dot-green"></span>
+                Camera activă (1080p)
+              </span>
+              <button type="button" class="btn-switch-cam">Schimbă camera</button>
+            </div>
+          </div>
+
+          <!-- Quick Test Simulation Controls -->
+          <div class="quick-scan-box">
+            <label class="field-label">Simulează scanarea rapidă a unui voluntar neconfirmat:</label>
+            <div class="quick-scan-row">
+              <select
+                class="select-input select-flex"
+                [ngModel]="quickScanSelectId()"
+                (ngModelChange)="quickScanSelectId.set(+$event)"
+              >
+                @for (volunteer of pendingVolunteers(); track volunteer.id) {
+                  <option [value]="volunteer.id">{{ volunteer.name }} ({{ volunteer.role }})</option>
+                } @empty {
+                  <option [value]="null">Toți voluntarii au fost deja confirmați!</option>
+                }
+              </select>
+              <button
+                type="button"
+                class="btn-scan-now"
+                [disabled]="pendingVolunteers().length === 0"
+                (click)="simulateScanSelected()"
+              >
+                Scanează acum
+              </button>
+            </div>
+          </div>
+
+          <!-- Manual code fallback -->
+          <div class="manual-code-row">
+            <span>Nu funcționează camera?</span>
+            <button type="button" class="btn-manual-link" (click)="promptManualCheckin()">
+              Introdu codul manual (bilet/PIN)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TOAST NOTIFICATION POPUP -->
+  <div class="toast-notification" [class.show]="toastVisible()">
+    <div class="toast-card">
+      <span class="toast-check">✓</span>
+      <span class="toast-text">{{ toastMessage() }}</span>
+    </div>
+  </div>
+</div>
