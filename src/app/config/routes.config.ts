@@ -12,6 +12,11 @@ export const APP_ROUTES = {
   MODERATION: 'moderare',
   OTP: 'confirmare-otp',
   HOME_AUTH: 'home-auth',
+  PROFILE: 'profil',
+  SETTINGS: 'setari',
+  TERMS: 'termeni',
+  PRIVACY: 'confidentialitate',
+  COOKIES: 'cookies',
   NOT_FOUND: '**'
 } as const;
 
@@ -29,6 +34,11 @@ export const ROUTE_HELPERS = {
   signup: () => `/${APP_ROUTES.SIGNUP}`,
   otp: () => `/${APP_ROUTES.OTP}`,
   homeAuth: () => `/${APP_ROUTES.HOME_AUTH}`,
+  profile: () => `/${APP_ROUTES.PROFILE}`,
+  settings: () => `/${APP_ROUTES.SETTINGS}`,
+  terms: () => `/${APP_ROUTES.TERMS}`,
+  privacy: () => `/${APP_ROUTES.PRIVACY}`,
+  cookies: () => `/${APP_ROUTES.COOKIES}`,
   addEvent: () => `/${APP_ROUTES.ADD_EVENT}`,
   moderation: () => `/${APP_ROUTES.MODERATION}`,
   editEvent: (id: string | number) => `/${APP_ROUTES.EDIT_EVENT.replace(':id', String(id))}`,

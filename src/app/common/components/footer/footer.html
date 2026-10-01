@@ -7,7 +7,7 @@
     <div class="footer-grid">
       <!-- Col 1: Brand Info & Socials -->
       <div class="footer-col brand-col">
-        <a routerLink="/" class="footer-brand-logo">
+        <a [routerLink]="brandRoute()" class="footer-brand-logo">
           <div class="brand-icon-circle">
             <svg class="brand-svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
@@ -49,7 +49,7 @@
       <div class="footer-col links-col">
         <h4 class="footer-heading">{{ 'FOOTER.EXPLORE_TITLE' | translate }}</h4>
         <ul class="footer-link-list">
-          <li><a routerLink="/" class="footer-link">{{ 'FOOTER.PROJECTS' | translate }}</a></li>
+          <li><a routerLink="/proiecte" class="footer-link">{{ 'FOOTER.PROJECTS' | translate }}</a></li>
           <li><a routerLink="/proiecte" class="footer-link">{{ 'FOOTER.CATEGORIES' | translate }}</a></li>
           <li><a routerLink="/organizatii" class="footer-link">{{ 'FOOTER.ORGANIZATIONS' | translate }}</a></li>
           <li><a routerLink="/calendar" class="footer-link">{{ 'FOOTER.CALENDAR' | translate }}</a></li>

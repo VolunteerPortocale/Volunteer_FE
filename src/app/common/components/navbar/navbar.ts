@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +29,8 @@ export class NavbarComponent {
   readonly translationService = inject(TranslationService);
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  readonly brandRoute = computed(() => this.authService.isAuthenticated() ? '/home-auth' : '/');
 
   changeLanguage(lang: SupportedLanguage): void {
     this.translationService.setLanguage(lang);

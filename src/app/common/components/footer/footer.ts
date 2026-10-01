@@ -1,10 +1,11 @@
-import { Component, signal, inject, HostListener, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, signal, inject, computed, HostListener, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '../../pipes/translate-pipe';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-footer',
@@ -22,6 +23,8 @@ import { TranslatePipe } from '../../pipes/translate-pipe';
 })
 export class FooterComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
+  readonly authService = inject(AuthService);
+  readonly brandRoute = computed(() => this.authService.isAuthenticated() ? '/home-auth' : '/');
   readonly currentYear = new Date().getFullYear();
   readonly email = signal<string>('');
   readonly subscribed = signal<boolean>(false);

@@ -3,10 +3,12 @@ import { APP_ROUTES } from './config/routes.config';
 import { USER_ROLES } from './config/roles.config';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
+import { homeRedirectGuard } from './core/guards/home-redirect.guard';
 
 export const routes: Routes = [
   {
     path: APP_ROUTES.HOME,
+    canActivate: [homeRedirectGuard],
     loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent)
   },
   {
@@ -45,6 +47,40 @@ export const routes: Routes = [
   {
     path: APP_ROUTES.OTP,
     loadComponent: () => import('./pages/otp-confirmation/otp-confirmation').then(m => m.OtpConfirmationComponent)
+  },
+  {
+    path: APP_ROUTES.ABOUT,
+    loadComponent: () => import('./pages/about/about').then(m => m.AboutComponent)
+  },
+  {
+    path: APP_ROUTES.PROFILE,
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/profile/profile').then(m => m.ProfileComponent)
+  },
+  {
+    path: APP_ROUTES.SETTINGS,
+    canActivate: [authGuard],
+    loadComponent: () => import('./pages/settings/settings').then(m => m.SettingsComponent)
+  },
+  {
+    path: APP_ROUTES.TERMS,
+    loadComponent: () => import('./pages/terms/terms').then(m => m.TermsComponent)
+  },
+  {
+    path: APP_ROUTES.PRIVACY,
+    loadComponent: () => import('./pages/terms/terms').then(m => m.TermsComponent)
+  },
+  {
+    path: APP_ROUTES.COOKIES,
+    loadComponent: () => import('./pages/terms/terms').then(m => m.TermsComponent)
+  },
+  {
+    path: 'termeni-si-conditii',
+    redirectTo: APP_ROUTES.TERMS
+  },
+  {
+    path: 'politica-de-confidentialitate',
+    redirectTo: APP_ROUTES.PRIVACY
   },
   // moderation route:
   // {
