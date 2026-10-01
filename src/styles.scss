@@ -21,11 +21,39 @@ html {
   --color-primary: #2b4c3f; // Primary green (buttons, headers)
   --color-primary-hover: #1f3a2e;
   --color-primary-soft: #e9efeb;
+  --color-primary-dark: #122c20;
   --color-dark-grey: #3a3a3a; // Text color
   --color-dark-grey-hover: #222222;
   --color-light-grey: #f4f5f4; // First background
   --color-medium-grey: #757575;
   --color-white: #ffffff; // Second background
+
+  // Semantic status colors
+  --color-success: #15803d;
+  --color-success-hover: #166534;
+  --color-success-soft: #ecfdf5;
+  --color-success-border: #a7f3d0;
+
+  --color-warning: #b45309;
+  --color-warning-soft: #fffbeb;
+  --color-warning-border: #fcd34d;
+
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-soft: #fef2f2;
+  --color-danger-border: #fecaca;
+
+  --color-info: #0284c7;
+  --color-info-soft: #f0f9ff;
+  --color-info-border: #bae6fd;
+
+  // Surfaces and borders
+  --color-bg-subtle: #f8fafc;
+  --color-bg-hover: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #cbd5e1;
+  --color-text-muted: #64748b;
+  --color-text-body: #1e293b;
 
 
   // UI elements

@@ -20,4 +20,14 @@ describe('NavbarComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should return "/" for brandRoute when user is unauthenticated', () => {
+    component.authService.isAuthenticated.set(false);
+    expect(component.brandRoute()).toBe('/');
+  });
+
+  it('should return "/home-auth" for brandRoute when user is authenticated', () => {
+    component.authService.isAuthenticated.set(true);
+    expect(component.brandRoute()).toBe('/home-auth');
+  });
 });

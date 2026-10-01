@@ -1,0 +1,538 @@
+<div class="legal-page">
+  <!-- Hero Section -->
+  <section class="legal-hero">
+    <div class="container hero-content">
+      <div class="hero-top-badge">
+        <mat-icon>gavel</mat-icon>
+        <span>{{ 'LEGAL.HERO.BADGE' | translate }}</span>
+      </div>
+
+      <h1 class="hero-title">{{ 'LEGAL.HERO.TITLE' | translate }}</h1>
+      <p class="hero-desc">{{ 'LEGAL.HERO.DESC' | translate }}</p>
+
+      <div class="hero-meta-strip">
+        <div class="meta-item">
+          <mat-icon>update</mat-icon>
+          <span>{{ 'LEGAL.HERO.LAST_UPDATED_LABEL' | translate }} <strong>{{ lastUpdated }}</strong></span>
+        </div>
+        <div class="meta-item">
+          <mat-icon>verified</mat-icon>
+          <span>{{ 'LEGAL.HERO.COMPLIANCE_LABEL' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Legal Navigation Tabs Strip -->
+  <div class="legal-tabs-wrapper">
+    <div class="container tabs-container">
+      <nav class="legal-nav-tabs" role="tablist">
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'terms'"
+          [class.active]="activeTab() === 'terms'"
+          (click)="setTab('terms')"
+        >
+          <mat-icon>description</mat-icon>
+          <span>{{ 'LEGAL.TABS.TERMS' | translate }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'privacy'"
+          [class.active]="activeTab() === 'privacy'"
+          (click)="setTab('privacy')"
+        >
+          <mat-icon>shield</mat-icon>
+          <span>{{ 'LEGAL.TABS.PRIVACY' | translate }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="tab-btn"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'cookies'"
+          [class.active]="activeTab() === 'cookies'"
+          (click)="setTab('cookies')"
+        >
+          <mat-icon>cookie</mat-icon>
+          <span>{{ 'LEGAL.TABS.COOKIES' | translate }}</span>
+        </button>
+      </nav>
+
+      <button type="button" class="print-btn" (click)="printDocument()" [title]="'LEGAL.TABS.PRINT' | translate">
+        <mat-icon>print</mat-icon>
+        <span>{{ 'LEGAL.TABS.PRINT' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Layout -->
+  <div class="container legal-body-container">
+    <div class="legal-layout-grid">
+      <!-- Left Table of Contents Sidebar -->
+      <aside class="legal-sidebar">
+        <div class="toc-card">
+          <h3 class="toc-title">
+            <mat-icon>menu_book</mat-icon>
+            <span>{{ 'LEGAL.TOC.TITLE' | translate }}</span>
+          </h3>
+
+          @if (activeTab() === 'terms') {
+            <ul class="toc-list">
+              <li><button type="button" (click)="scrollToSection('art-1')">{{ 'LEGAL.TOC.TERMS.ART1' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('art-2')">{{ 'LEGAL.TOC.TERMS.ART2' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('art-3')">{{ 'LEGAL.TOC.TERMS.ART3' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('art-4')">{{ 'LEGAL.TOC.TERMS.ART4' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('art-5')">{{ 'LEGAL.TOC.TERMS.ART5' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('art-6')">{{ 'LEGAL.TOC.TERMS.ART6' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('art-7')">{{ 'LEGAL.TOC.TERMS.ART7' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('art-8')">{{ 'LEGAL.TOC.TERMS.ART8' | translate }}</button></li>
+            </ul>
+          }
+
+          @if (activeTab() === 'privacy') {
+            <ul class="toc-list">
+              <li><button type="button" (click)="scrollToSection('priv-1')">{{ 'LEGAL.TOC.PRIVACY.ART1' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('priv-2')">{{ 'LEGAL.TOC.PRIVACY.ART2' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('priv-3')">{{ 'LEGAL.TOC.PRIVACY.ART3' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('priv-4')">{{ 'LEGAL.TOC.PRIVACY.ART4' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('priv-5')">{{ 'LEGAL.TOC.PRIVACY.ART5' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('priv-6')">{{ 'LEGAL.TOC.PRIVACY.ART6' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('priv-7')">{{ 'LEGAL.TOC.PRIVACY.ART7' | translate }}</button></li>
+            </ul>
+          }
+
+          @if (activeTab() === 'cookies') {
+            <ul class="toc-list">
+              <li><button type="button" (click)="scrollToSection('cook-1')">{{ 'LEGAL.TOC.COOKIES.ART1' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('cook-2')">{{ 'LEGAL.TOC.COOKIES.ART2' | translate }}</button></li>
+              <li><button type="button" (click)="scrollToSection('cook-3')">{{ 'LEGAL.TOC.COOKIES.ART3' | translate }}</button></li>
+            </ul>
+          }
+
+          <div class="sidebar-contact-box">
+            <mat-icon class="box-icon">help_outline</mat-icon>
+            <h4>{{ 'LEGAL.TOC.HELP_TITLE' | translate }}</h4>
+            <p>{{ 'LEGAL.TOC.HELP_DESC' | translate }}</p>
+            <a href="mailto:juridic@volunteerio.md" class="contact-link">juridic&#64;volunteerio.md</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Document Viewer -->
+      <main class="legal-content-card">
+        <!-- ============================================== -->
+        <!-- TAB 1: TERMENI ȘI CONDIȚII                     -->
+        <!-- ============================================== -->
+        @if (activeTab() === 'terms') {
+          <article class="legal-document">
+            <header class="doc-header">
+              <span class="doc-badge">{{ 'LEGAL.TERMS.DOC_BADGE' | translate }}</span>
+              <h2>{{ 'LEGAL.TERMS.DOC_TITLE' | translate }}</h2>
+              <p class="doc-lead">{{ 'LEGAL.TERMS.DOC_LEAD' | translate }}</p>
+            </header>
+
+            <mat-divider></mat-divider>
+
+            <!-- Articolul 1 -->
+            <section id="art-1" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">1.</span>
+                {{ 'LEGAL.TERMS.ART1_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.TERMS.ART1_P1' | translate }}</p>
+
+              <div class="definitions-grid">
+                <div class="def-box">
+                  <strong>{{ 'LEGAL.TERMS.DEF_VOLUNTEERING_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.TERMS.DEF_VOLUNTEERING_DESC' | translate }}</p>
+                </div>
+                <div class="def-box">
+                  <strong>{{ 'LEGAL.TERMS.DEF_VOLUNTEER_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.TERMS.DEF_VOLUNTEER_DESC' | translate }}</p>
+                </div>
+                <div class="def-box">
+                  <strong>{{ 'LEGAL.TERMS.DEF_HOST_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.TERMS.DEF_HOST_DESC' | translate }}</p>
+                </div>
+                <div class="def-box">
+                  <strong>{{ 'LEGAL.TERMS.DEF_COORD_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.TERMS.DEF_COORD_DESC' | translate }}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Articolul 2 -->
+            <section id="art-2" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">2.</span>
+                {{ 'LEGAL.TERMS.ART2_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.TERMS.ART2_P1' | translate }}</p>
+              <ul class="legal-bullets">
+                <li>{{ 'LEGAL.TERMS.LAW_121' | translate }}</li>
+                <li>{{ 'LEGAL.TERMS.LAW_86' | translate }}</li>
+                <li>{{ 'LEGAL.TERMS.LAW_133' | translate }}</li>
+                <li>{{ 'LEGAL.TERMS.CIVIL_CODE' | translate }}</li>
+              </ul>
+              <div class="callout-notice">
+                <mat-icon>info</mat-icon>
+                <div>
+                  <strong>{{ 'LEGAL.TERMS.CALLOUT_IMPORTANT' | translate }}</strong>
+                  <em> {{ 'LEGAL.TERMS.CALLOUT_TEXT' | translate }}</em>
+                </div>
+              </div>
+            </section>
+
+            <!-- Articolul 3 -->
+            <section id="art-3" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">3.</span>
+                {{ 'LEGAL.TERMS.ART3_TITLE' | translate }}
+              </h3>
+              <div class="article-body">
+                <p><strong>{{ 'LEGAL.TERMS.AGE_TITLE' | translate }}</strong></p>
+                <ul>
+                  <li>{{ 'LEGAL.TERMS.AGE_18' | translate }}</li>
+                  <li>{{ 'LEGAL.TERMS.AGE_14_18' | translate }}</li>
+                </ul>
+                <p><strong>{{ 'LEGAL.TERMS.DATA_ACCURACY_TITLE' | translate }}</strong> {{ 'LEGAL.TERMS.DATA_ACCURACY_DESC' | translate }}</p>
+                <p><strong>{{ 'LEGAL.TERMS.CREDENTIALS_TITLE' | translate }}</strong> {{ 'LEGAL.TERMS.CREDENTIALS_DESC' | translate }}</p>
+              </div>
+            </section>
+
+            <!-- Articolul 4 -->
+            <section id="art-4" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">4.</span>
+                {{ 'LEGAL.TERMS.ART4_TITLE' | translate }}
+              </h3>
+              <div class="columns-2">
+                <div class="col-card">
+                  <h4><mat-icon>check_circle</mat-icon> {{ 'LEGAL.TERMS.VOL_RIGHTS_TITLE' | translate }}</h4>
+                  <ul>
+                    <li>{{ 'LEGAL.TERMS.VOL_RIGHT1' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_RIGHT2' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_RIGHT3' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_RIGHT4' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_RIGHT5' | translate }}</li>
+                  </ul>
+                </div>
+
+                <div class="col-card">
+                  <h4><mat-icon>assignment</mat-icon> {{ 'LEGAL.TERMS.VOL_OBLIG_TITLE' | translate }}</h4>
+                  <ul>
+                    <li>{{ 'LEGAL.TERMS.VOL_OBLIG1' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_OBLIG2' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_OBLIG3' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_OBLIG4' | translate }}</li>
+                    <li>{{ 'LEGAL.TERMS.VOL_OBLIG5' | translate }}</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- Articolul 5 -->
+            <section id="art-5" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">5.</span>
+                {{ 'LEGAL.TERMS.ART5_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.TERMS.NGO_INTRO' | translate }}</p>
+              <ul class="legal-bullets">
+                <li>{{ 'LEGAL.TERMS.NGO_REQ1' | translate }}</li>
+                <li>{{ 'LEGAL.TERMS.NGO_REQ2' | translate }}</li>
+                <li>{{ 'LEGAL.TERMS.NGO_REQ3' | translate }}</li>
+                <li>{{ 'LEGAL.TERMS.NGO_REQ4' | translate }}</li>
+                <li>{{ 'LEGAL.TERMS.NGO_REQ5' | translate }}</li>
+              </ul>
+            </section>
+
+            <!-- Articolul 6 -->
+            <section id="art-6" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">6.</span>
+                {{ 'LEGAL.TERMS.ART6_TITLE' | translate }}
+              </h3>
+              <div class="prohibited-grid">
+                <div class="prohibited-item">
+                  <mat-icon>block</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.TERMS.NO_DISCRIM_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.TERMS.NO_DISCRIM_DESC' | translate }}</p>
+                  </div>
+                </div>
+                <div class="prohibited-item">
+                  <mat-icon>campaign</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.TERMS.NO_POLITICS_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.TERMS.NO_POLITICS_DESC' | translate }}</p>
+                  </div>
+                </div>
+                <div class="prohibited-item">
+                  <mat-icon>paid</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.TERMS.NO_COMMERCIAL_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.TERMS.NO_COMMERCIAL_DESC' | translate }}</p>
+                  </div>
+                </div>
+                <div class="prohibited-item">
+                  <mat-icon>security</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.TERMS.DIGITAL_INTEGRITY_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.TERMS.DIGITAL_INTEGRITY_DESC' | translate }}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Articolul 7 -->
+            <section id="art-7" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">7.</span>
+                {{ 'LEGAL.TERMS.ART7_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.TERMS.ART7_P1' | translate }}</p>
+            </section>
+
+            <!-- Articolul 8 -->
+            <section id="art-8" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">8.</span>
+                {{ 'LEGAL.TERMS.ART8_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.TERMS.ART8_P1' | translate }}</p>
+              <p>{{ 'LEGAL.TERMS.ART8_P2' | translate }}</p>
+            </section>
+          </article>
+        }
+
+        <!-- ============================================== -->
+        <!-- TAB 2: POLITICA DE CONFIDENȚIALITATE           -->
+        <!-- ============================================== -->
+        @if (activeTab() === 'privacy') {
+          <article class="legal-document">
+            <header class="doc-header">
+              <span class="doc-badge privacy-badge">{{ 'LEGAL.PRIVACY.DOC_BADGE' | translate }}</span>
+              <h2>{{ 'LEGAL.PRIVACY.DOC_TITLE' | translate }}</h2>
+              <p class="doc-lead">{{ 'LEGAL.PRIVACY.DOC_LEAD' | translate }}</p>
+            </header>
+
+            <mat-divider></mat-divider>
+
+            <!-- Articolul 1 Privacy -->
+            <section id="priv-1" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">1.</span>
+                {{ 'LEGAL.PRIVACY.ART1_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.PRIVACY.ART1_P1' | translate }}</p>
+            </section>
+
+            <!-- Articolul 2 Privacy -->
+            <section id="priv-2" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">2.</span>
+                {{ 'LEGAL.PRIVACY.ART2_TITLE' | translate }}
+              </h3>
+              <div class="data-categories-list">
+                <div class="data-cat-card">
+                  <mat-icon>person</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.PRIVACY.CAT_IDENTITY_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.PRIVACY.CAT_IDENTITY_DESC' | translate }}</p>
+                  </div>
+                </div>
+
+                <div class="data-cat-card">
+                  <mat-icon>phone</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.PRIVACY.CAT_CONTACT_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.PRIVACY.CAT_CONTACT_DESC' | translate }}</p>
+                  </div>
+                </div>
+
+                <div class="data-cat-card">
+                  <mat-icon>timeline</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.PRIVACY.CAT_ACTIVITY_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.PRIVACY.CAT_ACTIVITY_DESC' | translate }}</p>
+                  </div>
+                </div>
+
+                <div class="data-cat-card">
+                  <mat-icon>devices</mat-icon>
+                  <div>
+                    <strong>{{ 'LEGAL.PRIVACY.CAT_TECH_TITLE' | translate }}</strong>
+                    <p>{{ 'LEGAL.PRIVACY.CAT_TECH_DESC' | translate }}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Articolul 3 Privacy -->
+            <section id="priv-3" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">3.</span>
+                {{ 'LEGAL.PRIVACY.ART3_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.PRIVACY.ART3_INTRO' | translate }}</p>
+              <ul class="legal-bullets">
+                <li>{{ 'LEGAL.PRIVACY.LEGAL_AGREEMENT' | translate }}</li>
+                <li>{{ 'LEGAL.PRIVACY.LEGAL_CONSENT' | translate }}</li>
+                <li>{{ 'LEGAL.PRIVACY.LEGAL_OBLIGATION' | translate }}</li>
+                <li>{{ 'LEGAL.PRIVACY.LEGAL_INTEREST' | translate }}</li>
+              </ul>
+            </section>
+
+            <!-- Articolul 4 Privacy -->
+            <section id="priv-4" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">4.</span>
+                {{ 'LEGAL.PRIVACY.ART4_TITLE' | translate }}
+              </h3>
+              <p><strong>{{ 'LEGAL.PRIVACY.ART4_STRONG' | translate }}</strong></p>
+              <p>{{ 'LEGAL.PRIVACY.ART4_P2' | translate }}</p>
+            </section>
+
+            <!-- Articolul 5 Privacy -->
+            <section id="priv-5" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">5.</span>
+                {{ 'LEGAL.PRIVACY.ART5_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.PRIVACY.ART5_INTRO' | translate }}</p>
+              <div class="rights-grid">
+                <div class="right-box">
+                  <mat-icon>visibility</mat-icon>
+                  <strong>{{ 'LEGAL.PRIVACY.RIGHT_ACCESS_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.PRIVACY.RIGHT_ACCESS_DESC' | translate }}</p>
+                </div>
+
+                <div class="right-box">
+                  <mat-icon>edit</mat-icon>
+                  <strong>{{ 'LEGAL.PRIVACY.RIGHT_RECTIFY_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.PRIVACY.RIGHT_RECTIFY_DESC' | translate }}</p>
+                </div>
+
+                <div class="right-box">
+                  <mat-icon>delete_forever</mat-icon>
+                  <strong>{{ 'LEGAL.PRIVACY.RIGHT_ERASE_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.PRIVACY.RIGHT_ERASE_DESC' | translate }}</p>
+                </div>
+
+                <div class="right-box">
+                  <mat-icon>cancel</mat-icon>
+                  <strong>{{ 'LEGAL.PRIVACY.RIGHT_CONSENT_TITLE' | translate }}</strong>
+                  <p>{{ 'LEGAL.PRIVACY.RIGHT_CONSENT_DESC' | translate }}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Articolul 6 Privacy -->
+            <section id="priv-6" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">6.</span>
+                {{ 'LEGAL.PRIVACY.ART6_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.PRIVACY.ART6_P1' | translate }}</p>
+            </section>
+
+            <!-- Articolul 7 Privacy -->
+            <section id="priv-7" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">7.</span>
+                {{ 'LEGAL.PRIVACY.ART7_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.PRIVACY.ART7_P1' | translate }}</p>
+              <div class="contact-pill-card">
+                <mat-icon>email</mat-icon>
+                <div>
+                  <strong>{{ 'LEGAL.PRIVACY.DPO_CARD_LABEL' | translate }}</strong>
+                  <a href="mailto:privacy@volunteerio.md">privacy&#64;volunteerio.md</a>
+                </div>
+              </div>
+            </section>
+          </article>
+        }
+
+        <!-- ============================================== -->
+        <!-- TAB 3: POLITICA COOKIE-URI                     -->
+        <!-- ============================================== -->
+        @if (activeTab() === 'cookies') {
+          <article class="legal-document">
+            <header class="doc-header">
+              <span class="doc-badge cookie-badge">{{ 'LEGAL.COOKIES.DOC_BADGE' | translate }}</span>
+              <h2>{{ 'LEGAL.COOKIES.DOC_TITLE' | translate }}</h2>
+              <p class="doc-lead">{{ 'LEGAL.COOKIES.DOC_LEAD' | translate }}</p>
+            </header>
+
+            <mat-divider></mat-divider>
+
+            <section id="cook-1" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">1.</span>
+                {{ 'LEGAL.COOKIES.ART1_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.COOKIES.ART1_P1' | translate }}</p>
+            </section>
+
+            <section id="cook-2" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">2.</span>
+                {{ 'LEGAL.COOKIES.ART2_TITLE' | translate }}
+              </h3>
+              <div class="cookies-table-wrap">
+                <table class="cookies-table">
+                  <thead>
+                    <tr>
+                      <th>{{ 'LEGAL.COOKIES.TABLE_HEAD_TYPE' | translate }}</th>
+                      <th>{{ 'LEGAL.COOKIES.TABLE_HEAD_PURPOSE' | translate }}</th>
+                      <th>{{ 'LEGAL.COOKIES.TABLE_HEAD_DURATION' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>{{ 'LEGAL.COOKIES.COOKIE_AUTH_TYPE' | translate }}</strong></td>
+                      <td>{{ 'LEGAL.COOKIES.COOKIE_AUTH_PURPOSE' | translate }}</td>
+                      <td>{{ 'LEGAL.COOKIES.COOKIE_AUTH_DURATION' | translate }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>{{ 'LEGAL.COOKIES.COOKIE_LANG_TYPE' | translate }}</strong></td>
+                      <td>{{ 'LEGAL.COOKIES.COOKIE_LANG_PURPOSE' | translate }}</td>
+                      <td>{{ 'LEGAL.COOKIES.COOKIE_LANG_DURATION' | translate }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>{{ 'LEGAL.COOKIES.COOKIE_CSRF_TYPE' | translate }}</strong></td>
+                      <td>{{ 'LEGAL.COOKIES.COOKIE_CSRF_PURPOSE' | translate }}</td>
+                      <td>{{ 'LEGAL.COOKIES.COOKIE_CSRF_DURATION' | translate }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="cookie-note">
+                <mat-icon>check_circle</mat-icon>
+                <span><strong>{{ 'LEGAL.COOKIES.COOKIE_NOTE_LABEL' | translate }}</strong> {{ 'LEGAL.COOKIES.COOKIE_NOTE_TEXT' | translate }}</span>
+              </p>
+            </section>
+
+            <section id="cook-3" class="doc-section">
+              <h3 class="section-title">
+                <span class="num">3.</span>
+                {{ 'LEGAL.COOKIES.ART3_TITLE' | translate }}
+              </h3>
+              <p>{{ 'LEGAL.COOKIES.ART3_P1' | translate }}</p>
+            </section>
+          </article>
+        }
+      </main>
+    </div>
+  </div>
+</div>
+
+<app-footer />

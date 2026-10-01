@@ -1,0 +1,145 @@
+<footer class="app-footer" role="contentinfo">
+  <!-- Accent Top Border Glow -->
+  <div class="footer-top-accent"></div>
+
+  <div class="footer-container">
+    <!-- Main Footer Grid (Brand, Links, Newsletter) -->
+    <div class="footer-grid">
+      <!-- Col 1: Brand Info & Socials -->
+      <div class="footer-col brand-col">
+        <a [routerLink]="brandRoute()" class="footer-brand-logo">
+          <div class="brand-icon-circle">
+            <img src="assets/icons/brand-logo.svg" alt="Volunteerio Logo" class="brand-svg" />
+          </div>
+          <span class="brand-name">VOLUNTEERIO</span>
+        </a>
+
+        <p class="brand-tagline">
+          {{ 'FOOTER.TAGLINE' | translate }}
+        </p>
+
+        <!-- Social Media Icons -->
+        <div class="social-links" aria-label="Social media links">
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="Facebook" aria-label="Facebook">
+            <img src="assets/icons/facebook.svg" alt="Facebook" class="social-svg" />
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="Instagram" aria-label="Instagram">
+            <img src="assets/icons/instagram.svg" alt="Instagram" class="social-svg" />
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-btn" title="LinkedIn" aria-label="LinkedIn">
+            <img src="assets/icons/linkedin.svg" alt="LinkedIn" class="social-svg" />
+          </a>
+          <a href="https://t.me" target="_blank" rel="noopener noreferrer" class="social-btn" title="Telegram" aria-label="Telegram">
+            <img src="assets/icons/telegram.svg" alt="Telegram" class="social-svg" />
+          </a>
+        </div>
+      </div>
+
+      <!-- Col 2: Explore Links -->
+      <div class="footer-col links-col">
+        <h4 class="footer-heading">{{ 'FOOTER.EXPLORE_TITLE' | translate }}</h4>
+        <ul class="footer-link-list">
+          <li><a routerLink="/proiecte" class="footer-link">{{ 'FOOTER.PROJECTS' | translate }}</a></li>
+          <li><a routerLink="/proiecte" class="footer-link">{{ 'FOOTER.CATEGORIES' | translate }}</a></li>
+          <li><a routerLink="/organizatii" class="footer-link">{{ 'FOOTER.ORGANIZATIONS' | translate }}</a></li>
+          <li><a routerLink="/calendar" class="footer-link">{{ 'FOOTER.CALENDAR' | translate }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: For Organizations -->
+      <div class="footer-col links-col">
+        <h4 class="footer-heading">{{ 'FOOTER.ORGANIZATIONS_TITLE' | translate }}</h4>
+        <ul class="footer-link-list">
+          <li><a routerLink="/adauga-eveniment" class="footer-link">{{ 'FOOTER.ADD_EVENT' | translate }}</a></li>
+          <li><a routerLink="/inregistrare" class="footer-link">{{ 'FOOTER.NGO_REGISTER' | translate }}</a></li>
+          <li><a routerLink="/despre" class="footer-link">{{ 'FOOTER.GUIDELINES' | translate }}</a></li>
+          <li><a routerLink="/despre" class="footer-link">{{ 'FOOTER.RESOURCES' | translate }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: About Us -->
+      <div class="footer-col links-col">
+        <h4 class="footer-heading">{{ 'FOOTER.ABOUT_TITLE' | translate }}</h4>
+        <ul class="footer-link-list">
+          <li><a routerLink="/despre" class="footer-link">{{ 'FOOTER.MISSION' | translate }}</a></li>
+          <li><a routerLink="/despre" class="footer-link">{{ 'FOOTER.IMPACT' | translate }}</a></li>
+          <li><a routerLink="/despre" class="footer-link">{{ 'FOOTER.STORIES' | translate }}</a></li>
+          <li><a routerLink="/contact" class="footer-link">{{ 'FOOTER.CONTACT' | translate }}</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 5: Newsletter Subscription Card -->
+      <div class="footer-col newsletter-col">
+        <div class="newsletter-card">
+          <div class="newsletter-header">
+            <mat-icon class="newsletter-icon">mark_email_read</mat-icon>
+            <h4 class="newsletter-title">{{ 'FOOTER.NEWSLETTER_TITLE' | translate }}</h4>
+          </div>
+          <p class="newsletter-desc">
+            {{ 'FOOTER.NEWSLETTER_DESC' | translate }}
+          </p>
+
+          @if (subscribed()) {
+            <div class="subscribe-success">
+              <mat-icon class="success-icon">check_circle</mat-icon>
+              <span>{{ 'FOOTER.SUBSCRIBE_SUCCESS' | translate }}</span>
+            </div>
+          } @else {
+            <form (submit)="onSubscribe($event)" class="newsletter-form">
+              <div class="newsletter-input-wrap">
+                <input
+                  type="email"
+                  [ngModel]="email()"
+                  (ngModelChange)="email.set($event)"
+                  name="footerEmail"
+                  [placeholder]="'FOOTER.EMAIL_PLACEHOLDER' | translate"
+                  class="newsletter-input"
+                  required
+                />
+                <button type="submit" class="newsletter-submit-btn" aria-label="Subscribe to newsletter">
+                  <mat-icon>send</mat-icon>
+                </button>
+              </div>
+              @if (errorMessage()) {
+                <span class="newsletter-error">{{ errorMessage() }}</span>
+              }
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar (Legal, Copyright & Scroll to Top) -->
+    <div class="footer-bottom-bar">
+      <div class="copyright-text">
+        &copy; {{ currentYear }} <strong class="brand-highlight">VOLUNTEERIO</strong>. {{ 'FOOTER.ALL_RIGHTS' | translate }}
+      </div>
+
+      <div class="legal-links">
+        <a routerLink="/termeni" class="legal-link">{{ 'FOOTER.TERMS' | translate }}</a>
+        <span class="legal-sep">&bull;</span>
+        <a routerLink="/confidentialitate" class="legal-link">{{ 'FOOTER.PRIVACY' | translate }}</a>
+        <span class="legal-sep">&bull;</span>
+        <a routerLink="/cookies" class="legal-link">{{ 'FOOTER.COOKIES' | translate }}</a>
+      </div>
+
+      <div class="footer-bottom-right">
+        <span class="made-in-md">
+          🇲🇩 {{ 'FOOTER.MADE_WITH' | translate }}
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Floating Scroll to Top Button (always visible when scrolled down) -->
+<button
+  type="button"
+  class="floating-scroll-top-btn"
+  [class.visible]="showScrollTop()"
+  (click)="scrollToTop()"
+  title="Mergi sus"
+  aria-label="Scroll to top"
+>
+  <mat-icon class="scroll-icon">keyboard_arrow_up</mat-icon>
+</button>

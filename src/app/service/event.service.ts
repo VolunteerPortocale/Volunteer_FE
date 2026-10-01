@@ -14,11 +14,15 @@ export interface AttachedFile {
 export interface EventItem {
   id: string;
   title: string;
+  titleKey?: string;
   description: string;
+  descriptionKey?: string;
   startDateTime: string;
   endDateTime?: string;
   location: string;
+  locationKey?: string;
   volunteers: number;
+  occupiedSpots?: number;
   organization: string;
   email?: string;
   phone?: string;
@@ -38,11 +42,15 @@ const INITIAL_EVENTS: EventItem[] = [
   {
     id: 'eco-forest',
     title: 'Plantăm păduri comunitare',
+    titleKey: 'PROJECTS.CARD_1.TITLE',
     description: 'Alătură-te echipei pentru a planta peste 2.000 de puieți și a revitaliza spațiile verzi locale.',
+    descriptionKey: 'PROJECTS.CARD_1.DESCRIPTION',
     startDateTime: '2026-10-03T09:00',
     endDateTime: '2026-10-03T17:00',
     location: 'Strășeni, Moldova',
+    locationKey: 'PROJECTS.CARD_1.LOCATION',
     volunteers: 40,
+    occupiedSpots: 32,
     organization: 'Eco Moldova',
     email: 'contact@ecomoldova.md',
     phone: '+373 69 111 222',
@@ -59,11 +67,15 @@ const INITIAL_EVENTS: EventItem[] = [
   {
     id: 'senior-digital',
     title: 'Competențe digitale pentru seniori',
+    titleKey: 'PROJECTS.CARD_2.TITLE',
     description: 'Ajută persoanele în vârstă să folosească servicii digitale, smartphone-uri și internetul în siguranță.',
+    descriptionKey: 'PROJECTS.CARD_2.DESCRIPTION',
     startDateTime: '2026-10-10T10:00',
     endDateTime: '2026-10-10T14:00',
     location: 'Chișinău, Moldova',
+    locationKey: 'PROJECTS.CARD_2.LOCATION',
     volunteers: 20,
+    occupiedSpots: 14,
     organization: 'Generații Împreună',
     email: 'info@generatii.md',
     phone: '+373 69 333 444',
@@ -80,11 +92,15 @@ const INITIAL_EVENTS: EventItem[] = [
   {
     id: 'shelter-animals',
     title: 'Sprijin pentru adăpostul de animale',
+    titleKey: 'PROJECTS.CARD_3.TITLE',
     description: 'Oferă îngrijire, hrană și afecțiune animalelor abandonate care așteaptă o familie.',
+    descriptionKey: 'PROJECTS.CARD_3.DESCRIPTION',
     startDateTime: '2026-10-17T09:30',
     endDateTime: '2026-10-17T15:00',
     location: 'Bălți, Moldova',
+    locationKey: 'PROJECTS.CARD_3.LOCATION',
     volunteers: 25,
+    occupiedSpots: 18,
     organization: 'Casa Blănoșilor',
     email: 'adoptie@casablanosilor.md',
     phone: '+373 69 555 666',
@@ -198,7 +214,19 @@ export class EventService {
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed;
+            return parsed.map((item: EventItem) => {
+              const predefined = INITIAL_EVENTS.find((init) => init.id === item.id);
+              if (predefined) {
+                return {
+                  ...item,
+                  titleKey: item.titleKey || predefined.titleKey,
+                  descriptionKey: item.descriptionKey || predefined.descriptionKey,
+                  locationKey: item.locationKey || predefined.locationKey,
+                  occupiedSpots: item.occupiedSpots !== undefined ? item.occupiedSpots : predefined.occupiedSpots,
+                };
+              }
+              return item;
+            });
           }
         }
       } catch (err) {

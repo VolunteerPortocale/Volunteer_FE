@@ -1,0 +1,680 @@
+<div class="event-admin-page">
+  <!-- BREADCRUMBS & PHASE SWITCHER TABS -->
+  <div class="top-nav-bar">
+    <div class="nav-container">
+      <div class="breadcrumbs">
+        <a [routerLink]="routes.homeAuth()" class="breadcrumb-link">{{ 'EVENT_ADMIN.BREADCRUMBS.MY_PROJECTS' | translate }}</a>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">{{ eventData()?.title || ('EVENT_ADMIN.HERO.DEFAULT_TITLE' | translate) }}</span>
+        <span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-active">{{ 'EVENT_ADMIN.BREADCRUMBS.CONTACT_MANAGE' | translate }}</span>
+      </div>
+
+      <!-- Navigation Tabs Between Story 1 (Contact & Manage) and Story 2 (Post-Event) -->
+      <div class="phase-switcher">
+        <button type="button" class="phase-tab active">
+          <mat-icon class="tab-icon">group</mat-icon>
+          <span>{{ 'EVENT_ADMIN.BREADCRUMBS.LIVE_TAB' | translate }}</span>
+        </button>
+        <button type="button" class="phase-tab inactive" [title]="'EVENT_ADMIN.BREADCRUMBS.POST_EVENT_TOOLTIP' | translate">
+          <mat-icon class="tab-icon">verified</mat-icon>
+          <span>{{ 'EVENT_ADMIN.BREADCRUMBS.POST_EVENT_TAB' | translate }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVENT MANAGEMENT BANNER -->
+  <main class="main-content">
+    <!-- Top Hero Banner Card with Brand Deep Green -->
+    <div class="hero-banner">
+      <div class="glow-orb"></div>
+
+      <div class="banner-content">
+        <div class="banner-left">
+          <div class="badge-row">
+            <span class="status-badge">{{ 'EVENT_ADMIN.HERO.ACTIVE_BADGE' | translate }}</span>
+            <span class="meta-item">
+              <mat-icon class="meta-icon">place</mat-icon>
+              {{ eventData()?.location || 'Strășeni, Moldova' }}
+            </span>
+            <span class="meta-item">
+              <mat-icon class="meta-icon">event</mat-icon>
+              {{ eventData()?.startDateTime || '3 Octombrie 2026, 09:00' }}
+            </span>
+          </div>
+
+          <h1 class="event-title">{{ eventData()?.title || ('EVENT_ADMIN.HERO.DEFAULT_TITLE' | translate) }}</h1>
+          <p class="event-desc">
+            {{ eventData()?.description || ('EVENT_ADMIN.HERO.DEFAULT_DESC' | translate) }}
+          </p>
+
+          <!-- Capacity & Attendance Mini Progress -->
+          <div class="mini-stats-row">
+            <div class="mini-stat-pill">
+              <span class="stat-highlight">{{ totalCount() }} {{ 'EVENT_ADMIN.HERO.OUT_OF' | translate }} {{ eventData()?.volunteers || 40 }}</span>
+              <span class="stat-label">{{ 'EVENT_ADMIN.HERO.VOLUNTEERS_REGISTERED' | translate }}</span>
+            </div>
+            <div class="mini-stat-pill">
+              <span class="stat-highlight">{{ checkedCount() }} {{ 'EVENT_ADMIN.HERO.OUT_OF' | translate }} {{ totalCount() }}</span>
+              <span class="stat-label">{{ 'EVENT_ADMIN.HERO.VOLUNTEERS_CONFIRMED_QR' | translate }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="banner-actions">
+          <!-- Action 1: Message all volunteers -->
+          <button type="button" class="btn-action btn-broadcast" (click)="openMessageAllModal()">
+            <mat-icon class="btn-icon">mail</mat-icon>
+            <span>{{ 'EVENT_ADMIN.HERO.BTN_MESSAGE_ALL' | translate }}</span>
+          </button>
+
+          <!-- Action 3: Invite an individual volunteer -->
+          <button type="button" class="btn-action btn-invite" (click)="openInviteModal()">
+            <mat-icon class="btn-icon">person_add</mat-icon>
+            <span>{{ 'EVENT_ADMIN.HERO.BTN_INVITE' | translate }}</span>
+          </button>
+
+          <!-- Action 5: Confirm volunteer participation on-sight using QR codes -->
+          <button type="button" class="btn-action btn-qr-scan" (click)="openQRScannerModal()">
+            <mat-icon class="btn-icon">qr_code_scanner</mat-icon>
+            <span>{{ 'EVENT_ADMIN.HERO.BTN_QR_SCAN' | translate }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN INTERACTIVE SECTION: Filters, Table & Stats Sidebar -->
+    <div class="dashboard-grid">
+      <!-- Left: Table & Controls -->
+      <div class="table-section">
+        <!-- Search Bar and Status Filter Tabs -->
+        <div class="control-bar">
+          <!-- Search Input -->
+          <div class="search-wrap">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input
+              type="text"
+              class="search-input"
+              [ngModel]="searchQuery()"
+              (ngModelChange)="searchQuery.set($event)"
+              [placeholder]="'EVENT_ADMIN.CONTROLS.SEARCH_PLACEHOLDER' | translate"
+            />
+            @if (searchQuery()) {
+              <button type="button" class="clear-btn" (click)="searchQuery.set('')">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </div>
+
+          <!-- Status Filter Tabs -->
+          <div class="filter-tabs">
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="currentFilter() === 'all'"
+              (click)="setFilter('all')"
+            >
+              {{ 'EVENT_ADMIN.CONTROLS.FILTER_ALL' | translate }} (<span>{{ totalCount() }}</span>)
+            </button>
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="currentFilter() === 'checked-in'"
+              (click)="setFilter('checked-in')"
+            >
+              {{ 'EVENT_ADMIN.CONTROLS.FILTER_CHECKED' | translate }} (<span>{{ checkedCount() }}</span>)
+            </button>
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="currentFilter() === 'pending'"
+              (click)="setFilter('pending')"
+            >
+              {{ 'EVENT_ADMIN.CONTROLS.FILTER_PENDING' | translate }} (<span>{{ pendingCount() }}</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- Volunteers Table Card -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="volunteers-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'EVENT_ADMIN.TABLE.HEADER_VOLUNTEER' | translate }}</th>
+                  <th scope="col" class="hide-mobile">{{ 'EVENT_ADMIN.TABLE.HEADER_CONTACT' | translate }}</th>
+                  <th scope="col" class="hide-sm">{{ 'EVENT_ADMIN.TABLE.HEADER_ROLE' | translate }}</th>
+                  <th scope="col">{{ 'EVENT_ADMIN.TABLE.HEADER_STATUS' | translate }}</th>
+                  <th scope="col" class="text-right">{{ 'EVENT_ADMIN.TABLE.HEADER_ACTIONS' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (volunteer of filteredVolunteers(); track volunteer.id) {
+                  <tr class="table-row">
+                    <!-- Volunteer Info -->
+                    <td>
+                      <div class="volunteer-profile">
+                        <img [src]="volunteer.avatar" [alt]="volunteer.name" class="volunteer-avatar" />
+                        <div>
+                          <div class="volunteer-name">{{ volunteer.name }}</div>
+                          <div class="volunteer-email hide-md-inline">{{ volunteer.email }}</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Contact -->
+                    <td class="hide-mobile">
+                      <div class="contact-phone">{{ volunteer.phone }}</div>
+                      <div class="contact-email">{{ volunteer.email }}</div>
+                    </td>
+
+                    <!-- Role Badge -->
+                    <td class="hide-sm">
+                      <span class="role-badge" [ngClass]="{
+                        'role-leader': volunteer.role === 'Leader of the group',
+                        'role-logistics': volunteer.role === 'Echipa Logistică',
+                        'role-checkin': volunteer.role === 'Asistență Check-in',
+                        'role-general': volunteer.role === 'Voluntar general'
+                      }">
+                        {{ getTranslatedRole(volunteer.role) }}
+                      </span>
+                    </td>
+
+                    <!-- Attendance Status -->
+                    <td>
+                      @if (volunteer.status === 'checked-in') {
+                        <span class="status-pill status-checked">
+                          <mat-icon class="status-icon">check</mat-icon>
+                          <span>{{ 'EVENT_ADMIN.TABLE.STATUS_CHECKED' | translate }}</span>
+                          @if (volunteer.checkInTime) {
+                            <span class="status-time">({{ volunteer.checkInTime.replace('Astăzi, ', '').replace('Today, ', '').replace('Сегодня, ', '') }})</span>
+                          }
+                        </span>
+                      } @else {
+                        <span class="status-pill status-pending">
+                          <span class="status-dot"></span>
+                          <span>{{ 'EVENT_ADMIN.TABLE.STATUS_PENDING' | translate }}</span>
+                        </span>
+                      }
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="text-right">
+                      <div class="row-actions">
+                        <button
+                          type="button"
+                          class="action-btn-row btn-dm"
+                          (click)="openMessageIndividualModal(volunteer)"
+                          [title]="'EVENT_ADMIN.TABLE.TOOLTIP_DM' | translate"
+                        >
+                          <mat-icon>chat</mat-icon>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-btn-row btn-kick"
+                          (click)="openKickOutModal(volunteer)"
+                          [title]="'EVENT_ADMIN.TABLE.TOOLTIP_KICK' | translate"
+                        >
+                          <mat-icon>person_remove</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="empty-table-cell">
+                      <mat-icon class="empty-icon">search_off</mat-icon>
+                      <p>{{ 'EVENT_ADMIN.TABLE.EMPTY' | translate }}</p>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Footer -->
+          <div class="table-footer">
+            <div class="footer-count">
+              {{ 'EVENT_ADMIN.TABLE.FOOTER_SHOWING' | translate }} {{ filteredVolunteers().length }} {{ 'EVENT_ADMIN.TABLE.FOOTER_VOLUNTEERS' | translate }}
+            </div>
+            <div class="pagination-controls">
+              <button type="button" class="page-btn disabled" disabled>{{ 'EVENT_ADMIN.TABLE.PAGINATION_PREV' | translate }}</button>
+              <button type="button" class="page-btn active">1</button>
+              <button type="button" class="page-btn">2</button>
+              <button type="button" class="page-btn">{{ 'EVENT_ADMIN.TABLE.PAGINATION_NEXT' | translate }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Sidebar Stats & Live Feed -->
+      <aside class="sidebar-section">
+        <!-- Attendance Stats Card -->
+        <div class="sidebar-card">
+          <h2 class="card-heading">
+            <mat-icon class="heading-icon">bar_chart</mat-icon>
+            <span>{{ 'EVENT_ADMIN.SIDEBAR.STATS_TITLE' | translate }}</span>
+          </h2>
+
+          <div class="stats-counter-grid">
+            <div class="stat-box stat-box-checked">
+              <div class="stat-number text-emerald">{{ checkedCount() }}</div>
+              <div class="stat-caption">{{ 'EVENT_ADMIN.SIDEBAR.PRESENT_ON_SITE' | translate }}</div>
+            </div>
+            <div class="stat-box stat-box-pending">
+              <div class="stat-number text-amber">{{ pendingCount() }}</div>
+              <div class="stat-caption">{{ 'EVENT_ADMIN.SIDEBAR.PENDING_CONFIRMATION' | translate }}</div>
+            </div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-header">
+              <span>{{ 'EVENT_ADMIN.SIDEBAR.PARTICIPATION_RATE' | translate }}</span>
+              <span class="rate-val">{{ attendanceRate() }}</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" [style.width]="attendanceRate()"></div>
+            </div>
+            <p class="progress-hint">
+              {{ 'EVENT_ADMIN.SIDEBAR.STATS_HINT' | translate }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Help Card -->
+        <div class="sidebar-card help-card">
+          <div class="help-title">
+            <mat-icon class="help-icon">info</mat-icon>
+            <span>{{ 'EVENT_ADMIN.SIDEBAR.HELP_TITLE' | translate }}</span>
+          </div>
+          <ul class="help-list">
+            <li>• {{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_1_PREFIX' | translate }}<strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_1_STRONG' | translate }}</strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_1_SUFFIX' | translate }}</li>
+            <li>• <strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_2_STRONG' | translate }}</strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_2_SUFFIX' | translate }}</li>
+            <li>• {{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_3_TEXT' | translate }}</li>
+          </ul>
+        </div>
+
+        <!-- Live Activity Feed -->
+        <div class="sidebar-card activity-card">
+          <div class="card-heading space-between">
+            <span>{{ 'EVENT_ADMIN.SIDEBAR.ACTIVITY_TITLE' | translate }}</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <div class="activity-feed-list custom-scrollbar">
+            @for (log of activityFeed(); track log.id) {
+              <div class="activity-item">
+                <span class="activity-icon" [ngClass]="log.type">
+                  @if (log.type === 'check-in') { ✓ }
+                  @else if (log.type === 'message') { ✉ }
+                  @else if (log.type === 'invite') { + }
+                  @else { ✕ }
+                </span>
+                <div class="activity-text-wrap">
+                  <p class="activity-text">{{ log.text }}</p>
+                  <span class="activity-time">{{ log.time }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- MODAL 1: MESSAGE ALL VOLUNTEERS                               -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'messageAll') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle emerald">
+              <mat-icon>mail</mat-icon>
+            </div>
+            <div>
+              <h3>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBTITLE_PREFIX' | translate }}{{ totalCount() }}{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBTITLE_SUFFIX' | translate }}</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-field">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CHANNELS_LABEL' | translate }}</label>
+            <div class="channels-grid">
+              <label class="channel-card" [class.selected]="broadcastPush()">
+                <input type="checkbox" [checked]="broadcastPush()" (change)="broadcastPush.set(!broadcastPush())" />
+                <span>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CHANNEL_PUSH' | translate }}</span>
+              </label>
+              <label class="channel-card" [class.selected]="broadcastEmail()">
+                <input type="checkbox" [checked]="broadcastEmail()" (change)="broadcastEmail.set(!broadcastEmail())" />
+                <span>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CHANNEL_EMAIL' | translate }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBJECT_LABEL' | translate }}</label>
+            <input
+              type="text"
+              class="text-input"
+              [placeholder]="'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBJECT_PLACEHOLDER' | translate"
+              [ngModel]="broadcastSubject()"
+              (ngModelChange)="broadcastSubject.set($event)"
+            />
+          </div>
+
+          <div class="form-field">
+            <div class="field-label-row">
+              <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CONTENT_LABEL' | translate }}</label>
+              <span class="field-vars">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.VARS_HINT' | translate }}</span>
+            </div>
+            <textarea
+              rows="4"
+              class="textarea-input"
+              [ngModel]="broadcastBody()"
+              (ngModelChange)="broadcastBody.set($event)"
+            ></textarea>
+          </div>
+
+          <div class="alert-box amber">
+            <mat-icon class="alert-icon">warning_amber</mat-icon>
+            <span>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.ALERT_PREFIX' | translate }}{{ eventData()?.organization || 'Eco Moldova' }}{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.ALERT_SUFFIX' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CANCEL' | translate }}</button>
+          <button type="button" class="btn-confirm" (click)="sendBroadcastMessage()">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBMIT' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 2: MESSAGE INDIVIDUAL VOLUNTEER                          -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'messageIndividual') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog modal-sm" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <img [src]="targetVolunteer()?.avatar" [alt]="targetVolunteer()?.name" class="modal-avatar" />
+            <div>
+              <h3>{{ targetVolunteer()?.name }}</h3>
+              <p>{{ targetVolunteer()?.email }}</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="quick-templates">
+            <label class="field-label-sm">{{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATES_LABEL' | translate }}</label>
+            <div class="templates-row">
+              <button type="button" class="template-chip" (click)="insertTemplate('EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TRANSPORT_TEXT')">
+                {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TRANSPORT' | translate }}
+              </button>
+              <button type="button" class="template-chip" (click)="insertTemplate('EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TIME_TEXT')">
+                {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TIME' | translate }}
+              </button>
+              <button type="button" class="template-chip" (click)="insertTemplate('EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_SECTOR_TEXT')">
+                {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_SECTOR' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.DIRECT_LABEL' | translate }}</label>
+            <textarea
+              rows="4"
+              class="textarea-input"
+              [placeholder]="'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.DIRECT_PLACEHOLDER' | translate"
+              [ngModel]="dmMessageText()"
+              (ngModelChange)="dmMessageText.set($event)"
+            ></textarea>
+          </div>
+
+          <p class="modal-hint">
+            {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.HINT' | translate }}
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CLOSE' | translate }}</button>
+          <button type="button" class="btn-confirm" (click)="sendIndividualMessage()">{{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.SUBMIT' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 3: INVITE INDIVIDUAL VOLUNTEER                           -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'invite') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle emerald">
+              <mat-icon>person_add</mat-icon>
+            </div>
+            <div>
+              <h3>{{ 'EVENT_ADMIN.MODALS.INVITE.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.INVITE.SUBTITLE' | translate }}</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-field">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.CONTACT_LABEL' | translate }}</label>
+            <input
+              type="text"
+              class="text-input"
+              [placeholder]="'EVENT_ADMIN.MODALS.INVITE.CONTACT_PLACEHOLDER' | translate"
+              [ngModel]="inviteContact()"
+              (ngModelChange)="inviteContact.set($event)"
+            />
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.ROLE_LABEL' | translate }}</label>
+              <select class="select-input" [ngModel]="inviteRole()" (ngModelChange)="inviteRole.set($event)">
+                <option value="Voluntar general">{{ 'EVENT_ADMIN.ROLES.GENERAL' | translate }}</option>
+                <option value="Leader of the group">{{ 'EVENT_ADMIN.ROLES.LEADER' | translate }}</option>
+                <option value="Echipa Logistică">{{ 'EVENT_ADMIN.ROLES.LOGISTICS' | translate }}</option>
+                <option value="Asistență Check-in">{{ 'EVENT_ADMIN.ROLES.CHECKIN' | translate }}</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.SLOT_LABEL' | translate }}</label>
+              <label class="checkbox-box">
+                <input type="checkbox" [checked]="reserveSlot()" (change)="reserveSlot.set(!reserveSlot())" />
+                <span>{{ 'EVENT_ADMIN.MODALS.INVITE.SLOT_RESERVE_PREFIX' | translate }}{{ eventData()?.volunteers || 40 }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.NOTE_LABEL' | translate }}</label>
+            <textarea
+              rows="2"
+              class="textarea-input"
+              [placeholder]="'EVENT_ADMIN.MODALS.INVITE.NOTE_PLACEHOLDER' | translate"
+              [ngModel]="inviteNote()"
+              (ngModelChange)="inviteNote.set($event)"
+            ></textarea>
+          </div>
+
+          <!-- Shareable Link Box -->
+          <div class="share-link-box">
+            <div class="share-text-wrap">
+              <span class="share-title">{{ 'EVENT_ADMIN.MODALS.INVITE.OR_COPY' | translate }}</span>
+              <span class="share-url">volunteerio.md/join/{{ eventId() }}?inv=pc42</span>
+            </div>
+            <button type="button" class="btn-copy-link" (click)="copyInviteLink()">{{ 'EVENT_ADMIN.MODALS.INVITE.COPY_BTN' | translate }}</button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CANCEL' | translate }}</button>
+          <button type="button" class="btn-confirm" (click)="sendInvite()">{{ 'EVENT_ADMIN.MODALS.INVITE.SUBMIT' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 4: KICK OUT VOLUNTEER                                    -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'kickOut') {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog modal-sm border-danger" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle red">
+              <mat-icon>person_remove</mat-icon>
+            </div>
+            <div>
+              <h3>{{ 'EVENT_ADMIN.MODALS.KICK.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.KICK.SUBTITLE' | translate }}</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="warning-volunteer-card">
+            <img [src]="targetVolunteer()?.avatar" [alt]="targetVolunteer()?.name" class="volunteer-avatar-warn" />
+            <div>
+              <strong>{{ targetVolunteer()?.name }}</strong>
+              <p>{{ 'EVENT_ADMIN.MODALS.KICK.SLOT_FREED' | translate }}</p>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_LABEL' | translate }}</label>
+            <select class="select-input" [ngModel]="kickReasonSelect()" (ngModelChange)="kickReasonSelect.set($event)">
+              <option value="Solicitare din partea voluntarului (retragere)">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_WITHDRAWAL' | translate }}</option>
+              <option value="Neprezentare la ora stabilită fără justificare">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_NOSHOW' | translate }}</option>
+              <option value="Neîndeplinire cerințe de vârstă / echipament">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_REQUIREMENTS' | translate }}</option>
+              <option value="Comportament neadecvat / nerespectare regulament">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_BEHAVIOR' | translate }}</option>
+              <option value="Alt motiv">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_OTHER' | translate }}</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.KICK.DETAILS_LABEL' | translate }}</label>
+            <textarea
+              rows="2"
+              class="textarea-input"
+              [placeholder]="'EVENT_ADMIN.MODALS.KICK.DETAILS_PLACEHOLDER' | translate"
+              [ngModel]="kickReasonText()"
+              (ngModelChange)="kickReasonText.set($event)"
+            ></textarea>
+          </div>
+
+          <label class="checkbox-row">
+            <input type="checkbox" [checked]="notifyKickVolunteer()" (change)="notifyKickVolunteer.set(!notifyKickVolunteer())" />
+            <span>{{ 'EVENT_ADMIN.MODALS.KICK.NOTIFY_CHECKBOX' | translate }}</span>
+          </label>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CANCEL' | translate }}</button>
+          <button type="button" class="btn-danger" (click)="confirmKickOut()">{{ 'EVENT_ADMIN.MODALS.KICK.SUBMIT' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ============================================================== -->
+  <!-- MODAL 5: ON-SIGHT QR CODE ATTENDANCE SCANNER                   -->
+  <!-- ============================================================== -->
+  @if (activeModal() === 'qrScanner') {
+    <div class="modal-backdrop dark" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <div class="modal-icon-circle emerald">
+              <mat-icon>qr_code_scanner</mat-icon>
+            </div>
+            <div>
+              <h3>{{ 'EVENT_ADMIN.MODALS.QR.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.QR.SUBTITLE' | translate }}</p>
+            </div>
+          </div>
+          <button type="button" class="close-btn" (click)="closeModal()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Live QR Scanner Viewport Simulation -->
+          <div class="scanner-viewport">
+            <div class="scanner-reticle">
+              <div class="laser-scan-line"></div>
+              <span class="reticle-label">{{ 'EVENT_ADMIN.MODALS.QR.RETICLE' | translate }}</span>
+            </div>
+
+            <div class="scanner-controls-bar">
+              <span class="camera-status">
+                <span class="pulse-dot-green"></span>
+                {{ 'EVENT_ADMIN.MODALS.QR.CAM_ACTIVE' | translate }}
+              </span>
+              <button type="button" class="btn-switch-cam">{{ 'EVENT_ADMIN.MODALS.QR.SWITCH_CAM' | translate }}</button>
+            </div>
+          </div>
+
+          <!-- Quick Test Simulation Controls -->
+          <div class="quick-scan-box">
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.QR.SIMULATE_LABEL' | translate }}</label>
+            <div class="quick-scan-row">
+              <select
+                class="select-input select-flex"
+                [ngModel]="quickScanSelectId()"
+                (ngModelChange)="quickScanSelectId.set(+$event)"
+              >
+                @for (volunteer of pendingVolunteers(); track volunteer.id) {
+                  <option [value]="volunteer.id">{{ volunteer.name }} ({{ getTranslatedRole(volunteer.role) }})</option>
+                } @empty {
+                  <option [value]="null">{{ 'EVENT_ADMIN.MODALS.QR.ALL_CONFIRMED' | translate }}</option>
+                }
+              </select>
+              <button
+                type="button"
+                class="btn-scan-now"
+                [disabled]="pendingVolunteers().length === 0"
+                (click)="simulateScanSelected()"
+              >
+                {{ 'EVENT_ADMIN.MODALS.QR.SCAN_NOW' | translate }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Manual code fallback -->
+          <div class="manual-code-row">
+            <span>{{ 'EVENT_ADMIN.MODALS.QR.CAM_FAIL' | translate }}</span>
+            <button type="button" class="btn-manual-link" (click)="promptManualCheckin()">
+              {{ 'EVENT_ADMIN.MODALS.QR.MANUAL_LINK' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- TOAST NOTIFICATION POPUP -->
+  <div class="toast-notification" [class.show]="toastVisible()">
+    <div class="toast-card">
+      <span class="toast-check">✓</span>
+      <span class="toast-text">{{ toastMessage() }}</span>
+    </div>
+  </div>
+</div>

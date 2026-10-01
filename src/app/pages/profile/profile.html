@@ -1,0 +1,704 @@
+<div class="profile-page">
+  <!-- Profile Top Hero Banner -->
+  <section class="profile-hero-banner">
+    <div class="container hero-container">
+      <!-- Top Navigation -->
+      <div class="top-nav-bar">
+        <a routerLink="/home-auth" class="back-link">
+          <mat-icon>arrow_back</mat-icon>
+          <span>{{ 'PROFILE.BACK_TO_EVENTS' | translate }}</span>
+        </a>
+      </div>
+
+      <!-- Main Profile Card -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <!-- Avatar -->
+          <div class="avatar-wrap">
+            <div class="profile-avatar" [class.ngo-avatar]="isNgo()">
+              @if (!isNgo()) {
+                {{ userInitial() }}
+              } @else {
+                <mat-icon class="ngo-main-icon">domain</mat-icon>
+              }
+            </div>
+            @if (isNgo()) {
+              <div class="verified-badge-icon" title="Organizație Verificată">
+                <mat-icon>verified</mat-icon>
+              </div>
+            } @else {
+              <div class="online-badge-dot" title="Activ"></div>
+            }
+          </div>
+
+          <!-- Main Info -->
+          <div class="profile-info-content">
+            <div class="title-role-row">
+              <h1 class="profile-title">
+                {{ !isNgo() ? volunteerName() : ngoName() }}
+              </h1>
+              
+              @if (!isNgo()) {
+                <span class="role-badge volunteer-badge">
+                  <mat-icon class="badge-icon">volunteer_activism</mat-icon>
+                  {{ 'PROFILE.VOLUNTEER_ACTIVE' | translate }}
+                </span>
+                <span class="level-badge">
+                  <mat-icon class="level-icon">stars</mat-icon>
+                  {{ volunteerStats.level }}
+                </span>
+              } @else {
+                <span class="role-badge ngo-badge">
+                  <mat-icon class="badge-icon">verified</mat-icon>
+                  {{ 'PROFILE.NGO_VERIFIED' | translate }}
+                </span>
+                <span class="idno-badge">
+                  IDNO: {{ ngoIdno() }}
+                </span>
+              }
+            </div>
+
+            <p class="profile-tagline">
+              {{ !isNgo() ? volunteerTitle() : ngoTagline() }}
+            </p>
+
+            <!-- Meta attributes -->
+            <div class="profile-meta-row">
+              <div class="meta-item">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ !isNgo() ? volunteerCity() : ngoCity() }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>email</mat-icon>
+                <span>{{ !isNgo() ? (authService.currentUser()?.email || 'voluntar@volunteerio.md') : ngoEmail() }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>phone</mat-icon>
+                <span>{{ !isNgo() ? volunteerPhone() : ngoPhone() }}</span>
+              </div>
+              @if (isNgo()) {
+                <div class="meta-item">
+                  <mat-icon>language</mat-icon>
+                  <a [href]="ngoWebsite()" target="_blank" rel="noopener noreferrer" class="meta-link">{{ ngoWebsite() }}</a>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="profile-actions-col">
+            @if (!isEditing()) {
+              <button type="button" class="btn-primary edit-profile-btn" (click)="toggleEdit()">
+                <mat-icon>edit</mat-icon>
+                <span>{{ 'PROFILE.EDIT_PROFILE' | translate }}</span>
+              </button>
+            } @else {
+              <div class="edit-btn-group">
+                <button type="button" class="btn-primary save-btn" (click)="saveProfile()">
+                  <mat-icon>check</mat-icon>
+                  <span>{{ 'PROFILE.SAVE' | translate }}</span>
+                </button>
+                <button type="button" class="btn-outline cancel-btn" (click)="cancelEdit()">
+                  <span>{{ 'PROFILE.CANCEL' | translate }}</span>
+                </button>
+              </div>
+            }
+
+            <a routerLink="/setari" class="btn-outline settings-link-btn">
+              <mat-icon>settings</mat-icon>
+              <span>{{ 'PROFILE.ACCOUNT_SETTINGS' | translate }}</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Success Toast Alert -->
+        @if (saveSuccess()) {
+          <div class="success-alert-banner">
+            <mat-icon class="alert-icon">check_circle</mat-icon>
+            <span>Modificările profilului au fost salvate cu succes!</span>
+          </div>
+        }
+
+        <!-- Inline Edit Section -->
+        @if (isEditing()) {
+          <div class="edit-form-panel">
+            <h3 class="edit-panel-title">
+              <mat-icon>tune</mat-icon>
+              Modificare informații {{ !isNgo() ? 'voluntar' : 'organizație' }}
+            </h3>
+
+            <div class="edit-grid">
+              @if (!isNgo()) {
+                <div class="form-group">
+                  <label for="profName" class="form-label">Nume și Prenume</label>
+                  <input
+                    id="profName"
+                    type="text"
+                    [ngModel]="volunteerName()"
+                    (ngModelChange)="volunteerName.set($event)"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="profPhone" class="form-label">Număr de telefon</label>
+                  <input
+                    id="profPhone"
+                    type="text"
+                    [ngModel]="volunteerPhone()"
+                    (ngModelChange)="volunteerPhone.set($event)"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="profCity" class="form-label">Oraș / Localitate</label>
+                  <input
+                    id="profCity"
+                    type="text"
+                    [ngModel]="volunteerCity()"
+                    (ngModelChange)="volunteerCity.set($event)"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="profBio" class="form-label">Despre tine (Bio)</label>
+                  <textarea
+                    id="profBio"
+                    rows="3"
+                    [ngModel]="volunteerBio()"
+                    (ngModelChange)="volunteerBio.set($event)"
+                    class="form-textarea"
+                  ></textarea>
+                </div>
+              } @else {
+                <div class="form-group">
+                  <label for="ngoName" class="form-label">Denumire Organizație</label>
+                  <input
+                    id="ngoName"
+                    type="text"
+                    [ngModel]="ngoName()"
+                    (ngModelChange)="ngoName.set($event)"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="ngoIdno" class="form-label">Cod Fiscal / IDNO</label>
+                  <input
+                    id="ngoIdno"
+                    type="text"
+                    [ngModel]="ngoIdno()"
+                    (ngModelChange)="ngoIdno.set($event)"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="ngoEmail" class="form-label">Email Oficial</label>
+                  <input
+                    id="ngoEmail"
+                    type="email"
+                    [ngModel]="ngoEmail()"
+                    (ngModelChange)="ngoEmail.set($event)"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="ngoWebsite" class="form-label">Website Oficial</label>
+                  <input
+                    id="ngoWebsite"
+                    type="url"
+                    [ngModel]="ngoWebsite()"
+                    (ngModelChange)="ngoWebsite.set($event)"
+                    class="form-input"
+                  />
+                </div>
+
+                <div class="form-group full-width">
+                  <label for="ngoMission" class="form-label">Misiunea Organizației</label>
+                  <textarea
+                    id="ngoMission"
+                    rows="3"
+                    [ngModel]="ngoMission()"
+                    (ngModelChange)="ngoMission.set($event)"
+                    class="form-textarea"
+                  ></textarea>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Metrics Grid -->
+  <section class="metrics-section">
+    <div class="container">
+      @if (!isNgo()) {
+        <div class="metrics-grid volunteer-metrics">
+          <div class="metric-card highlight-card">
+            <div class="metric-icon-wrap green-icon">
+              <mat-icon>schedule</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-num">{{ volunteerStats.hoursLogged }} ore</span>
+              <span class="metric-title">Timp de Voluntariat</span>
+              <div class="progress-wrap">
+                <div class="progress-bar-bg">
+                  <div
+                    class="progress-fill"
+                    [style.width.%]="(volunteerStats.hoursLogged / volunteerStats.nextMilestoneHours) * 100"
+                  ></div>
+                </div>
+                <span class="progress-label">{{ volunteerStats.hoursLogged }}/{{ volunteerStats.nextMilestoneHours }} ore spre Nivelul 4</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-wrap blue-icon">
+              <mat-icon>event_available</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-num">{{ volunteerStats.eventsAttended }}</span>
+              <span class="metric-title">Evenimente Finalizate</span>
+              <span class="metric-sub">100% prezență atestată</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-wrap orange-icon">
+              <mat-icon>diversity_3</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-num">{{ volunteerStats.causesSupported }}</span>
+              <span class="metric-title">Cauze Susținute</span>
+              <span class="metric-sub">Ecologie, Educație, Social</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-wrap purple-icon">
+              <mat-icon>military_tech</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-num">{{ volunteerStats.badgesCount }}</span>
+              <span class="metric-title">Insigne & Distincții</span>
+              <span class="metric-sub">Recunoaștere activă</span>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- NGO Metrics Grid -->
+        <div class="metrics-grid ngo-metrics">
+          <div class="metric-card highlight-card">
+            <div class="metric-icon-wrap green-icon">
+              <mat-icon>campaign</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-num">{{ ngoStats.eventsPublished }}</span>
+              <span class="metric-title">Evenimente Publicate</span>
+              <span class="metric-sub">{{ ngoStats.completedProjects }} finalizate cu succes</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-wrap blue-icon">
+              <mat-icon>group</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-num">{{ ngoStats.volunteersMobilized }}</span>
+              <span class="metric-title">Voluntari Mobilizați</span>
+              <span class="metric-sub">{{ ngoStats.activeVolunteers }} implicați luna aceasta</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-wrap orange-icon">
+              <mat-icon>grade</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-num">{{ ngoStats.averageRating }} ★</span>
+              <span class="metric-title">Evaluare Voluntari</span>
+              <span class="metric-sub">Peste 60 recenzii pozitive</span>
+            </div>
+          </div>
+
+          <div class="metric-card cta-metric-card" (click)="addNewEvent()">
+            <div class="metric-icon-wrap cta-icon">
+              <mat-icon>add_circle</mat-icon>
+            </div>
+            <div class="metric-body">
+              <span class="metric-cta-text">+ Publică Eveniment</span>
+              <span class="metric-sub">Recrutează voluntari acum</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Detailed Tab Content Section -->
+  <section class="profile-tabs-section">
+    <div class="container">
+      <!-- Tabs Navigation -->
+      <div class="tab-headers">
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="activeTab() === 'overview'"
+          (click)="setTab('overview')"
+        >
+          <mat-icon class="tab-icon">grid_view</mat-icon>
+          <span>{{ !isNgo() ? 'Activitatea Mea' : 'Proiectele Organizației' }}</span>
+        </button>
+
+        @if (!isNgo()) {
+          <button
+            type="button"
+            class="tab-btn"
+            [class.active]="activeTab() === 'badges'"
+            (click)="setTab('badges')"
+          >
+            <mat-icon class="tab-icon">emoji_events</mat-icon>
+            <span>Insigne & Realizări</span>
+          </button>
+        }
+
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="activeTab() === 'about'"
+          (click)="setTab('about')"
+        >
+          <mat-icon class="tab-icon">info</mat-icon>
+          <span>{{ !isNgo() ? 'Abilități & Despre' : 'Despre ONG & Echipa' }}</span>
+        </button>
+      </div>
+
+      <!-- Tab 1: Overview / Events -->
+      @if (activeTab() === 'overview') {
+        <div class="tab-panel">
+          @if (!isNgo()) {
+            <!-- Volunteer Events List -->
+            <div class="section-header-row">
+              <div>
+                <h2 class="section-title">Evenimentele Mele Înregistrate</h2>
+                <p class="section-subtitle">Oportunități de voluntariat viitoare și istoricul acțiunilor finalizate.</p>
+              </div>
+              <a routerLink="/proiecte" class="btn-soft view-all-btn">
+                <span>Explorează alte proiecte</span>
+                <mat-icon>arrow_forward</mat-icon>
+              </a>
+            </div>
+
+            <div class="events-list-grid">
+              @for (act of volunteerActivities(); track act.id) {
+                <div class="event-record-card" [class.completed]="act.status === 'completed'">
+                  <div class="event-record-status">
+                    @if (act.status === 'confirmed') {
+                      <span class="status-pill status-confirmed">
+                        <mat-icon>check_circle</mat-icon>
+                        Înscriere Confirmată
+                      </span>
+                    } @else {
+                      <span class="status-pill status-completed">
+                        <mat-icon>task_alt</mat-icon>
+                        Finalizat ({{ act.hours }} ore)
+                      </span>
+                    }
+                  </div>
+
+                  <div class="event-record-info">
+                    <span class="org-name">{{ act.organization }}</span>
+                    <h3 class="event-title">{{ act.title }}</h3>
+                    <p class="role-desc"><strong>Rol:</strong> {{ act.role }}</p>
+
+                    <div class="event-meta-items">
+                      <span class="meta-tag">
+                        <mat-icon>calendar_today</mat-icon>
+                        {{ act.date }}
+                      </span>
+                      <span class="meta-tag">
+                        <mat-icon>place</mat-icon>
+                        {{ act.location }}
+                      </span>
+                      <span class="meta-tag">
+                        <mat-icon>timer</mat-icon>
+                        {{ act.hours }} ore validate
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="event-record-action">
+                    @if (act.status === 'completed') {
+                      <button
+                        type="button"
+                        class="btn-outline cert-btn"
+                        (click)="downloadCertificate(act)"
+                        title="Descarcă adeverință oficială"
+                      >
+                        <mat-icon>download</mat-icon>
+                        <span>{{ 'PROFILE.DOWNLOAD_CERTIFICATE' | translate }}</span>
+                      </button>
+                    } @else {
+                      <a routerLink="/proiecte" class="btn-primary details-btn">
+                        <span>Detalii eveniment</span>
+                      </a>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <!-- NGO Projects Management -->
+            <div class="section-header-row">
+              <div>
+                <h2 class="section-title">Evenimentele Organizației Eco Moldova</h2>
+                <p class="section-subtitle">Gestionează evenimentele publicate, voluntarii înscriși și modifică detaliile.</p>
+              </div>
+              <button type="button" class="btn-primary create-new-btn" (click)="addNewEvent()">
+                <mat-icon>add</mat-icon>
+                <span>+ Publică Eveniment Nou</span>
+              </button>
+            </div>
+
+            <div class="ngo-events-table-wrap">
+              <table class="ngo-table">
+                <thead>
+                  <tr>
+                    <th>Eveniment</th>
+                    <th>Data & Locația</th>
+                    <th>Voluntari</th>
+                    <th>Status</th>
+                    <th class="actions-th">Acțiuni de gestiune</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (ev of ngoProjects(); track ev.id) {
+                    <tr>
+                      <td class="table-event-col">
+                        <strong class="table-event-title">{{ ev.title }}</strong>
+                      </td>
+                      <td>
+                        <div class="td-meta-row">
+                          <mat-icon>event</mat-icon>
+                          <span>{{ ev.date }}</span>
+                        </div>
+                        <div class="td-meta-row text-muted">
+                          <mat-icon>location_on</mat-icon>
+                          <span>{{ ev.location }}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="volunteers-progress-pill">
+                          {{ ev.volunteersRegistered }} / {{ ev.volunteersNeeded }} locuri
+                        </span>
+                      </td>
+                      <td>
+                        @if (ev.status === 'active') {
+                          <span class="status-pill status-confirmed">Activ</span>
+                        } @else if (ev.status === 'in_progress') {
+                          <span class="status-pill status-inprogress">În desfășurare</span>
+                        } @else {
+                          <span class="status-pill status-completed">Finalizat</span>
+                        }
+                      </td>
+                      <td class="table-actions-col">
+                        <button
+                          type="button"
+                          class="action-icon-btn admin-btn"
+                          (click)="administerEvent(ev.id)"
+                          title="Contact și Administrare Voluntari"
+                        >
+                          <mat-icon>manage_accounts</mat-icon>
+                          <span>Administrează</span>
+                        </button>
+                        <button
+                          type="button"
+                          class="action-icon-btn edit-icon-btn"
+                          (click)="editEvent(ev.id)"
+                          title="Editează Eveniment"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Tab 2: Badges (Volunteer) -->
+      @if (activeTab() === 'badges' && !isNgo()) {
+        <div class="tab-panel">
+          <div class="section-header-row">
+            <div>
+              <h2 class="section-title">Insigne de Excelență & Realizări</h2>
+              <p class="section-subtitle">Recunoașterea implicării și a orelor dăruite comunității.</p>
+            </div>
+          </div>
+
+          <div class="badges-grid">
+            @for (badge of badges(); track badge.id) {
+              <div class="badge-card">
+                <div class="badge-icon-circle" [style.background-color]="badge.color + '18'" [style.color]="badge.color">
+                  <mat-icon>{{ badge.icon }}</mat-icon>
+                </div>
+                <div class="badge-content">
+                  <h3 class="badge-name">{{ badge.name }}</h3>
+                  <p class="badge-desc">{{ badge.description }}</p>
+                  <span class="badge-date">Obținut în: {{ badge.dateEarned }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Tab 3: About & Skills / NGO Details -->
+      @if (activeTab() === 'about') {
+        <div class="tab-panel">
+          @if (!isNgo()) {
+            <div class="about-grid">
+              <div class="about-col bio-col">
+                <h3 class="panel-heading">Despre Mine</h3>
+                <p class="bio-text">{{ volunteerBio() }}</p>
+
+                <h3 class="panel-heading" style="margin-top: 1.5rem;">Interese & Cauze Preferate</h3>
+                <div class="skills-tags-wrap">
+                  @for (skill of volunteerSkills(); track skill) {
+                    <span class="skill-chip">
+                      {{ skill }}
+                      @if (isEditing()) {
+                        <button type="button" class="chip-remove" (click)="removeSkill(skill)">&times;</button>
+                      }
+                    </span>
+                  }
+                </div>
+
+                @if (isEditing()) {
+                  <div class="add-skill-row">
+                    <input
+                      type="text"
+                      [ngModel]="newSkillInput()"
+                      (ngModelChange)="newSkillInput.set($event)"
+                      placeholder="Adaugă un interes (ex: Prim Ajutor)..."
+                      class="form-input-sm"
+                      (keyup.enter)="addSkill()"
+                    />
+                    <button type="button" class="btn-primary btn-sm" (click)="addSkill()">Adaugă</button>
+                  </div>
+                }
+              </div>
+
+              <div class="about-col info-col">
+                <h3 class="panel-heading">Informații Personale & Verificare</h3>
+                <ul class="info-list">
+                  <li>
+                    <mat-icon>verified</mat-icon>
+                    <div>
+                      <strong>Identitate Confirmată</strong>
+                      <p>Cont asociat cu Keycloak SSO</p>
+                    </div>
+                  </li>
+                  <li>
+                    <mat-icon>military_tech</mat-icon>
+                    <div>
+                      <strong>Nivel de Voluntar</strong>
+                      <p>{{ volunteerStats.level }} (48 ore)</p>
+                    </div>
+                  </li>
+                  <li>
+                    <mat-icon>local_police</mat-icon>
+                    <div>
+                      <strong>Cazier / Statut de Încredere</strong>
+                      <p>Verificat fără antecedente</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          } @else {
+            <!-- NGO Mission & Legal Info -->
+            <div class="about-grid">
+              <div class="about-col bio-col">
+                <h3 class="panel-heading">Misiunea și Viziunea Organizației</h3>
+                <p class="bio-text">{{ ngoMission() }}</p>
+
+                <h3 class="panel-heading" style="margin-top: 1.5rem;">Domenii de Activitate</h3>
+                <div class="skills-tags-wrap">
+                  @for (domain of ngoDomains(); track domain) {
+                    <span class="skill-chip ngo-chip">
+                      {{ domain }}
+                      @if (isEditing()) {
+                        <button type="button" class="chip-remove" (click)="removeDomain(domain)">&times;</button>
+                      }
+                    </span>
+                  }
+                </div>
+
+                @if (isEditing()) {
+                  <div class="add-skill-row">
+                    <input
+                      type="text"
+                      [ngModel]="newDomainInput()"
+                      (ngModelChange)="newDomainInput.set($event)"
+                      placeholder="Adaugă domeniu..."
+                      class="form-input-sm"
+                      (keyup.enter)="addDomain()"
+                    />
+                    <button type="button" class="btn-primary btn-sm" (click)="addDomain()">Adaugă</button>
+                  </div>
+                }
+              </div>
+
+              <div class="about-col info-col">
+                <h3 class="panel-heading">Date Juridice & Coordonare</h3>
+                <ul class="info-list">
+                  <li>
+                    <mat-icon>business</mat-icon>
+                    <div>
+                      <strong>Denumire Legală</strong>
+                      <p>{{ ngoName() }}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <mat-icon>fingerprint</mat-icon>
+                    <div>
+                      <strong>Cod Fiscal / IDNO</strong>
+                      <p>{{ ngoIdno() }} (Înregistrat la ASP)</p>
+                    </div>
+                  </li>
+                  <li>
+                    <mat-icon>badge</mat-icon>
+                    <div>
+                      <strong>Persoană de Contact</strong>
+                      <p>{{ ngoCoordinator() }}</p>
+                    </div>
+                  </li>
+                  <li>
+                    <mat-icon>verified</mat-icon>
+                    <div>
+                      <strong>Statut Verificare</strong>
+                      <p class="text-green">ONG Acreditat VOLUNTEERIO</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>
+
+<app-footer />
