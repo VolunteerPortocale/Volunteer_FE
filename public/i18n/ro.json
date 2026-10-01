@@ -574,5 +574,158 @@
       "ART3_TITLE": "Cum Poți Controla Cookie-urile?",
       "ART3_P1": "Puteți seta browserul să blocheze sau să vă avertizeze cu privire la aceste cookie-uri, însă blocarea cookie-urilor esențiale poate duce la imposibilitatea autentificării pe contul tău de voluntar."
     }
+  },
+  "EVENT_ADMIN": {
+    "BREADCRUMBS": {
+      "MY_PROJECTS": "Proiectele mele",
+      "CONTACT_MANAGE": "Contact și Administrare",
+      "LIVE_TAB": "Contact & Administrare (Live)",
+      "POST_EVENT_TAB": "Post-Eveniment & Evaluare (Finalizat)",
+      "POST_EVENT_TOOLTIP": "Disponibil după finalizarea evenimentului"
+    },
+    "HERO": {
+      "ACTIVE_BADGE": "Eveniment activ",
+      "VOLUNTEERS_REGISTERED": "voluntari înscriși",
+      "VOLUNTEERS_CONFIRMED_QR": "prezenți confirmați QR",
+      "OUT_OF": "din",
+      "BTN_MESSAGE_ALL": "Mesaj către toți",
+      "BTN_INVITE": "Invită voluntar",
+      "BTN_QR_SCAN": "Scanează QR Prezență"
+    },
+    "CONTROLS": {
+      "SEARCH_PLACEHOLDER": "Caută voluntar după nume, email sau rol...",
+      "FILTER_ALL": "Toți",
+      "FILTER_CHECKED": "Prezenți",
+      "FILTER_PENDING": "În așteptare"
+    },
+    "TABLE": {
+      "HEADER_VOLUNTEER": "Voluntar",
+      "HEADER_CONTACT": "Contact",
+      "HEADER_ROLE": "Rol / Echipă",
+      "HEADER_STATUS": "Stare Prezență",
+      "HEADER_ACTIONS": "Acțiuni",
+      "STATUS_CHECKED": "Confirmat QR",
+      "STATUS_PENDING": "În așteptare",
+      "TOOLTIP_DM": "Trimite mesaj direct",
+      "TOOLTIP_KICK": "Elimină din proiect",
+      "EMPTY": "Niciun voluntar găsit conform criteriilor de căutare.",
+      "FOOTER_SHOWING": "Afișează",
+      "FOOTER_VOLUNTEERS": "voluntari",
+      "PAGINATION_PREV": "Anterior",
+      "PAGINATION_NEXT": "Următor"
+    },
+    "ROLES": {
+      "LEADER": "Leader of the group",
+      "LOGISTICS": "Echipa Logistică",
+      "CHECKIN": "Asistență Check-in",
+      "GENERAL": "Voluntar general"
+    },
+    "SIDEBAR": {
+      "STATS_TITLE": "Statistici Prezență",
+      "PRESENT_ON_SITE": "Prezenți la fața locului",
+      "PENDING_CONFIRMATION": "În așteptare",
+      "PARTICIPATION_RATE": "Rată de participare:",
+      "STATS_HINT": "Prezența se validează la intrare prin scanarea codului QR generat în aplicația fiecărui voluntar.",
+      "HELP_TITLE": "Ghid rapid organizator",
+      "HELP_ITEM_1_PREFIX": "Folosește ",
+      "HELP_ITEM_1_STRONG": "Scanează QR",
+      "HELP_ITEM_1_SUFFIX": " de pe telefon sau tabletă pentru check-in instantaneu la intrare.",
+      "HELP_ITEM_2_STRONG": "Mesaj către toți",
+      "HELP_ITEM_2_SUFFIX": " transmite actualizări urgente simultan prin notificări push și email.",
+      "HELP_ITEM_3_TEXT": "În caz de neprezentare sau cerere de retragere, poți elibera locul cu butonul de eliminare.",
+      "ACTIVITY_TITLE": "Activitate recentă"
+    },
+    "MODALS": {
+      "CANCEL": "Anulează",
+      "CLOSE": "Închide",
+      "MESSAGE_ALL": {
+        "TITLE": "Mesaj către toți voluntarii",
+        "SUBTITLE_PREFIX": "Transmite un anunț simultan către cei ",
+        "SUBTITLE_SUFFIX": " de voluntari înscriși.",
+        "CHANNELS_LABEL": "Canale de transmitere",
+        "CHANNEL_PUSH": "Notificare Push (App)",
+        "CHANNEL_EMAIL": "Email Voluntari",
+        "SUBJECT_LABEL": "Subiect anunț",
+        "SUBJECT_PLACEHOLDER": "ex: Reamintire echipament & actualizare orar",
+        "CONTENT_LABEL": "Conținut mesaj",
+        "VARS_HINT": "Variabile: {nume}, {ora}",
+        "ALERT_PREFIX": "Mesajul va fi trimis ca anunț oficial din partea organizației «",
+        "ALERT_SUFFIX": "».",
+        "SUBMIT": "Trimite anunțul"
+      },
+      "MESSAGE_INDIVIDUAL": {
+        "TEMPLATES_LABEL": "Șabloane rapide",
+        "TEMPLATE_TRANSPORT": "Transport?",
+        "TEMPLATE_TRANSPORT_TEXT": "Salut! Ai nevoie de transport până la locație?",
+        "TEMPLATE_TIME": "Confirmare oră",
+        "TEMPLATE_TIME_TEXT": "Te rugăm să confirmi dacă ajungi la ora 09:00.",
+        "TEMPLATE_SECTOR": "Sector repartizat",
+        "TEMPLATE_SECTOR_TEXT": "Echipa ta a fost repartizată la Sectorul A.",
+        "DIRECT_LABEL": "Mesaj direct",
+        "DIRECT_PLACEHOLDER": "Scrie mesajul pentru voluntar...",
+        "HINT": "Voluntarul va primi notificarea în aplicația Volunteerio și pe adresa de email înregistrată.",
+        "SUBMIT": "Trimite mesajul"
+      },
+      "INVITE": {
+        "TITLE": "Invită un voluntar",
+        "SUBTITLE": "Trimite o invitație nominală prin email sau căutare în comunitate.",
+        "CONTACT_LABEL": "Email sau Nume utilizator Volunteerio",
+        "CONTACT_PLACEHOLDER": "ex: maria.popa@gmail.com sau @mariap",
+        "ROLE_LABEL": "Rol / Echipă atribuită",
+        "SLOT_LABEL": "Alocare loc garantat",
+        "SLOT_RESERVE_PREFIX": "Rezervă loc din cele ",
+        "NOTE_LABEL": "Mesaj de invitație personalizat (opțional)",
+        "NOTE_PLACEHOLDER": "ex: Te invităm cu drag în echipa noastră de voluntariat!",
+        "OR_COPY": "Sau copiază link-ul direct",
+        "COPY_BTN": "Copiază",
+        "SUBMIT": "Trimite invitația"
+      },
+      "KICK": {
+        "TITLE": "Elimină voluntarul din proiect",
+        "SUBTITLE": "Ești pe cale să revoci participarea acestui voluntar.",
+        "SLOT_FREED": "Locul va deveni disponibil pentru alte persoane interesate.",
+        "REASON_LABEL": "Motiv eliminare (opțional)",
+        "REASON_WITHDRAWAL": "Solicitare din partea voluntarului (retragere)",
+        "REASON_NOSHOW": "Neprezentare la ora stabilită fără justificare",
+        "REASON_REQUIREMENTS": "Neîndeplinire cerințe de vârstă / echipament",
+        "REASON_BEHAVIOR": "Comportament neadecvat / nerespectare regulament",
+        "REASON_OTHER": "Alt motiv...",
+        "DETAILS_LABEL": "Detalii adiționale pentru notificare (opțional)",
+        "DETAILS_PLACEHOLDER": "Scrie detalii suplimentare transmise voluntarului...",
+        "NOTIFY_CHECKBOX": "Trimite notificare pe email voluntarului cu motivul eliminării",
+        "SUBMIT": "Elimină din proiect"
+      },
+      "QR": {
+        "TITLE": "Validare Prezență QR la Fața Locului",
+        "SUBTITLE": "Scanează codul din aplicația Volunteerio a voluntarului.",
+        "RETICLE": "Îndreaptă camera spre codul QR al voluntarului",
+        "CAM_ACTIVE": "Camera activă (1080p)",
+        "SWITCH_CAM": "Schimbă camera",
+        "SIMULATE_LABEL": "Simulează scanarea rapidă a unui voluntar neconfirmat:",
+        "ALL_CONFIRMED": "Toți voluntarii au fost deja confirmați!",
+        "SCAN_NOW": "Scanează acum",
+        "CAM_FAIL": "Nu funcționează camera?",
+        "MANUAL_LINK": "Introdu codul manual (bilet/PIN)"
+      }
+    },
+    "TOASTS": {
+      "BROADCAST_SENT": "Mesajul a fost expediat către toți cei {count} voluntari!",
+      "DM_SENT": "Mesajul a fost trimis către {name}!",
+      "INVITE_SENT": "Invitația a fost trimisă cu succes către {contact}!",
+      "LINK_COPIED": "Link-ul de invitație a fost copiat în clipboard!",
+      "KICKED": "Voluntarul {name} a fost eliminat din proiect.",
+      "CHECKIN_CONFIRMED": "✓ Prezență confirmată: {name} ({role})",
+      "ALL_CONFIRMED_ALREADY": "Toți voluntarii au confirmat deja prezența!",
+      "MANUAL_CODE_ACCEPTED": "✓ Cod manual acceptat: {name} este confirmat!"
+    },
+    "LOGS": {
+      "ANNOUNCEMENT_SENT": "Anunț transmis tuturor voluntarilor: \"{subject}\"",
+      "DM_SENT": "Mesaj expediat către {name}",
+      "INVITE_SENT": "Invitație trimisă către {contact} ({role})",
+      "KICKED": "Voluntarul {name} a fost eliminat. Motiv: {reason}",
+      "QR_CHECKIN": "✓ {name} a fost validat la fața locului (QR)",
+      "MANUAL_CHECKIN": "✓ Cod manual acceptat: {name} este acum prezent",
+      "TODAY": "Astăzi"
+    }
   }
 }

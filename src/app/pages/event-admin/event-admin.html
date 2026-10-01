@@ -3,22 +3,22 @@
   <div class="top-nav-bar">
     <div class="nav-container">
       <div class="breadcrumbs">
-        <a [routerLink]="routes.homeAuth()" class="breadcrumb-link">Proiectele mele</a>
+        <a [routerLink]="routes.homeAuth()" class="breadcrumb-link">{{ 'EVENT_ADMIN.BREADCRUMBS.MY_PROJECTS' | translate }}</a>
         <span class="breadcrumb-sep">/</span>
-        <span class="breadcrumb-current">{{ eventData()?.title || 'Plantăm păduri comunitare' }}</span>
+        <span class="breadcrumb-current">{{ eventData()?.title || ('EVENT_ADMIN.HERO.DEFAULT_TITLE' | translate) }}</span>
         <span class="breadcrumb-sep">/</span>
-        <span class="breadcrumb-active">Contact și Administrare</span>
+        <span class="breadcrumb-active">{{ 'EVENT_ADMIN.BREADCRUMBS.CONTACT_MANAGE' | translate }}</span>
       </div>
 
       <!-- Navigation Tabs Between Story 1 (Contact & Manage) and Story 2 (Post-Event) -->
       <div class="phase-switcher">
         <button type="button" class="phase-tab active">
           <mat-icon class="tab-icon">group</mat-icon>
-          <span>Contact & Administrare (Live)</span>
+          <span>{{ 'EVENT_ADMIN.BREADCRUMBS.LIVE_TAB' | translate }}</span>
         </button>
-        <button type="button" class="phase-tab inactive" title="Disponibil după finalizarea evenimentului">
+        <button type="button" class="phase-tab inactive" [title]="'EVENT_ADMIN.BREADCRUMBS.POST_EVENT_TOOLTIP' | translate">
           <mat-icon class="tab-icon">verified</mat-icon>
-          <span>Post-Eveniment & Evaluare (Finalizat)</span>
+          <span>{{ 'EVENT_ADMIN.BREADCRUMBS.POST_EVENT_TAB' | translate }}</span>
         </button>
       </div>
     </div>
@@ -33,7 +33,7 @@
       <div class="banner-content">
         <div class="banner-left">
           <div class="badge-row">
-            <span class="status-badge">Eveniment activ</span>
+            <span class="status-badge">{{ 'EVENT_ADMIN.HERO.ACTIVE_BADGE' | translate }}</span>
             <span class="meta-item">
               <mat-icon class="meta-icon">place</mat-icon>
               {{ eventData()?.location || 'Strășeni, Moldova' }}
@@ -44,20 +44,20 @@
             </span>
           </div>
 
-          <h1 class="event-title">{{ eventData()?.title || 'Plantăm păduri comunitare' }}</h1>
+          <h1 class="event-title">{{ eventData()?.title || ('EVENT_ADMIN.HERO.DEFAULT_TITLE' | translate) }}</h1>
           <p class="event-desc">
-            {{ eventData()?.description || 'Gestionare înscrieri, comunicare cu participanții și confirmarea prezenței la fața locului pentru acțiunea de voluntariat.' }}
+            {{ eventData()?.description || ('EVENT_ADMIN.HERO.DEFAULT_DESC' | translate) }}
           </p>
 
           <!-- Capacity & Attendance Mini Progress -->
           <div class="mini-stats-row">
             <div class="mini-stat-pill">
-              <span class="stat-highlight">{{ totalCount() }} din {{ eventData()?.volunteers || 40 }}</span>
-              <span class="stat-label">voluntari înscriși</span>
+              <span class="stat-highlight">{{ totalCount() }} {{ 'EVENT_ADMIN.HERO.OUT_OF' | translate }} {{ eventData()?.volunteers || 40 }}</span>
+              <span class="stat-label">{{ 'EVENT_ADMIN.HERO.VOLUNTEERS_REGISTERED' | translate }}</span>
             </div>
             <div class="mini-stat-pill">
-              <span class="stat-highlight">{{ checkedCount() }} din {{ totalCount() }}</span>
-              <span class="stat-label">prezenți confirmați QR</span>
+              <span class="stat-highlight">{{ checkedCount() }} {{ 'EVENT_ADMIN.HERO.OUT_OF' | translate }} {{ totalCount() }}</span>
+              <span class="stat-label">{{ 'EVENT_ADMIN.HERO.VOLUNTEERS_CONFIRMED_QR' | translate }}</span>
             </div>
           </div>
         </div>
@@ -67,19 +67,19 @@
           <!-- Action 1: Message all volunteers -->
           <button type="button" class="btn-action btn-broadcast" (click)="openMessageAllModal()">
             <mat-icon class="btn-icon">mail</mat-icon>
-            <span>Mesaj către toți</span>
+            <span>{{ 'EVENT_ADMIN.HERO.BTN_MESSAGE_ALL' | translate }}</span>
           </button>
 
           <!-- Action 3: Invite an individual volunteer -->
           <button type="button" class="btn-action btn-invite" (click)="openInviteModal()">
             <mat-icon class="btn-icon">person_add</mat-icon>
-            <span>Invită voluntar</span>
+            <span>{{ 'EVENT_ADMIN.HERO.BTN_INVITE' | translate }}</span>
           </button>
 
           <!-- Action 5: Confirm volunteer participation on-sight using QR codes -->
           <button type="button" class="btn-action btn-qr-scan" (click)="openQRScannerModal()">
             <mat-icon class="btn-icon">qr_code_scanner</mat-icon>
-            <span>Scanează QR Prezență</span>
+            <span>{{ 'EVENT_ADMIN.HERO.BTN_QR_SCAN' | translate }}</span>
           </button>
         </div>
       </div>
@@ -99,7 +99,7 @@
               class="search-input"
               [ngModel]="searchQuery()"
               (ngModelChange)="searchQuery.set($event)"
-              placeholder="Caută voluntar după nume, email sau rol..."
+              [placeholder]="'EVENT_ADMIN.CONTROLS.SEARCH_PLACEHOLDER' | translate"
             />
             @if (searchQuery()) {
               <button type="button" class="clear-btn" (click)="searchQuery.set('')">
@@ -116,7 +116,7 @@
               [class.active]="currentFilter() === 'all'"
               (click)="setFilter('all')"
             >
-              Toți (<span>{{ totalCount() }}</span>)
+              {{ 'EVENT_ADMIN.CONTROLS.FILTER_ALL' | translate }} (<span>{{ totalCount() }}</span>)
             </button>
             <button
               type="button"
@@ -124,7 +124,7 @@
               [class.active]="currentFilter() === 'checked-in'"
               (click)="setFilter('checked-in')"
             >
-              Prezenți (<span>{{ checkedCount() }}</span>)
+              {{ 'EVENT_ADMIN.CONTROLS.FILTER_CHECKED' | translate }} (<span>{{ checkedCount() }}</span>)
             </button>
             <button
               type="button"
@@ -132,7 +132,7 @@
               [class.active]="currentFilter() === 'pending'"
               (click)="setFilter('pending')"
             >
-              În așteptare (<span>{{ pendingCount() }}</span>)
+              {{ 'EVENT_ADMIN.CONTROLS.FILTER_PENDING' | translate }} (<span>{{ pendingCount() }}</span>)
             </button>
           </div>
         </div>
@@ -143,11 +143,11 @@
             <table class="volunteers-table">
               <thead>
                 <tr>
-                  <th scope="col">Voluntar</th>
-                  <th scope="col" class="hide-mobile">Contact</th>
-                  <th scope="col" class="hide-sm">Rol / Echipă</th>
-                  <th scope="col">Stare Prezență</th>
-                  <th scope="col" class="text-right">Acțiuni</th>
+                  <th scope="col">{{ 'EVENT_ADMIN.TABLE.HEADER_VOLUNTEER' | translate }}</th>
+                  <th scope="col" class="hide-mobile">{{ 'EVENT_ADMIN.TABLE.HEADER_CONTACT' | translate }}</th>
+                  <th scope="col" class="hide-sm">{{ 'EVENT_ADMIN.TABLE.HEADER_ROLE' | translate }}</th>
+                  <th scope="col">{{ 'EVENT_ADMIN.TABLE.HEADER_STATUS' | translate }}</th>
+                  <th scope="col" class="text-right">{{ 'EVENT_ADMIN.TABLE.HEADER_ACTIONS' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -178,7 +178,7 @@
                         'role-checkin': volunteer.role === 'Asistență Check-in',
                         'role-general': volunteer.role === 'Voluntar general'
                       }">
-                        {{ volunteer.role }}
+                        {{ getTranslatedRole(volunteer.role) }}
                       </span>
                     </td>
 
@@ -187,15 +187,15 @@
                       @if (volunteer.status === 'checked-in') {
                         <span class="status-pill status-checked">
                           <mat-icon class="status-icon">check</mat-icon>
-                          <span>Confirmat QR</span>
+                          <span>{{ 'EVENT_ADMIN.TABLE.STATUS_CHECKED' | translate }}</span>
                           @if (volunteer.checkInTime) {
-                            <span class="status-time">({{ volunteer.checkInTime.replace('Astăzi, ', '') }})</span>
+                            <span class="status-time">({{ volunteer.checkInTime.replace('Astăzi, ', '').replace('Today, ', '').replace('Сегодня, ', '') }})</span>
                           }
                         </span>
                       } @else {
                         <span class="status-pill status-pending">
                           <span class="status-dot"></span>
-                          <span>În așteptare</span>
+                          <span>{{ 'EVENT_ADMIN.TABLE.STATUS_PENDING' | translate }}</span>
                         </span>
                       }
                     </td>
@@ -207,7 +207,7 @@
                           type="button"
                           class="action-btn-row btn-dm"
                           (click)="openMessageIndividualModal(volunteer)"
-                          title="Trimite mesaj direct"
+                          [title]="'EVENT_ADMIN.TABLE.TOOLTIP_DM' | translate"
                         >
                           <mat-icon>chat</mat-icon>
                         </button>
@@ -215,7 +215,7 @@
                           type="button"
                           class="action-btn-row btn-kick"
                           (click)="openKickOutModal(volunteer)"
-                          title="Elimină din proiect"
+                          [title]="'EVENT_ADMIN.TABLE.TOOLTIP_KICK' | translate"
                         >
                           <mat-icon>person_remove</mat-icon>
                         </button>
@@ -226,7 +226,7 @@
                   <tr>
                     <td colspan="5" class="empty-table-cell">
                       <mat-icon class="empty-icon">search_off</mat-icon>
-                      <p>Niciun voluntar găsit conform criteriilor de căutare.</p>
+                      <p>{{ 'EVENT_ADMIN.TABLE.EMPTY' | translate }}</p>
                     </td>
                   </tr>
                 }
@@ -236,12 +236,14 @@
 
           <!-- Table Footer -->
           <div class="table-footer">
-            <div class="footer-count">Afișează {{ filteredVolunteers().length }} voluntari</div>
+            <div class="footer-count">
+              {{ 'EVENT_ADMIN.TABLE.FOOTER_SHOWING' | translate }} {{ filteredVolunteers().length }} {{ 'EVENT_ADMIN.TABLE.FOOTER_VOLUNTEERS' | translate }}
+            </div>
             <div class="pagination-controls">
-              <button type="button" class="page-btn disabled" disabled>Anterior</button>
+              <button type="button" class="page-btn disabled" disabled>{{ 'EVENT_ADMIN.TABLE.PAGINATION_PREV' | translate }}</button>
               <button type="button" class="page-btn active">1</button>
               <button type="button" class="page-btn">2</button>
-              <button type="button" class="page-btn">Următor</button>
+              <button type="button" class="page-btn">{{ 'EVENT_ADMIN.TABLE.PAGINATION_NEXT' | translate }}</button>
             </div>
           </div>
         </div>
@@ -253,30 +255,30 @@
         <div class="sidebar-card">
           <h2 class="card-heading">
             <mat-icon class="heading-icon">bar_chart</mat-icon>
-            <span>Statistici Prezență</span>
+            <span>{{ 'EVENT_ADMIN.SIDEBAR.STATS_TITLE' | translate }}</span>
           </h2>
 
           <div class="stats-counter-grid">
             <div class="stat-box stat-box-checked">
               <div class="stat-number text-emerald">{{ checkedCount() }}</div>
-              <div class="stat-caption">Prezenți la fața locului</div>
+              <div class="stat-caption">{{ 'EVENT_ADMIN.SIDEBAR.PRESENT_ON_SITE' | translate }}</div>
             </div>
             <div class="stat-box stat-box-pending">
               <div class="stat-number text-amber">{{ pendingCount() }}</div>
-              <div class="stat-caption">În așteptare</div>
+              <div class="stat-caption">{{ 'EVENT_ADMIN.SIDEBAR.PENDING_CONFIRMATION' | translate }}</div>
             </div>
           </div>
 
           <div class="progress-wrap">
             <div class="progress-header">
-              <span>Rată de participare:</span>
+              <span>{{ 'EVENT_ADMIN.SIDEBAR.PARTICIPATION_RATE' | translate }}</span>
               <span class="rate-val">{{ attendanceRate() }}</span>
             </div>
             <div class="progress-bar-bg">
               <div class="progress-bar-fill" [style.width]="attendanceRate()"></div>
             </div>
             <p class="progress-hint">
-              Prezența se validează la intrare prin scanarea codului QR generat în aplicația fiecărui voluntar.
+              {{ 'EVENT_ADMIN.SIDEBAR.STATS_HINT' | translate }}
             </p>
           </div>
         </div>
@@ -285,19 +287,19 @@
         <div class="sidebar-card help-card">
           <div class="help-title">
             <mat-icon class="help-icon">info</mat-icon>
-            <span>Ghid rapid organizator</span>
+            <span>{{ 'EVENT_ADMIN.SIDEBAR.HELP_TITLE' | translate }}</span>
           </div>
           <ul class="help-list">
-            <li>• Folosește <strong>Scanează QR</strong> de pe telefon sau tabletă pentru check-in instantaneu la intrare.</li>
-            <li>• <strong>Mesaj către toți</strong> transmite actualizări urgente simultan prin notificări push și email.</li>
-            <li>• În caz de neprezentare sau cerere de retragere, poți elibera locul cu butonul de eliminare.</li>
+            <li>• {{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_1_PREFIX' | translate }}<strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_1_STRONG' | translate }}</strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_1_SUFFIX' | translate }}</li>
+            <li>• <strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_2_STRONG' | translate }}</strong>{{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_2_SUFFIX' | translate }}</li>
+            <li>• {{ 'EVENT_ADMIN.SIDEBAR.HELP_ITEM_3_TEXT' | translate }}</li>
           </ul>
         </div>
 
         <!-- Live Activity Feed -->
         <div class="sidebar-card activity-card">
           <div class="card-heading space-between">
-            <span>Activitate recentă</span>
+            <span>{{ 'EVENT_ADMIN.SIDEBAR.ACTIVITY_TITLE' | translate }}</span>
             <span class="pulse-dot"></span>
           </div>
           <div class="activity-feed-list custom-scrollbar">
@@ -333,8 +335,8 @@
               <mat-icon>mail</mat-icon>
             </div>
             <div>
-              <h3>Mesaj către toți voluntarii</h3>
-              <p>Transmite un anunț simultan către cei {{ totalCount() }} de voluntari înscriși.</p>
+              <h3>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBTITLE_PREFIX' | translate }}{{ totalCount() }}{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBTITLE_SUFFIX' | translate }}</p>
             </div>
           </div>
           <button type="button" class="close-btn" (click)="closeModal()">✕</button>
@@ -342,25 +344,25 @@
 
         <div class="modal-body">
           <div class="form-field">
-            <label class="field-label">Canale de transmitere</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CHANNELS_LABEL' | translate }}</label>
             <div class="channels-grid">
               <label class="channel-card" [class.selected]="broadcastPush()">
                 <input type="checkbox" [checked]="broadcastPush()" (change)="broadcastPush.set(!broadcastPush())" />
-                <span>Notificare Push (App)</span>
+                <span>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CHANNEL_PUSH' | translate }}</span>
               </label>
               <label class="channel-card" [class.selected]="broadcastEmail()">
                 <input type="checkbox" [checked]="broadcastEmail()" (change)="broadcastEmail.set(!broadcastEmail())" />
-                <span>Email Voluntari</span>
+                <span>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CHANNEL_EMAIL' | translate }}</span>
               </label>
             </div>
           </div>
 
           <div class="form-field">
-            <label class="field-label">Subiect anunț</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBJECT_LABEL' | translate }}</label>
             <input
               type="text"
               class="text-input"
-              placeholder="ex: Reamintire echipament & actualizare orar"
+              [placeholder]="'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBJECT_PLACEHOLDER' | translate"
               [ngModel]="broadcastSubject()"
               (ngModelChange)="broadcastSubject.set($event)"
             />
@@ -368,8 +370,8 @@
 
           <div class="form-field">
             <div class="field-label-row">
-              <label class="field-label">Conținut mesaj</label>
-              <span class="field-vars">Variabile: &#123;nume&#125;, &#123;ora&#125;</span>
+              <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.CONTENT_LABEL' | translate }}</label>
+              <span class="field-vars">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.VARS_HINT' | translate }}</span>
             </div>
             <textarea
               rows="4"
@@ -381,13 +383,13 @@
 
           <div class="alert-box amber">
             <mat-icon class="alert-icon">warning_amber</mat-icon>
-            <span>Mesajul va fi trimis ca anunț oficial din partea organizației «{{ eventData()?.organization || 'Eco Moldova' }}».</span>
+            <span>{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.ALERT_PREFIX' | translate }}{{ eventData()?.organization || 'Eco Moldova' }}{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.ALERT_SUFFIX' | translate }}</span>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="closeModal()">Anulează</button>
-          <button type="button" class="btn-confirm" (click)="sendBroadcastMessage()">Trimite anunțul</button>
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CANCEL' | translate }}</button>
+          <button type="button" class="btn-confirm" (click)="sendBroadcastMessage()">{{ 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBMIT' | translate }}</button>
         </div>
       </div>
     </div>
@@ -412,33 +414,39 @@
 
         <div class="modal-body">
           <div class="quick-templates">
-            <label class="field-label-sm">Șabloane rapide</label>
+            <label class="field-label-sm">{{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATES_LABEL' | translate }}</label>
             <div class="templates-row">
-              <button type="button" class="template-chip" (click)="insertTemplate('Salut! Ai nevoie de transport până la locație?')">Transport?</button>
-              <button type="button" class="template-chip" (click)="insertTemplate('Te rugăm să confirmi dacă ajungi la ora 09:00.')">Confirmare oră</button>
-              <button type="button" class="template-chip" (click)="insertTemplate('Echipa ta a fost repartizată la Sectorul A.')">Sector repartizat</button>
+              <button type="button" class="template-chip" (click)="insertTemplate('EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TRANSPORT_TEXT')">
+                {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TRANSPORT' | translate }}
+              </button>
+              <button type="button" class="template-chip" (click)="insertTemplate('EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TIME_TEXT')">
+                {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_TIME' | translate }}
+              </button>
+              <button type="button" class="template-chip" (click)="insertTemplate('EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_SECTOR_TEXT')">
+                {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.TEMPLATE_SECTOR' | translate }}
+              </button>
             </div>
           </div>
 
           <div class="form-field">
-            <label class="field-label">Mesaj direct</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.DIRECT_LABEL' | translate }}</label>
             <textarea
               rows="4"
               class="textarea-input"
-              placeholder="Scrie mesajul pentru voluntar..."
+              [placeholder]="'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.DIRECT_PLACEHOLDER' | translate"
               [ngModel]="dmMessageText()"
               (ngModelChange)="dmMessageText.set($event)"
             ></textarea>
           </div>
 
           <p class="modal-hint">
-            Voluntarul va primi notificarea în aplicația Volunteerio și pe adresa de email înregistrată.
+            {{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.HINT' | translate }}
           </p>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="closeModal()">Închide</button>
-          <button type="button" class="btn-confirm" (click)="sendIndividualMessage()">Trimite mesajul</button>
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CLOSE' | translate }}</button>
+          <button type="button" class="btn-confirm" (click)="sendIndividualMessage()">{{ 'EVENT_ADMIN.MODALS.MESSAGE_INDIVIDUAL.SUBMIT' | translate }}</button>
         </div>
       </div>
     </div>
@@ -456,8 +464,8 @@
               <mat-icon>person_add</mat-icon>
             </div>
             <div>
-              <h3>Invită un voluntar</h3>
-              <p>Trimite o invitație nominală prin email sau căutare în comunitate.</p>
+              <h3>{{ 'EVENT_ADMIN.MODALS.INVITE.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.INVITE.SUBTITLE' | translate }}</p>
             </div>
           </div>
           <button type="button" class="close-btn" (click)="closeModal()">✕</button>
@@ -465,11 +473,11 @@
 
         <div class="modal-body">
           <div class="form-field">
-            <label class="field-label">Email sau Nume utilizator Volunteerio</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.CONTACT_LABEL' | translate }}</label>
             <input
               type="text"
               class="text-input"
-              placeholder="ex: maria.popa@gmail.com sau @mariap"
+              [placeholder]="'EVENT_ADMIN.MODALS.INVITE.CONTACT_PLACEHOLDER' | translate"
               [ngModel]="inviteContact()"
               (ngModelChange)="inviteContact.set($event)"
             />
@@ -477,30 +485,30 @@
 
           <div class="form-row-2">
             <div class="form-field">
-              <label class="field-label">Rol / Echipă atribuită</label>
+              <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.ROLE_LABEL' | translate }}</label>
               <select class="select-input" [ngModel]="inviteRole()" (ngModelChange)="inviteRole.set($event)">
-                <option value="Voluntar general">Voluntar general</option>
-                <option value="Leader of the group">Leader of the group</option>
-                <option value="Echipa Logistică">Echipa Logistică</option>
-                <option value="Asistență Check-in">Asistență Check-in</option>
+                <option value="Voluntar general">{{ 'EVENT_ADMIN.ROLES.GENERAL' | translate }}</option>
+                <option value="Leader of the group">{{ 'EVENT_ADMIN.ROLES.LEADER' | translate }}</option>
+                <option value="Echipa Logistică">{{ 'EVENT_ADMIN.ROLES.LOGISTICS' | translate }}</option>
+                <option value="Asistență Check-in">{{ 'EVENT_ADMIN.ROLES.CHECKIN' | translate }}</option>
               </select>
             </div>
 
             <div class="form-field">
-              <label class="field-label">Alocare loc garantat</label>
+              <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.SLOT_LABEL' | translate }}</label>
               <label class="checkbox-box">
                 <input type="checkbox" [checked]="reserveSlot()" (change)="reserveSlot.set(!reserveSlot())" />
-                <span>Rezervă loc din cele {{ eventData()?.volunteers || 40 }}</span>
+                <span>{{ 'EVENT_ADMIN.MODALS.INVITE.SLOT_RESERVE_PREFIX' | translate }}{{ eventData()?.volunteers || 40 }}</span>
               </label>
             </div>
           </div>
 
           <div class="form-field">
-            <label class="field-label">Mesaj de invitație personalizat (opțional)</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.INVITE.NOTE_LABEL' | translate }}</label>
             <textarea
               rows="2"
               class="textarea-input"
-              placeholder="ex: Te invităm cu drag în echipa noastră de voluntariat!"
+              [placeholder]="'EVENT_ADMIN.MODALS.INVITE.NOTE_PLACEHOLDER' | translate"
               [ngModel]="inviteNote()"
               (ngModelChange)="inviteNote.set($event)"
             ></textarea>
@@ -509,16 +517,16 @@
           <!-- Shareable Link Box -->
           <div class="share-link-box">
             <div class="share-text-wrap">
-              <span class="share-title">Sau copiază link-ul direct</span>
+              <span class="share-title">{{ 'EVENT_ADMIN.MODALS.INVITE.OR_COPY' | translate }}</span>
               <span class="share-url">volunteerio.md/join/{{ eventId() }}?inv=pc42</span>
             </div>
-            <button type="button" class="btn-copy-link" (click)="copyInviteLink()">Copiază</button>
+            <button type="button" class="btn-copy-link" (click)="copyInviteLink()">{{ 'EVENT_ADMIN.MODALS.INVITE.COPY_BTN' | translate }}</button>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="closeModal()">Anulează</button>
-          <button type="button" class="btn-confirm" (click)="sendInvite()">Trimite invitația</button>
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CANCEL' | translate }}</button>
+          <button type="button" class="btn-confirm" (click)="sendInvite()">{{ 'EVENT_ADMIN.MODALS.INVITE.SUBMIT' | translate }}</button>
         </div>
       </div>
     </div>
@@ -536,8 +544,8 @@
               <mat-icon>person_remove</mat-icon>
             </div>
             <div>
-              <h3>Elimină voluntarul din proiect</h3>
-              <p>Ești pe cale să revoci participarea acestui voluntar.</p>
+              <h3>{{ 'EVENT_ADMIN.MODALS.KICK.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.KICK.SUBTITLE' | translate }}</p>
             </div>
           </div>
           <button type="button" class="close-btn" (click)="closeModal()">✕</button>
@@ -548,27 +556,27 @@
             <img [src]="targetVolunteer()?.avatar" [alt]="targetVolunteer()?.name" class="volunteer-avatar-warn" />
             <div>
               <strong>{{ targetVolunteer()?.name }}</strong>
-              <p>Locul va deveni disponibil pentru alte persoane interesate.</p>
+              <p>{{ 'EVENT_ADMIN.MODALS.KICK.SLOT_FREED' | translate }}</p>
             </div>
           </div>
 
           <div class="form-field">
-            <label class="field-label">Motiv eliminare (opțional)</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_LABEL' | translate }}</label>
             <select class="select-input" [ngModel]="kickReasonSelect()" (ngModelChange)="kickReasonSelect.set($event)">
-              <option value="Solicitare din partea voluntarului (retragere)">Solicitare din partea voluntarului (retragere)</option>
-              <option value="Neprezentare la ora stabilită fără justificare">Neprezentare la ora stabilită fără justificare</option>
-              <option value="Neîndeplinire cerințe de vârstă / echipament">Neîndeplinire cerințe de vârstă / echipament</option>
-              <option value="Comportament neadecvat / nerespectare regulament">Comportament neadecvat / nerespectare regulament</option>
-              <option value="Alt motiv">Alt motiv...</option>
+              <option value="Solicitare din partea voluntarului (retragere)">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_WITHDRAWAL' | translate }}</option>
+              <option value="Neprezentare la ora stabilită fără justificare">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_NOSHOW' | translate }}</option>
+              <option value="Neîndeplinire cerințe de vârstă / echipament">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_REQUIREMENTS' | translate }}</option>
+              <option value="Comportament neadecvat / nerespectare regulament">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_BEHAVIOR' | translate }}</option>
+              <option value="Alt motiv">{{ 'EVENT_ADMIN.MODALS.KICK.REASON_OTHER' | translate }}</option>
             </select>
           </div>
 
           <div class="form-field">
-            <label class="field-label">Detalii adiționale pentru notificare (opțional)</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.KICK.DETAILS_LABEL' | translate }}</label>
             <textarea
               rows="2"
               class="textarea-input"
-              placeholder="Scrie detalii suplimentare transmise voluntarului..."
+              [placeholder]="'EVENT_ADMIN.MODALS.KICK.DETAILS_PLACEHOLDER' | translate"
               [ngModel]="kickReasonText()"
               (ngModelChange)="kickReasonText.set($event)"
             ></textarea>
@@ -576,13 +584,13 @@
 
           <label class="checkbox-row">
             <input type="checkbox" [checked]="notifyKickVolunteer()" (change)="notifyKickVolunteer.set(!notifyKickVolunteer())" />
-            <span>Trimite notificare pe email voluntarului cu motivul eliminării</span>
+            <span>{{ 'EVENT_ADMIN.MODALS.KICK.NOTIFY_CHECKBOX' | translate }}</span>
           </label>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn-cancel" (click)="closeModal()">Anulează</button>
-          <button type="button" class="btn-danger" (click)="confirmKickOut()">Elimină din proiect</button>
+          <button type="button" class="btn-cancel" (click)="closeModal()">{{ 'EVENT_ADMIN.MODALS.CANCEL' | translate }}</button>
+          <button type="button" class="btn-danger" (click)="confirmKickOut()">{{ 'EVENT_ADMIN.MODALS.KICK.SUBMIT' | translate }}</button>
         </div>
       </div>
     </div>
@@ -600,8 +608,8 @@
               <mat-icon>qr_code_scanner</mat-icon>
             </div>
             <div>
-              <h3>Validare Prezență QR la Fața Locului</h3>
-              <p>Scanează codul din aplicația Volunteerio a voluntarului.</p>
+              <h3>{{ 'EVENT_ADMIN.MODALS.QR.TITLE' | translate }}</h3>
+              <p>{{ 'EVENT_ADMIN.MODALS.QR.SUBTITLE' | translate }}</p>
             </div>
           </div>
           <button type="button" class="close-btn" (click)="closeModal()">✕</button>
@@ -612,21 +620,21 @@
           <div class="scanner-viewport">
             <div class="scanner-reticle">
               <div class="laser-scan-line"></div>
-              <span class="reticle-label">Îndreaptă camera spre codul QR al voluntarului</span>
+              <span class="reticle-label">{{ 'EVENT_ADMIN.MODALS.QR.RETICLE' | translate }}</span>
             </div>
 
             <div class="scanner-controls-bar">
               <span class="camera-status">
                 <span class="pulse-dot-green"></span>
-                Camera activă (1080p)
+                {{ 'EVENT_ADMIN.MODALS.QR.CAM_ACTIVE' | translate }}
               </span>
-              <button type="button" class="btn-switch-cam">Schimbă camera</button>
+              <button type="button" class="btn-switch-cam">{{ 'EVENT_ADMIN.MODALS.QR.SWITCH_CAM' | translate }}</button>
             </div>
           </div>
 
           <!-- Quick Test Simulation Controls -->
           <div class="quick-scan-box">
-            <label class="field-label">Simulează scanarea rapidă a unui voluntar neconfirmat:</label>
+            <label class="field-label">{{ 'EVENT_ADMIN.MODALS.QR.SIMULATE_LABEL' | translate }}</label>
             <div class="quick-scan-row">
               <select
                 class="select-input select-flex"
@@ -634,9 +642,9 @@
                 (ngModelChange)="quickScanSelectId.set(+$event)"
               >
                 @for (volunteer of pendingVolunteers(); track volunteer.id) {
-                  <option [value]="volunteer.id">{{ volunteer.name }} ({{ volunteer.role }})</option>
+                  <option [value]="volunteer.id">{{ volunteer.name }} ({{ getTranslatedRole(volunteer.role) }})</option>
                 } @empty {
-                  <option [value]="null">Toți voluntarii au fost deja confirmați!</option>
+                  <option [value]="null">{{ 'EVENT_ADMIN.MODALS.QR.ALL_CONFIRMED' | translate }}</option>
                 }
               </select>
               <button
@@ -645,16 +653,16 @@
                 [disabled]="pendingVolunteers().length === 0"
                 (click)="simulateScanSelected()"
               >
-                Scanează acum
+                {{ 'EVENT_ADMIN.MODALS.QR.SCAN_NOW' | translate }}
               </button>
             </div>
           </div>
 
           <!-- Manual code fallback -->
           <div class="manual-code-row">
-            <span>Nu funcționează camera?</span>
+            <span>{{ 'EVENT_ADMIN.MODALS.QR.CAM_FAIL' | translate }}</span>
             <button type="button" class="btn-manual-link" (click)="promptManualCheckin()">
-              Introdu codul manual (bilet/PIN)
+              {{ 'EVENT_ADMIN.MODALS.QR.MANUAL_LINK' | translate }}
             </button>
           </div>
         </div>

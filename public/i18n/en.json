@@ -574,5 +574,158 @@
       "ART3_TITLE": "How Can You Control Cookies?",
       "ART3_P1": "You can configure your browser to block or warn about cookies; however, disabling essential session cookies may prevent you from logging into your volunteer account."
     }
+  },
+  "EVENT_ADMIN": {
+    "BREADCRUMBS": {
+      "MY_PROJECTS": "My Projects",
+      "CONTACT_MANAGE": "Contact & Administration",
+      "LIVE_TAB": "Contact & Admin (Live)",
+      "POST_EVENT_TAB": "Post-Event & Evaluation (Completed)",
+      "POST_EVENT_TOOLTIP": "Available after event completion"
+    },
+    "HERO": {
+      "ACTIVE_BADGE": "Active Event",
+      "VOLUNTEERS_REGISTERED": "registered volunteers",
+      "VOLUNTEERS_CONFIRMED_QR": "confirmed QR on-site",
+      "OUT_OF": "of",
+      "BTN_MESSAGE_ALL": "Message Everyone",
+      "BTN_INVITE": "Invite Volunteer",
+      "BTN_QR_SCAN": "Scan QR Attendance"
+    },
+    "CONTROLS": {
+      "SEARCH_PLACEHOLDER": "Search volunteer by name, email or role...",
+      "FILTER_ALL": "All",
+      "FILTER_CHECKED": "Present",
+      "FILTER_PENDING": "Pending"
+    },
+    "TABLE": {
+      "HEADER_VOLUNTEER": "Volunteer",
+      "HEADER_CONTACT": "Contact",
+      "HEADER_ROLE": "Role / Team",
+      "HEADER_STATUS": "Attendance Status",
+      "HEADER_ACTIONS": "Actions",
+      "STATUS_CHECKED": "Confirmed QR",
+      "STATUS_PENDING": "Pending",
+      "TOOLTIP_DM": "Send direct message",
+      "TOOLTIP_KICK": "Remove from project",
+      "EMPTY": "No volunteers found matching search criteria.",
+      "FOOTER_SHOWING": "Showing",
+      "FOOTER_VOLUNTEERS": "volunteers",
+      "PAGINATION_PREV": "Previous",
+      "PAGINATION_NEXT": "Next"
+    },
+    "ROLES": {
+      "LEADER": "Leader of the group",
+      "LOGISTICS": "Logistics Team",
+      "CHECKIN": "Check-in Support",
+      "GENERAL": "General Volunteer"
+    },
+    "SIDEBAR": {
+      "STATS_TITLE": "Attendance Stats",
+      "PRESENT_ON_SITE": "Present on-site",
+      "PENDING_CONFIRMATION": "Pending",
+      "PARTICIPATION_RATE": "Participation rate:",
+      "STATS_HINT": "Attendance is validated at the entrance by scanning the QR code generated in each volunteer's app.",
+      "HELP_TITLE": "Quick Organizer Guide",
+      "HELP_ITEM_1_PREFIX": "Use ",
+      "HELP_ITEM_1_STRONG": "Scan QR",
+      "HELP_ITEM_1_SUFFIX": " from phone or tablet for instant check-in at the entrance.",
+      "HELP_ITEM_2_STRONG": "Message Everyone",
+      "HELP_ITEM_2_SUFFIX": " sends urgent updates simultaneously via push notifications and email.",
+      "HELP_ITEM_3_TEXT": "In case of no-show or withdrawal request, you can free up the spot using the remove button.",
+      "ACTIVITY_TITLE": "Recent Activity"
+    },
+    "MODALS": {
+      "CANCEL": "Cancel",
+      "CLOSE": "Close",
+      "MESSAGE_ALL": {
+        "TITLE": "Message All Volunteers",
+        "SUBTITLE_PREFIX": "Send a simultaneous announcement to all ",
+        "SUBTITLE_SUFFIX": " registered volunteers.",
+        "CHANNELS_LABEL": "Delivery Channels",
+        "CHANNEL_PUSH": "Push Notification (App)",
+        "CHANNEL_EMAIL": "Volunteer Email",
+        "SUBJECT_LABEL": "Announcement Subject",
+        "SUBJECT_PLACEHOLDER": "e.g. Equipment reminder & schedule update",
+        "CONTENT_LABEL": "Message Content",
+        "VARS_HINT": "Variables: {name}, {time}",
+        "ALERT_PREFIX": "The message will be sent as an official announcement on behalf of «",
+        "ALERT_SUFFIX": "».",
+        "SUBMIT": "Send Announcement"
+      },
+      "MESSAGE_INDIVIDUAL": {
+        "TEMPLATES_LABEL": "Quick Templates",
+        "TEMPLATE_TRANSPORT": "Transport?",
+        "TEMPLATE_TRANSPORT_TEXT": "Hello! Do you need transport to the location?",
+        "TEMPLATE_TIME": "Time Confirmation",
+        "TEMPLATE_TIME_TEXT": "Please confirm if you are arriving at 09:00.",
+        "TEMPLATE_SECTOR": "Assigned Sector",
+        "TEMPLATE_SECTOR_TEXT": "Your team has been assigned to Sector A.",
+        "DIRECT_LABEL": "Direct Message",
+        "DIRECT_PLACEHOLDER": "Type message for volunteer...",
+        "HINT": "The volunteer will receive the notification in the Volunteerio app and at their registered email.",
+        "SUBMIT": "Send Message"
+      },
+      "INVITE": {
+        "TITLE": "Invite a Volunteer",
+        "SUBTITLE": "Send a personal invitation via email or community search.",
+        "CONTACT_LABEL": "Email or Volunteerio Username",
+        "CONTACT_PLACEHOLDER": "e.g. maria.popa@gmail.com or @mariap",
+        "ROLE_LABEL": "Assigned Role / Team",
+        "SLOT_LABEL": "Guaranteed Slot Allocation",
+        "SLOT_RESERVE_PREFIX": "Reserve slot out of ",
+        "NOTE_LABEL": "Custom invitation message (optional)",
+        "NOTE_PLACEHOLDER": "e.g. We warmly invite you to join our volunteer team!",
+        "OR_COPY": "Or copy direct link",
+        "COPY_BTN": "Copy",
+        "SUBMIT": "Send Invitation"
+      },
+      "KICK": {
+        "TITLE": "Remove Volunteer from Project",
+        "SUBTITLE": "You are about to revoke this volunteer's participation.",
+        "SLOT_FREED": "The spot will become available for other interested participants.",
+        "REASON_LABEL": "Reason for removal (optional)",
+        "REASON_WITHDRAWAL": "Volunteer request (withdrawal)",
+        "REASON_NOSHOW": "No-show at scheduled time without justification",
+        "REASON_REQUIREMENTS": "Did not meet age / equipment requirements",
+        "REASON_BEHAVIOR": "Inappropriate behavior / violation of rules",
+        "REASON_OTHER": "Other reason...",
+        "DETAILS_LABEL": "Additional details for notification (optional)",
+        "DETAILS_PLACEHOLDER": "Write additional details to send to the volunteer...",
+        "NOTIFY_CHECKBOX": "Send email notification to volunteer with the reason for removal",
+        "SUBMIT": "Remove from Project"
+      },
+      "QR": {
+        "TITLE": "On-Site QR Attendance Validation",
+        "SUBTITLE": "Scan the code from the volunteer's Volunteerio app.",
+        "RETICLE": "Point camera at the volunteer's QR code",
+        "CAM_ACTIVE": "Camera active (1080p)",
+        "SWITCH_CAM": "Switch camera",
+        "SIMULATE_LABEL": "Simulate quick scan for an unconfirmed volunteer:",
+        "ALL_CONFIRMED": "All volunteers have already been confirmed!",
+        "SCAN_NOW": "Scan Now",
+        "CAM_FAIL": "Camera not working?",
+        "MANUAL_LINK": "Enter code manually (ticket/PIN)"
+      }
+    },
+    "TOASTS": {
+      "BROADCAST_SENT": "The message was sent to all {count} volunteers!",
+      "DM_SENT": "Message sent to {name}!",
+      "INVITE_SENT": "Invitation sent successfully to {contact}!",
+      "LINK_COPIED": "Invitation link copied to clipboard!",
+      "KICKED": "Volunteer {name} was removed from the project.",
+      "CHECKIN_CONFIRMED": "✓ Attendance confirmed: {name} ({role})",
+      "ALL_CONFIRMED_ALREADY": "All volunteers have already confirmed attendance!",
+      "MANUAL_CODE_ACCEPTED": "✓ Manual code accepted: {name} is confirmed!"
+    },
+    "LOGS": {
+      "ANNOUNCEMENT_SENT": "Announcement sent to all volunteers: \"{subject}\"",
+      "DM_SENT": "Direct message sent to {name}",
+      "INVITE_SENT": "Invitation sent to {contact} ({role})",
+      "KICKED": "Volunteer {name} removed. Reason: {reason}",
+      "QR_CHECKIN": "✓ {name} validated on-site (QR)",
+      "MANUAL_CHECKIN": "✓ Manual code accepted: {name} is now present",
+      "TODAY": "Today"
+    }
   }
 }

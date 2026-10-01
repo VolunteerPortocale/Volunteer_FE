@@ -125,7 +125,8 @@ const INITIAL_LOGS: ActivityLogItem[] = [
     FormsModule,
     RouterLink,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    TranslatePipe
   ],
   templateUrl: './event-admin.html',
   styleUrl: './event-admin.scss'
@@ -229,6 +230,21 @@ export class EventAdminComponent implements OnInit {
     this.activeModal.set(null);
   }
 
+  getTranslatedRole(role: string): string {
+    switch (role) {
+      case 'Leader of the group':
+        return this.translationService.translate('EVENT_ADMIN.ROLES.LEADER');
+      case 'Echipa Logistică':
+        return this.translationService.translate('EVENT_ADMIN.ROLES.LOGISTICS');
+      case 'Asistență Check-in':
+        return this.translationService.translate('EVENT_ADMIN.ROLES.CHECKIN');
+      case 'Voluntar general':
+        return this.translationService.translate('EVENT_ADMIN.ROLES.GENERAL');
+      default:
+        return role;
+    }
+  }
+
   // Action 1: Broadcast Message
   openMessageAllModal(): void {
     this.broadcastSubject.set('');
@@ -236,10 +252,21 @@ export class EventAdminComponent implements OnInit {
   }
 
   sendBroadcastMessage(): void {
-    const subject = this.broadcastSubject().trim() || 'Anunț important';
+    const defaultSubject = this.translationService.translate('EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBJECT_LABEL');
+    const subject = this.broadcastSubject().trim() || (defaultSubject !== 'EVENT_ADMIN.MODALS.MESSAGE_ALL.SUBJECT_LABEL' ? defaultSubject : 'Anunț important');
     this.closeModal();
-    this.logActivity(`Anunț transmis tuturor voluntarilor: "${subject}"`, 'message');
-    this.showToast(`Mesajul a fost expediat către toți cei ${this.totalCount()} voluntari!`);
+
+    const logTemplate = this.translationService.translate('EVENT_ADMIN.LOGS.ANNOUNCEMENT_SENT');
+    const logText = logTemplate && logTemplate !== 'EVENT_ADMIN.LOGS.ANNOUNCEMENT_SENT'
+      ? logTemplate.replace('{subject}', subject)
+      : `Anunț transmis tuturor voluntarilor: "${subject}"`;
+    this.logActivity(logText, 'message');
+
+    const toastTemplate = this.translationService.translate('EVENT_ADMIN.TOASTS.BROADCAST_SENT');
+    const toastMsg = toastTemplate && toastTemplate !== 'EVENT_ADMIN.TOASTS.BROADCAST_SENT'
+      ? toastTemplate.replace('{count}', this.totalCount().toString())
+      : `Mesajul a fost expediat către toți cei ${this.totalCount()} voluntari!`;
+    this.showToast(toastMsg);
   }
 
   // Action 2: Individual Message
@@ -249,16 +276,27 @@ export class EventAdminComponent implements OnInit {
     this.openModal('messageIndividual');
   }
 
-  insertTemplate(text: string): void {
-    this.dmMessageText.set(text);
+  insertTemplate(textOrKey: string): void {
+    const translated = this.translationService.translate(textOrKey);
+    this.dmMessageText.set(translated && translated !== textOrKey ? translated : textOrKey);
   }
 
   sendIndividualMessage(): void {
     const volunteer = this.targetVolunteer();
     if (!volunteer) return;
     this.closeModal();
-    this.logActivity(`Mesaj expediat către ${volunteer.name}`, 'message');
-    this.showToast(`Mesajul a fost trimis către ${volunteer.name}!`);
+
+    const logTemplate = this.translationService.translate('EVENT_ADMIN.LOGS.DM_SENT');
+    const logText = logTemplate && logTemplate !== 'EVENT_ADMIN.LOGS.DM_SENT'
+      ? logTemplate.replace('{name}', volunteer.name)
+      : `Mesaj expediat către ${volunteer.name}`;
+    this.logActivity(logText, 'message');
+
+    const toastTemplate = this.translationService.translate('EVENT_ADMIN.TOASTS.DM_SENT');
+    const toastMsg = toastTemplate && toastTemplate !== 'EVENT_ADMIN.TOASTS.DM_SENT'
+      ? toastTemplate.replace('{name}', volunteer.name)
+      : `Mesajul a fost trimis către ${volunteer.name}!`;
+    this.showToast(toastMsg);
   }
 
   // Action 3: Invite Volunteer
@@ -290,8 +328,18 @@ export class EventAdminComponent implements OnInit {
 
     this.volunteers.update(list => [newVolunteer, ...list]);
     this.closeModal();
-    this.logActivity(`Invitație trimisă către ${contact} (${role})`, 'invite');
-    this.showToast(`Invitația a fost trimisă cu succes către ${contact}!`);
+
+    const logTemplate = this.translationService.translate('EVENT_ADMIN.LOGS.INVITE_SENT');
+    const logText = logTemplate && logTemplate !== 'EVENT_ADMIN.LOGS.INVITE_SENT'
+      ? logTemplate.replace('{contact}', contact).replace('{role}', this.getTranslatedRole(role))
+      : `Invitație trimisă către ${contact} (${role})`;
+    this.logActivity(logText, 'invite');
+
+    const toastTemplate = this.translationService.translate('EVENT_ADMIN.TOASTS.INVITE_SENT');
+    const toastMsg = toastTemplate && toastTemplate !== 'EVENT_ADMIN.TOASTS.INVITE_SENT'
+      ? toastTemplate.replace('{contact}', contact)
+      : `Invitația a fost trimisă cu succes către ${contact}!`;
+    this.showToast(toastMsg);
   }
 
   copyInviteLink(): void {
@@ -299,7 +347,8 @@ export class EventAdminComponent implements OnInit {
       const link = `${window.location.origin}/join/${this.eventId()}?inv=pc42`;
       navigator.clipboard.writeText(link);
     }
-    this.showToast('Link-ul de invitație a fost copiat în clipboard!');
+    const toastTemplate = this.translationService.translate('EVENT_ADMIN.TOASTS.LINK_COPIED');
+    this.showToast(toastTemplate && toastTemplate !== 'EVENT_ADMIN.TOASTS.LINK_COPIED' ? toastTemplate : 'Link-ul de invitație a fost copiat în clipboard!');
   }
 
   // Action 4: Kick Out Volunteer
@@ -316,8 +365,18 @@ export class EventAdminComponent implements OnInit {
     const reason = this.kickReasonSelect();
     this.volunteers.update(list => list.filter(v => v.id !== volunteer.id));
     this.closeModal();
-    this.logActivity(`Voluntarul ${volunteer.name} a fost eliminat. Motiv: ${reason}`, 'kick');
-    this.showToast(`Voluntarul ${volunteer.name} a fost eliminat din proiect.`);
+
+    const logTemplate = this.translationService.translate('EVENT_ADMIN.LOGS.KICKED');
+    const logText = logTemplate && logTemplate !== 'EVENT_ADMIN.LOGS.KICKED'
+      ? logTemplate.replace('{name}', volunteer.name).replace('{reason}', reason)
+      : `Voluntarul ${volunteer.name} a fost eliminat. Motiv: ${reason}`;
+    this.logActivity(logText, 'kick');
+
+    const toastTemplate = this.translationService.translate('EVENT_ADMIN.TOASTS.KICKED');
+    const toastMsg = toastTemplate && toastTemplate !== 'EVENT_ADMIN.TOASTS.KICKED'
+      ? toastTemplate.replace('{name}', volunteer.name)
+      : `Voluntarul ${volunteer.name} a fost eliminat din proiect.`;
+    this.showToast(toastMsg);
   }
 
   // Action 5: QR Code Attendance Scanner
@@ -338,13 +397,24 @@ export class EventAdminComponent implements OnInit {
     const target = this.volunteers().find(v => v.id === id);
     if (!target) return;
 
+    const todayStr = this.translationService.translate('EVENT_ADMIN.LOGS.TODAY');
+    const todayLabel = todayStr && todayStr !== 'EVENT_ADMIN.LOGS.TODAY' ? todayStr : 'Astăzi';
     const timeNow = new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
     this.volunteers.update(list =>
-      list.map(v => v.id === id ? { ...v, status: 'checked-in', checkInTime: `Astăzi, ${timeNow}` } : v)
+      list.map(v => v.id === id ? { ...v, status: 'checked-in', checkInTime: `${todayLabel}, ${timeNow}` } : v)
     );
 
-    this.logActivity(`✓ ${target.name} a fost validat la fața locului (QR)`, 'check-in');
-    this.showToast(`✓ Prezență confirmată: ${target.name} (${target.role})`);
+    const logTemplate = this.translationService.translate('EVENT_ADMIN.LOGS.QR_CHECKIN');
+    const logText = logTemplate && logTemplate !== 'EVENT_ADMIN.LOGS.QR_CHECKIN'
+      ? logTemplate.replace('{name}', target.name)
+      : `✓ ${target.name} a fost validat la fața locului (QR)`;
+    this.logActivity(logText, 'check-in');
+
+    const toastTemplate = this.translationService.translate('EVENT_ADMIN.TOASTS.CHECKIN_CONFIRMED');
+    const toastMsg = toastTemplate && toastTemplate !== 'EVENT_ADMIN.TOASTS.CHECKIN_CONFIRMED'
+      ? toastTemplate.replace('{name}', target.name).replace('{role}', this.getTranslatedRole(target.role))
+      : `✓ Prezență confirmată: ${target.name} (${target.role})`;
+    this.showToast(toastMsg);
 
     const remainingPending = this.volunteers().filter(v => v.status === 'pending');
     this.quickScanSelectId.set(remainingPending.length > 0 ? remainingPending[0].id : null);
@@ -353,28 +423,41 @@ export class EventAdminComponent implements OnInit {
   promptManualCheckin(): void {
     const pending = this.pendingVolunteers();
     if (pending.length === 0) {
-      this.showToast('Toți voluntarii au confirmat deja prezența!');
+      const allConfirmed = this.translationService.translate('EVENT_ADMIN.TOASTS.ALL_CONFIRMED_ALREADY');
+      this.showToast(allConfirmed && allConfirmed !== 'EVENT_ADMIN.TOASTS.ALL_CONFIRMED_ALREADY' ? allConfirmed : 'Toți voluntarii au confirmat deja prezența!');
       return;
     }
 
     const first = pending[0];
+    const todayStr = this.translationService.translate('EVENT_ADMIN.LOGS.TODAY');
+    const todayLabel = todayStr && todayStr !== 'EVENT_ADMIN.LOGS.TODAY' ? todayStr : 'Astăzi';
     const timeNow = new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
     this.volunteers.update(list =>
-      list.map(v => v.id === first.id ? { ...v, status: 'checked-in', checkInTime: `Astăzi, ${timeNow}` } : v)
+      list.map(v => v.id === first.id ? { ...v, status: 'checked-in', checkInTime: `${todayLabel}, ${timeNow}` } : v)
     );
 
-    this.logActivity(`✓ Cod manual acceptat: ${first.name} este acum prezent`, 'check-in');
-    this.showToast(`✓ Cod manual acceptat: ${first.name} este confirmat!`);
+    const logTemplate = this.translationService.translate('EVENT_ADMIN.LOGS.MANUAL_CHECKIN');
+    const logText = logTemplate && logTemplate !== 'EVENT_ADMIN.LOGS.MANUAL_CHECKIN'
+      ? logTemplate.replace('{name}', first.name)
+      : `✓ Cod manual acceptat: ${first.name} este acum prezent`;
+    this.logActivity(logText, 'check-in');
+
+    const toastTemplate = this.translationService.translate('EVENT_ADMIN.TOASTS.MANUAL_CODE_ACCEPTED');
+    const toastMsg = toastTemplate && toastTemplate !== 'EVENT_ADMIN.TOASTS.MANUAL_CODE_ACCEPTED'
+      ? toastTemplate.replace('{name}', first.name)
+      : `✓ Cod manual acceptat: ${first.name} este confirmat!`;
+    this.showToast(toastMsg);
   }
 
   // ── Logging & Toast ──
 
   logActivity(text: string, type: ActivityLogItem['type']): void {
+    const todayStr = this.translationService.translate('EVENT_ADMIN.LOGS.TODAY') || 'Astăzi';
     const time = new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
     const newEntry: ActivityLogItem = {
       id: Math.random().toString(36).substring(2, 9),
       text,
-      time: `Astăzi, ${time}`,
+      time: `${todayStr}, ${time}`,
       type
     };
     this.activityFeed.update(feed => [newEntry, ...feed.slice(0, 19)]);
