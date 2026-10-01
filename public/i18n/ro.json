@@ -226,6 +226,14 @@
       "PASSWORD_MISMATCH": "Parolele nu coincid.",
       "CONFIRM_PASSWORD_REQUIRED": "Confirmarea parolei este obligatorie.",
       "TERMS_REQUIRED": "Trebuie să accepți termenii și condițiile."
+    },
+    "PHONE": "Număr de telefon",
+    "PHONE_PLACEHOLDER": "ex. +373 69 123 456",
+    "SUBMITTING": "Se procesează...",
+    "ERRORS": {
+      "PHONE_REQUIRED": "Numărul de telefon este obligatoriu.",
+      "PHONE_INVALID": "Introduceți un număr de telefon valid.",
+      "EMAIL_EXISTS": "Un cont cu această adresă de email există deja."
     }
   }
 }

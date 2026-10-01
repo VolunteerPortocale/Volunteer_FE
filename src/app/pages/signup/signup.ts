@@ -13,7 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_ROUTES } from '../../config/routes.config';
 import { EVENT_TYPES, OptionItem } from '../../config/event-categories.config';
-import { EventCategory } from '../../core/graphql/types';
+import { CreateUserRole, EventCategory } from '../../core/graphql/types';
+import { CreateUserGQL } from '../../core/graphql/services';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
 
@@ -53,6 +54,7 @@ export const passwordMatchValidator: ValidatorFn = (
 export class SignupComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly createUserGQL = inject(CreateUserGQL);
   readonly translationService = inject(TranslationService);
 
   readonly routes = APP_ROUTES;
@@ -64,6 +66,8 @@ export class SignupComponent {
   readonly selectedInterests = signal<string[]>([]);
   readonly categoryDropdownOpen = signal<boolean>(false);
   readonly isSubmitted = signal<boolean>(false);
+  readonly isLoading = signal<boolean>(false);
+  readonly errorMessage = signal<string | null>(null);
 
   // Reactive form group with validators
   readonly signupForm = this.fb.group(
@@ -72,6 +76,7 @@ export class SignupComponent {
       lastName: ['', [Validators.required, Validators.maxLength(50)]],
       orgName: ['', [Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^[+0-9\s-]{8,20}$/)]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72)]],
       confirmPassword: ['', [Validators.required]],
       acceptTerms: [false, [Validators.requiredTrue]],
@@ -166,12 +171,49 @@ export class SignupComponent {
       return;
     }
 
-    this.isSubmitted.set(true);
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    const email = this.signupForm.value.email?.trim() || '';
-    
-    this.router.navigate(['/' + this.routes.OTP], {
-      queryParams: { email }
+    const val = this.signupForm.getRawValue();
+    const isNgo = this.role() === 'ngo';
+
+    const input = {
+      firstName: val.firstName?.trim() || '',
+      lastName: val.lastName?.trim() || '',
+      email: val.email?.trim() || '',
+      phoneNumber: val.phoneNumber?.trim() || '',
+      password: val.password || '',
+      role: isNgo ? CreateUserRole.Ngo : CreateUserRole.Volunteer,
+      companyName: isNgo ? val.orgName?.trim() || null : null,
+      eventCategoryPreferences: !isNgo ? this.getSelectedCategories() : [],
+    };
+
+        this.createUserGQL.mutate({ variables: { input } }).subscribe({
+      next: (result) => {
+        this.isLoading.set(false);
+        if (result.data?.createUser) {
+          this.isSubmitted.set(true);
+          this.router.navigate(['/' + this.routes.OTP], {
+            queryParams: { email: input.email },
+          });
+        } else if (result.error) {
+          this.errorMessage.set(result.error.message);
+        }
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        const msg = err?.graphQLErrors?.[0]?.message || err?.message || '';
+        if (msg.includes('already exists') || msg.includes('E409_001')) {
+          this.errorMessage.set(
+            this.translationService.translate('SIGNUP.ERRORS.EMAIL_EXISTS') ||
+              'Un cont cu această adresă de email există deja.'
+          );
+        } else {
+          this.errorMessage.set(
+            msg || 'A apărut o eroare la înregistrare. Vă rugăm să încercați din nou.'
+          );
+        }
+      },
     });
   }
 }

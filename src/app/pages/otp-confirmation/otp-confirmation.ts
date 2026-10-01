@@ -5,6 +5,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_ROUTES } from '../../config/routes.config';
+import {
+  ValidateRegistrationOtpGQL,
+  ResendRegistrationOtpGQL,
+} from '../../core/graphql/services';
 
 @Component({
   selector: 'app-otp-confirmation',
@@ -22,6 +26,8 @@ import { APP_ROUTES } from '../../config/routes.config';
 export class OtpConfirmationComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly validateRegistrationOtpGQL = inject(ValidateRegistrationOtpGQL);
+  private readonly resendRegistrationOtpGQL = inject(ResendRegistrationOtpGQL);
 
   readonly routes = APP_ROUTES;
 
@@ -37,7 +43,6 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
   private timerInterval: any = null;
 
   ngOnInit(): void {
-    // Read the email passed from signup page
     const emailParam = this.route.snapshot.queryParamMap.get('email') || '';
     this.email.set(emailParam);
 
@@ -62,23 +67,50 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.email()) {
+      this.errorMessage.set('Adresa de email lipsește. Vă rugăm să reluați înregistrarea.');
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
-    // Provide immediate user feedback and redirect to login
-    setTimeout(() => {
-      this.isLoading.set(false);
-      this.successMessage.set('Email verificat cu succes! Te redirecționăm la autentificare...');
-
-      setTimeout(() => {
-        this.router.navigate(['/' + this.routes.LOGIN]);
-      }, 1500);
-    }, 800);
+    this.validateRegistrationOtpGQL
+      .mutate({
+        variables: {
+          email: this.email().trim(),
+          otp: code,
+        },
+      })
+      .subscribe({
+        next: (result) => {
+          this.isLoading.set(false);
+          if (result.data?.validateRegistrationOtp) {
+            this.successMessage.set('Email verificat cu succes! Te redirecționăm la autentificare...');
+            setTimeout(() => {
+              this.router.navigate(['/' + this.routes.LOGIN]);
+            }, 1500);
+          } else if (result.error) {
+            this.errorMessage.set(result.error.message);
+          }
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          const msg = err?.graphQLErrors?.[0]?.message || err?.message || '';
+          if (msg.includes('Invalid OTP') || msg.includes('E400_002')) {
+            this.errorMessage.set('Codul de verificare este incorect sau a expirat.');
+          } else if (msg.includes('Too many attempts') || msg.includes('E400_003')) {
+            this.errorMessage.set('Prea multe încercări incorecte. Vă rugăm să solicitați un nou cod.');
+          } else if (msg.includes('not found') || msg.includes('E404_001')) {
+            this.errorMessage.set('Utilizatorul nu a fost găsit.');
+          } else {
+            this.errorMessage.set(msg || 'Eroare la verificarea codului. Vă rugăm să încercați din nou.');
+          }
+        },
+      });
   }
 
-  /**
-   * Resend a fresh OTP email with cooldown timer
-   */
   onResend(): void {
     if (this.resendCooldown() > 0 || this.isResending() || !this.email()) {
       return;
@@ -86,12 +118,26 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
 
     this.isResending.set(true);
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
-    setTimeout(() => {
-      this.isResending.set(false);
-      this.successMessage.set('Un nou cod de verificare a fost trimis pe adresa ta de email.');
-      this.startCooldown(60);
-    }, 600);
+    this.resendRegistrationOtpGQL
+      .mutate({
+        variables: {
+          email: this.email().trim(),
+        },
+      })
+      .subscribe({
+        next: () => {
+          this.isResending.set(false);
+          this.successMessage.set('Un nou cod de verificare a fost trimis pe adresa ta de email.');
+          this.startCooldown(60);
+        },
+        error: (err) => {
+          this.isResending.set(false);
+          const msg = err?.graphQLErrors?.[0]?.message || err?.message || '';
+          this.errorMessage.set(msg || 'Nu am putut retrimite codul. Vă rugăm să încercați din nou.');
+        },
+      });
   }
 
   private startCooldown(seconds: number): void {

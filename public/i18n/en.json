@@ -226,6 +226,14 @@
       "PASSWORD_MISMATCH": "Passwords do not match.",
       "CONFIRM_PASSWORD_REQUIRED": "Password confirmation is required.",
       "TERMS_REQUIRED": "You must accept the terms and conditions."
+    },    
+    "PHONE": "Phone number",
+    "PHONE_PLACEHOLDER": "e.g. +373 69 123 456",
+    "SUBMITTING": "Processing...",
+    "ERRORS": {
+      "PHONE_REQUIRED": "Phone number is required.",
+      "PHONE_INVALID": "Please enter a valid phone number.",
+      "EMAIL_EXISTS": "An account with this email already exists."
     }
   }
 }
