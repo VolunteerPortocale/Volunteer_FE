@@ -8,8 +8,15 @@ export const APP_ROUTES = {
   SIGNUP: 'inregistrare',
   ADD_EVENT: 'adauga-eveniment',
   EDIT_EVENT: 'editeaza-eveniment/:id',
+  ADMIN_EVENT: 'administrare-eveniment/:id',
+  ADMIN_EVENT_DEFAULT: 'administrare-eveniment',
   MODERATION: 'moderare',
   OTP: 'confirmare-otp',
+  PROFILE: 'profil',
+  SETTINGS: 'setari',
+  TERMS: 'termeni',
+  PRIVACY: 'confidentialitate',
+  COOKIES: 'cookies',
   NOT_FOUND: '**'
 } as const;
 
@@ -28,7 +35,14 @@ export const ROUTE_HELPERS = {
   login: () => `/${APP_ROUTES.LOGIN}`,
   signup: () => `/${APP_ROUTES.SIGNUP}`,
   otp: () => `/${APP_ROUTES.OTP}`,
+  profile: () => `/${APP_ROUTES.PROFILE}`,
+  settings: () => `/${APP_ROUTES.SETTINGS}`,
+  terms: () => `/${APP_ROUTES.TERMS}`,
+  privacy: () => `/${APP_ROUTES.PRIVACY}`,
+  cookies: () => `/${APP_ROUTES.COOKIES}`,
   addEvent: () => `/${APP_ROUTES.ADD_EVENT}`,
   moderation: () => `/${APP_ROUTES.MODERATION}`,
   editEvent: (id: string | number) => `/${APP_ROUTES.EDIT_EVENT.replace(':id', String(id))}`,
+  adminEvent: (id?: string | number) =>
+    id ? `/${APP_ROUTES.ADMIN_EVENT.replace(':id', String(id))}` : `/${APP_ROUTES.ADMIN_EVENT_DEFAULT}`,
 } as const;

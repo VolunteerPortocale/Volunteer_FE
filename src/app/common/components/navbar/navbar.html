@@ -2,7 +2,7 @@
   <mat-toolbar class="header-toolbar">
     <div class="toolbar-content">
       <!-- Brand Logo -->
-      <a routerLink="/" class="brand-logo">
+      <a [routerLink]="brandRoute()" class="brand-logo">
         <img src="favicon.ico" alt="Volunteerio Logo" class="brand-logo-img" />
         <span class="brand-title">VOLUNTEERIO</span>
       </a>
@@ -97,7 +97,7 @@
             <div class="profile-menu-email">{{ authService.currentUser()?.email || 'pavel@example.com' }}</div>
           </div>
           <mat-divider></mat-divider>
-          <button mat-menu-item routerLink="/">
+          <button mat-menu-item routerLink="/profil">
             <mat-icon>person</mat-icon>
             <span>{{ 'NAV.MY_PROFILE' | translate }}</span>
           </button>
@@ -105,7 +105,7 @@
             <mat-icon>list_alt</mat-icon>
             <span>{{ 'NAV.MY_PROJECTS' | translate }}</span>
           </button>
-          <button mat-menu-item>
+          <button mat-menu-item routerLink="/setari">
             <mat-icon>settings</mat-icon>
             <span>{{ 'NAV.SETTINGS' | translate }}</span>
           </button>
