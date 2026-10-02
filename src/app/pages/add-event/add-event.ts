@@ -311,6 +311,6 @@ export class AddEventComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/home-auth']);
+    this.router.navigate(['/']);
   }
 }

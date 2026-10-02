@@ -54,35 +54,43 @@ export class AuthService {
     if (!isPlatformBrowser(this.platformId)) {
       return false;
     }
-
     this.keycloak = new Keycloak({
       url: environment.keycloak.url,
       realm: environment.keycloak.realm,
       clientId: environment.keycloak.clientId
     });
-
+    const token = localStorage.getItem('access_token') || undefined;
+    const refreshToken = localStorage.getItem('refresh_token') || undefined;
+    const idToken = localStorage.getItem('id_token') || undefined;
     try {
       const authenticated = await this.keycloak.init({
         onLoad: 'check-sso',
         pkceMethod: 'S256',
-        checkLoginIframe: false
+        checkLoginIframe: false,
+        token,
+        refreshToken,
+        idToken
       });
-
       this.isAuthenticated.set(authenticated);
-
       if (authenticated) {
-        if (this.keycloak.token) {
-          localStorage.setItem('access_token', this.keycloak.token);
-        }
+        if (this.keycloak.token) localStorage.setItem('access_token', this.keycloak.token);
+        if (this.keycloak.refreshToken) localStorage.setItem('refresh_token', this.keycloak.refreshToken);
+        if (this.keycloak.idToken) localStorage.setItem('id_token', this.keycloak.idToken);
         this.updateCurrentUser();
       } else {
         localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('id_token');
         this.currentUser.set(null);
       }
-
       return authenticated;
     } catch (error) {
       console.error('Keycloak initialization failed:', error);
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('id_token');
+      this.currentUser.set(null);
+      this.isAuthenticated.set(false);
       return false;
     }
   }
@@ -90,19 +98,21 @@ export class AuthService {
   async login(redirectUri?: string): Promise<void> {
     if (isPlatformBrowser(this.platformId) && this.keycloak) {
       await this.keycloak.login({
-        redirectUri: redirectUri || `${window.location.origin}/home-auth`
+        redirectUri: redirectUri || `${window.location.origin}/`
       });
     }
   }
 
-  async logout(redirectUri?: string): Promise<void> {
+ async logout(redirectUri?: string): Promise<void> {
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('id_token');
       if (this.keycloak) {
         await this.keycloak.logout({
-          redirectUri: redirectUri || `${window.location.origin}/`
+          redirectUri: redirectUri || `${window.location.origin}/guest`
         });
       }
     }
