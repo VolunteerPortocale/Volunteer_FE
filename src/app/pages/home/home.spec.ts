@@ -31,15 +31,15 @@ describe('HomeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should navigate to /home-auth if user is authenticated', () => {
+  it('should navigate to / if user is authenticated', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     authService.isAuthenticated.set(true);
 
     component.ngOnInit();
-    expect(navigateSpy).toHaveBeenCalledWith(['/home-auth']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/']);
   });
 
-  it('should not navigate to /home-auth if user is unauthenticated', () => {
+  it('should not navigate if user is unauthenticated', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     authService.isAuthenticated.set(false);
 

@@ -30,7 +30,7 @@ export class NavbarComponent {
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  readonly brandRoute = computed(() => this.authService.isAuthenticated() ? '/guest' : '/');
+  readonly brandRoute = computed(() => this.authService.isAuthenticated() ? '/' : '/guest');
 
   changeLanguage(lang: SupportedLanguage): void {
     this.translationService.setLanguage(lang);

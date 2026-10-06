@@ -37,6 +37,6 @@ describe('homeRedirectGuard', () => {
       homeRedirectGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)
     );
 
-    expect(result).toEqual(router.parseUrl('/home-auth'));
+    expect(result).toEqual(router.parseUrl('/'));
   });
 });
