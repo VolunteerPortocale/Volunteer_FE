@@ -69,11 +69,30 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
   };
 }
 
+export function createApolloPublic(httpLink: HttpLink): ApolloClient.Options {
+
+  const http = httpLink.create({ uri: environment.graphqlPublicUrl });
+
+  return {
+    link: ApolloLink.from([http]),
+    cache: new InMemoryCache(),
+  };
+}
+
 export const graphqlProvider: ApplicationConfig['providers'] = [
   Apollo,
   {
     provide: APOLLO_OPTIONS,
     useFactory: createApollo,
     deps: [HttpLink, AuthService],
+  },
+];
+
+export const graphqlPublicProvider: ApplicationConfig['providers'] = [
+  Apollo,
+  {
+    provide: APOLLO_OPTIONS,
+    useFactory: createApolloPublic,
+    deps: [HttpLink],
   },
 ];
