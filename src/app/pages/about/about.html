@@ -1,0 +1,224 @@
+<div class="about-page">
+  <!-- Hero Section -->
+  <section class="about-hero">
+    <div class="container hero-content">
+      <span class="hero-badge">
+        <mat-icon>handshake</mat-icon>
+        {{ 'ABOUT_PAGE.BADGE' | translate }}
+      </span>
+      <h1 class="hero-title">
+        {{ 'ABOUT_PAGE.TITLE' | translate }}
+      </h1>
+      <p class="hero-desc">
+        {{ 'ABOUT_PAGE.HERO_DESC' | translate }}
+      </p>
+
+      <div class="hero-cta-group">
+        <a routerLink="/proiecte" class="btn-primary hero-btn">
+          <span>{{ 'ABOUT_PAGE.EXPLORE_BTN' | translate }}</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </a>
+
+        @if (!authService.isAuthenticated()) {
+          <a routerLink="/inregistrare" class="btn-outline hero-btn-outline">
+            <span>{{ 'ABOUT_PAGE.BECOME_VOLUNTEER' | translate }}</span>
+          </a>
+        } @else {
+          <a routerLink="/profil" class="btn-outline hero-btn-outline">
+            <span>{{ 'ABOUT_PAGE.MY_PROFILE' | translate }}</span>
+          </a>
+        }
+      </div>
+
+      <!-- Highlights Trust Strip -->
+      <div class="trust-strip">
+        <div class="trust-item">
+          <mat-icon>lock_open</mat-icon>
+          <span>{{ 'ABOUT_PAGE.TRUST_FREE' | translate }}</span>
+        </div>
+        <div class="trust-item">
+          <mat-icon>verified</mat-icon>
+          <span>{{ 'ABOUT_PAGE.TRUST_VERIFIED' | translate }}</span>
+        </div>
+        <div class="trust-item">
+          <mat-icon>card_membership</mat-icon>
+          <span>{{ 'ABOUT_PAGE.TRUST_CERTIFICATES' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact in Numbers Section -->
+  <section class="numbers-section">
+    <div class="container">
+      <div class="stats-grid">
+        @for (st of stats; track st.labelKey) {
+          <div class="stat-card">
+            <div class="stat-icon-wrap">
+              <mat-icon>{{ st.icon }}</mat-icon>
+            </div>
+            <div class="stat-body">
+              <span class="stat-value">{{ st.value }}</span>
+              <span class="stat-label">{{ st.labelKey | translate }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission & Vision Section -->
+  <section class="mission-section">
+    <div class="container">
+      <div class="dual-cards-grid">
+        <div class="mission-card">
+          <div class="card-icon-pill green">
+            <mat-icon>flag</mat-icon>
+          </div>
+          <h2>{{ 'ABOUT_PAGE.MISSION_TITLE' | translate }}</h2>
+          <p>{{ 'ABOUT_PAGE.MISSION_DESC' | translate }}</p>
+        </div>
+
+        <div class="mission-card">
+          <div class="card-icon-pill blue">
+            <mat-icon>visibility</mat-icon>
+          </div>
+          <h2>{{ 'ABOUT_PAGE.VISION_TITLE' | translate }}</h2>
+          <p>{{ 'ABOUT_PAGE.VISION_DESC' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="values-section">
+    <div class="container">
+      <div class="section-heading-center">
+        <span class="section-tag">{{ 'ABOUT_PAGE.VALUES.TAG' | translate }}</span>
+        <h2 class="section-main-title">{{ 'ABOUT_PAGE.VALUES.TITLE' | translate }}</h2>
+        <p class="section-lead">{{ 'ABOUT_PAGE.VALUES.SUBTITLE' | translate }}</p>
+      </div>
+
+      <div class="values-grid">
+        @for (val of values; track val.titleKey) {
+          <div class="value-card">
+            <div class="value-icon-circle" [style.background-color]="val.color + '15'" [style.color]="val.color">
+              <mat-icon>{{ val.icon }}</mat-icon>
+            </div>
+            <h3 class="value-title">{{ val.titleKey | translate }}</h3>
+            <p class="value-desc">{{ val.descKey | translate }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <div class="container">
+      <div class="section-heading-center">
+        <span class="section-tag">{{ 'ABOUT_PAGE.HOW_IT_WORKS_TAG' | translate }}</span>
+        <h2 class="section-main-title">{{ 'ABOUT_PAGE.HOW_IT_WORKS' | translate }}</h2>
+        <p class="section-lead">{{ 'ABOUT_PAGE.HOW_IT_WORKS_SUBTITLE' | translate }}</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <mat-icon class="step-icon">search</mat-icon>
+          <h3>{{ 'ABOUT_PAGE.STEP1_TITLE' | translate }}</h3>
+          <p>{{ 'ABOUT_PAGE.STEP1_DESC' | translate }}</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <mat-icon class="step-icon">how_to_reg</mat-icon>
+          <h3>{{ 'ABOUT_PAGE.STEP2_TITLE' | translate }}</h3>
+          <p>{{ 'ABOUT_PAGE.STEP2_DESC' | translate }}</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <mat-icon class="step-icon">workspace_premium</mat-icon>
+          <h3>{{ 'ABOUT_PAGE.STEP3_TITLE' | translate }}</h3>
+          <p>{{ 'ABOUT_PAGE.STEP3_DESC' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison: For Volunteers vs For NGOs -->
+  <section class="audience-section">
+    <div class="container">
+      <div class="audience-grid">
+        <!-- For Volunteers -->
+        <div class="audience-box volunteer-box">
+          <div class="box-badge">{{ 'ABOUT_PAGE.VOLUNTEER_BOX.BADGE' | translate }}</div>
+          <h3>{{ 'ABOUT_PAGE.VOLUNTEER_BOX.TITLE' | translate }}</h3>
+          <ul class="benefit-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.VOLUNTEER_BOX.BENEFIT1' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.VOLUNTEER_BOX.BENEFIT2' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.VOLUNTEER_BOX.BENEFIT3' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.VOLUNTEER_BOX.BENEFIT4' | translate }}</span>
+            </li>
+          </ul>
+          <a routerLink="/inregistrare" class="btn-primary box-btn">{{ 'ABOUT_PAGE.VOLUNTEER_BOX.BTN' | translate }}</a>
+        </div>
+
+        <!-- For NGOs -->
+        <div class="audience-box ngo-box">
+          <div class="box-badge ngo-badge">{{ 'ABOUT_PAGE.NGO_BOX.BADGE' | translate }}</div>
+          <h3>{{ 'ABOUT_PAGE.NGO_BOX.TITLE' | translate }}</h3>
+          <ul class="benefit-list">
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.NGO_BOX.BENEFIT1' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.NGO_BOX.BENEFIT2' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.NGO_BOX.BENEFIT3' | translate }}</span>
+            </li>
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'ABOUT_PAGE.NGO_BOX.BENEFIT4' | translate }}</span>
+            </li>
+          </ul>
+          <a routerLink="/adauga-eveniment" class="btn-secondary box-btn">{{ 'ABOUT_PAGE.NGO_BOX.BTN' | translate }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Banner -->
+  <section class="about-cta-banner">
+    <div class="container">
+      <div class="cta-inner-card">
+        <h2>{{ 'ABOUT_PAGE.CTA_BANNER.TITLE' | translate }}</h2>
+        <p>{{ 'ABOUT_PAGE.CTA_BANNER.DESC' | translate }}</p>
+        <div class="cta-btns">
+          <a routerLink="/proiecte" class="btn-primary cta-btn">
+            <span>{{ 'ABOUT_PAGE.CTA_BANNER.BTN' | translate }}</span>
+            <mat-icon>explore</mat-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<app-footer />

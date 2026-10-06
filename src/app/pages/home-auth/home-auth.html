@@ -2,7 +2,11 @@
   <!-- 1. Hero & Greeting Section -->
   <section class="auth-hero-section">
     <div class="greeting-lead">
-      {{ 'HOME_AUTH.GREETING' | translate }}
+      @if (userNickname()) {
+        {{ 'HOME_AUTH.GREETING' | translate }}, {{ userNickname() }}
+      } @else {
+        {{ 'HOME_AUTH.GREETING' | translate }}
+      }
     </div>
     <h1 class="main-title">
       {{ 'HOME_AUTH.TITLE' | translate }}
@@ -60,7 +64,12 @@
           <article class="project-auth-card">
             <!-- Card Image with Overlays -->
             <div class="card-media">
-              <img [src]="project.imageUrl" [alt]="project.fallbackTitle" class="card-image" loading="lazy" />
+              <img
+                [src]="project.imageUrl"
+                [alt]="project.titleKey ? (project.titleKey | translate) : project.fallbackTitle"
+                class="card-image"
+                loading="lazy"
+              />
               
               <!-- Category Badge (Top-Left) -->
               <span class="category-badge">
@@ -71,14 +80,16 @@
               <div class="card-top-actions">
                 <!-- Edit Button (Pencil Icon) -->
                 @if (authService.canManageEvents()) {
-                <button
-                  type="button"
-                  class="card-icon-btn edit-btn"
-                  (click)="editProject(project.id, $event)"
-                >
-                  <mat-icon class="action-icon">edit</mat-icon>
-                </button>
-              }
+                  <button
+                    type="button"
+                    class="card-icon-btn edit-btn"
+                    (click)="editProject(project.id, $event)"
+                    [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
+                    aria-label="Edit project"
+                  >
+                    <mat-icon class="action-icon">edit</mat-icon>
+                  </button>
+                }
 
                 <!-- Bookmark Button -->
                 <button
@@ -99,14 +110,20 @@
             <!-- Card Body Content -->
             <div class="card-body">
               <span class="card-org">{{ project.organization }}</span>
-              <h3 class="card-title">{{ project.fallbackTitle }}</h3>
-              <p class="card-description">{{ project.fallbackDescription }}</p>
+              <h3 class="card-title">
+                {{ project.titleKey ? (project.titleKey | translate) : project.fallbackTitle }}
+              </h3>
+              <p class="card-description">
+                {{ project.descriptionKey ? (project.descriptionKey | translate) : project.fallbackDescription }}
+              </p>
 
-              <!-- Meta Info Rows -->
+              <!-- Meta Info Rows (Points Regarding Event Details) -->
               <div class="card-meta-list">
                 <div class="meta-item">
                   <mat-icon class="meta-icon">location_on</mat-icon>
-                  <span class="meta-text">{{ project.location }}</span>
+                  <span class="meta-text">
+                    {{ project.locationKey ? (project.locationKey | translate) : project.location }}
+                  </span>
                 </div>
                 <div class="meta-item">
                   <mat-icon class="meta-icon">event</mat-icon>
@@ -127,15 +144,26 @@
                 >
                   {{ 'HOME_AUTH.VIEW_PROJECT' | translate }}
                 </button>
-                <button
-                  type="button"
-                  class="card-footer-edit-btn"
-                  (click)="editProject(project.id, $event)"
-                  [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
-                  aria-label="Edit event"
-                >
-                  <mat-icon>edit</mat-icon>
-                </button>
+                @if (authService.canManageEvents()) {
+                  <button
+                    type="button"
+                    class="card-footer-edit-btn"
+                    (click)="administerProject(project.id, $event)"
+                    [title]="'HOME_AUTH.ADMINISTER_PROJECT' | translate"
+                    aria-label="Administer event"
+                  >
+                    <mat-icon>manage_accounts</mat-icon>
+                  </button>
+                  <button
+                    type="button"
+                    class="card-footer-edit-btn"
+                    (click)="editProject(project.id, $event)"
+                    [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
+                    aria-label="Edit event"
+                  >
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
               </div>
             </div>
           </article>
@@ -152,4 +180,122 @@
       </div>
     }
   </section>
+
+  <!-- 4. Event Details Modal Dialog -->
+  @if (selectedProjectModal(); as modalProject) {
+    <div class="event-modal-backdrop" (click)="closeModal()">
+      <div class="event-modal-dialog" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          class="modal-close-btn"
+          (click)="closeModal()"
+          [title]="'HOME_AUTH.MODAL.CLOSE_BTN' | translate"
+          aria-label="Close modal"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+
+        <div class="modal-header-image">
+          <img
+            [src]="modalProject.imageUrl"
+            [alt]="modalProject.titleKey ? (modalProject.titleKey | translate) : modalProject.fallbackTitle"
+          />
+          <span class="category-badge">{{ modalProject.categoryTagKey | translate }}</span>
+        </div>
+
+        <div class="modal-content-body">
+          <span class="modal-org-label">{{ modalProject.organization }}</span>
+          <h2 class="modal-event-title">
+            {{ modalProject.titleKey ? (modalProject.titleKey | translate) : modalProject.fallbackTitle }}
+          </h2>
+
+          <!-- Meta Grid for Event Details -->
+          <div class="modal-meta-grid">
+            <div class="modal-meta-box">
+              <mat-icon>event</mat-icon>
+              <div>
+                <span class="meta-label">{{ 'HOME_AUTH.MODAL.DATE_TIME' | translate }}</span>
+                <span class="meta-val">{{ modalProject.date }}</span>
+              </div>
+            </div>
+
+            <div class="modal-meta-box">
+              <mat-icon>location_on</mat-icon>
+              <div>
+                <span class="meta-label">{{ 'HOME_AUTH.MODAL.LOCATION' | translate }}</span>
+                <span class="meta-val">
+                  {{ modalProject.locationKey ? (modalProject.locationKey | translate) : modalProject.location }}
+                </span>
+              </div>
+            </div>
+
+            <div class="modal-meta-box">
+              <mat-icon>people_outline</mat-icon>
+              <div>
+                <span class="meta-label">{{ 'HOME_AUTH.MODAL.SPOTS_STATUS' | translate }}</span>
+                <span class="meta-val">{{ modalProject.spotsOccupied }}</span>
+              </div>
+            </div>
+
+            <div class="modal-meta-box">
+              <mat-icon>corporate_fare</mat-icon>
+              <div>
+                <span class="meta-label">{{ 'HOME_AUTH.MODAL.ORGANIZER' | translate }}</span>
+                <span class="meta-val">{{ modalProject.organization }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description Section -->
+          <div class="modal-desc-section">
+            <h4>{{ 'HOME_AUTH.MODAL.ABOUT_EVENT' | translate }}</h4>
+            <p>{{ modalProject.descriptionKey ? (modalProject.descriptionKey | translate) : modalProject.fallbackDescription }}</p>
+          </div>
+
+          <!-- Contact Row if available -->
+          @if (modalProject.email || modalProject.phone) {
+            <div class="modal-contact-row">
+              <span class="contact-lbl">{{ 'HOME_AUTH.MODAL.CONTACT' | translate }}</span>
+              <div class="contact-badges">
+                @if (modalProject.email) {
+                  <span class="contact-pill"><mat-icon>email</mat-icon> {{ modalProject.email }}</span>
+                }
+                @if (modalProject.phone) {
+                  <span class="contact-pill"><mat-icon>phone</mat-icon> {{ modalProject.phone }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Applied Success Alert Banner -->
+          @if (isApplied(modalProject.id)) {
+            <div class="applied-banner">
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'HOME_AUTH.MODAL.APPLIED_SUCCESS' | translate }}</span>
+            </div>
+          }
+
+          <!-- Modal Actions Footer -->
+          <div class="modal-actions-footer">
+            <button type="button" class="btn-outline modal-cancel-btn" (click)="closeModal()">
+              {{ 'HOME_AUTH.MODAL.CLOSE_BTN' | translate }}
+            </button>
+            <button
+              type="button"
+              class="btn-primary modal-apply-btn"
+              [disabled]="isApplied(modalProject.id)"
+              (click)="applyToEvent(modalProject.id)"
+            >
+              <mat-icon>{{ isApplied(modalProject.id) ? 'check' : 'volunteer_activism' }}</mat-icon>
+              <span>
+                {{ isApplied(modalProject.id) ? ('HOME_AUTH.MODAL.ALREADY_APPLIED' | translate) : ('HOME_AUTH.MODAL.APPLY_BTN' | translate) }}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </main>
+
+<app-footer />
