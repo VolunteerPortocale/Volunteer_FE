@@ -30,7 +30,7 @@ export class NavbarComponent {
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  readonly brandRoute = computed(() => this.authService.isAuthenticated() ? '/home-auth' : '/');
+  readonly brandRoute = computed(() => this.authService.isAuthenticated() ? '/' : '/guest');
 
   changeLanguage(lang: SupportedLanguage): void {
     this.translationService.setLanguage(lang);
@@ -38,11 +38,9 @@ export class NavbarComponent {
 
   login(): void {
     this.authService.login();
-    this.router.navigate(['/home-auth']);
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/']);
   }
 }

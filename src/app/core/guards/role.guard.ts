@@ -13,7 +13,7 @@ export const roleGuard: CanActivateFn = (route) => {
 
   // 1. Must be authenticated
   if (!authService.isAuthenticated()) {
-    return router.parseUrl(ROUTE_HELPERS.home());
+    return router.parseUrl(ROUTE_HELPERS.guest());
   }
 
   // 2. Check roles specified in route data

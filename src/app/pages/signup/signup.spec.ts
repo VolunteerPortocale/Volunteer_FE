@@ -2,13 +2,19 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 import { SignupComponent } from './signup';
 import { EventCategory } from '../../core/graphql/types';
+import { CreateUserGQL } from '../../core/graphql/services';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
   let fixture: ComponentFixture<SignupComponent>;
 
+    const mockCreateUserGQL = {
+    mutate: () => of({ data: { createUser: { id: '1', email: 'test@example.com' } } }),
+  };
+  
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SignupComponent],
@@ -16,6 +22,7 @@ describe('SignupComponent', () => {
         provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
+        { provide: CreateUserGQL, useValue: mockCreateUserGQL },
       ],
     }).compileComponents();
 
@@ -23,9 +30,16 @@ describe('SignupComponent', () => {
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
-
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it('should validate phoneNumber as required and check format', () => {
+    const phoneControl = component.signupForm.get('phoneNumber');
+    expect(phoneControl?.hasError('required')).toBe(true);
+    phoneControl?.setValue('123');
+    expect(phoneControl?.hasError('pattern')).toBe(true);
+    phoneControl?.setValue('+37369123456');
+    expect(phoneControl?.valid).toBe(true);
   });
 
   it('should initialize form as invalid', () => {

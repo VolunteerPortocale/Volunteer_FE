@@ -25,6 +25,12 @@
     </div>
 
     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form" novalidate>
+            @if (errorMessage()) {
+        <div class="signup-alert error-alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
       <!-- SECTION 1: Account Type Selection -->
       <section class="form-section">
         <h2 class="section-title">{{ 'SIGNUP.ACCOUNT_TYPE_SECTION' | translate }}</h2>
@@ -155,6 +161,30 @@
           </div>
           @if (f.email.invalid && f.email.touched) {
             <span class="error-msg">{{ 'SIGNUP.ERRORS.EMAIL_INVALID' | translate }}</span>
+          }
+        </div>
+
+        <!-- Phone Number -->
+        <div class="field-group">
+          <label class="field-label" for="phoneInput">
+            {{ 'SIGNUP.PHONE' | translate }} <span class="required-star">*</span>
+          </label>
+          <div class="input-wrapper" [class.has-error]="f.phoneNumber.invalid && f.phoneNumber.touched">
+            <mat-icon class="input-icon">phone</mat-icon>
+            <input
+              id="phoneInput"
+              type="tel"
+              formControlName="phoneNumber"
+              [placeholder]="'SIGNUP.PHONE_PLACEHOLDER' | translate"
+              maxlength="20"
+            />
+          </div>
+          @if (f.phoneNumber.invalid && f.phoneNumber.touched) {
+            @if (f.phoneNumber.hasError('required')) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.PHONE_REQUIRED' | translate }}</span>
+            } @else if (f.phoneNumber.hasError('pattern')) {
+              <span class="error-msg">{{ 'SIGNUP.ERRORS.PHONE_INVALID' | translate }}</span>
+            }
           }
         </div>
 
@@ -307,8 +337,12 @@
           {{ 'SIGNUP.ALREADY_HAVE_ACCOUNT' | translate }}
           <a [routerLink]="['/login']" class="login-link">{{ 'SIGNUP.LOGIN_LINK' | translate }}</a>
         </p>
-        <button type="submit" class="submit-btn">
-          {{ 'SIGNUP.SUBMIT_BTN' | translate }}
+                <button type="submit" class="submit-btn" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span>{{ 'SIGNUP.SUBMITTING' | translate }}</span>
+          } @else {
+            <span>{{ 'SIGNUP.SUBMIT_BTN' | translate }}</span>
+          }
         </button>
       </footer>
     </form>

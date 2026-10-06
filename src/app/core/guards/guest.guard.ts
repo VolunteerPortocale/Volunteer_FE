@@ -4,16 +4,17 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ROUTE_HELPERS } from '../../config/routes.config';
 
-export const authGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
   const platformId = inject(PLATFORM_ID);
 
   if (!isPlatformBrowser(platformId)) return true;
 
+  // If already logged in, redirect to root dashboard
   if (authService.isAuthenticated()) {
-    return true;
+    return router.parseUrl(ROUTE_HELPERS.homeAuth());
   }
 
-  return router.parseUrl(ROUTE_HELPERS.guest());
+  return true;
 };
