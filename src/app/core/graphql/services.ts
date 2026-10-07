@@ -83,7 +83,7 @@ export const GetAllUsersDocument = gql`
   })
   export class GetAllUsersGQL extends Apollo.Query<GetAllUsersQuery, GetAllUsersQueryVariables> {
     override document = GetAllUsersDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -106,16 +106,16 @@ export const GetUserByIdDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
   })
   export class GetUserByIdGQL extends Apollo.Query<GetUserByIdQuery, GetUserByIdQueryVariables> {
     override document = GetUserByIdDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const CreateUserDocument = gql`
+  export const CreateUserDocument = gql`
     mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     id
@@ -131,11 +131,15 @@ export const CreateUserDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
   })
-  export class CreateUserGQL extends Apollo.Mutation<CreateUserMutation, CreateUserMutationVariables> {
+  export class CreateUserGQL extends Apollo.Mutation<
+    CreateUserMutation,
+    CreateUserMutationVariables
+  > {
     override document = CreateUserDocument;
-    
+    override client = 'public';
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -151,11 +155,15 @@ export const ValidateRegistrationOtpDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
   })
-  export class ValidateRegistrationOtpGQL extends Apollo.Mutation<ValidateRegistrationOtpMutation, ValidateRegistrationOtpMutationVariables> {
+  export class ValidateRegistrationOtpGQL extends Apollo.Mutation<
+    ValidateRegistrationOtpMutation,
+    ValidateRegistrationOtpMutationVariables
+  > {
     override document = ValidateRegistrationOtpDocument;
-    
+    override client = 'public';
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -167,11 +175,15 @@ export const ResendRegistrationOtpDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
   })
-  export class ResendRegistrationOtpGQL extends Apollo.Mutation<ResendRegistrationOtpMutation, ResendRegistrationOtpMutationVariables> {
+  export class ResendRegistrationOtpGQL extends Apollo.Mutation<
+    ResendRegistrationOtpMutation,
+    ResendRegistrationOtpMutationVariables
+  > {
     override document = ResendRegistrationOtpDocument;
-    
+    override client = 'public';
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -192,7 +204,7 @@ export const UpdateUserDocument = gql`
   })
   export class UpdateUserGQL extends Apollo.Mutation<UpdateUserMutation, UpdateUserMutationVariables> {
     override document = UpdateUserDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -212,7 +224,7 @@ export const SuspendUserDocument = gql`
   })
   export class SuspendUserGQL extends Apollo.Mutation<SuspendUserMutation, SuspendUserMutationVariables> {
     override document = SuspendUserDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -228,7 +240,7 @@ export const DeleteUserDocument = gql`
   })
   export class DeleteUserGQL extends Apollo.Mutation<DeleteUserMutation, DeleteUserMutationVariables> {
     override document = DeleteUserDocument;
-    
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
