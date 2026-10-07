@@ -1,6 +1,6 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, inject } from '@angular/core';
 import { ApolloClient, InMemoryCache, ApolloLink } from '@apollo/client/core';
-import { Apollo, APOLLO_OPTIONS } from 'apollo-angular';
+import { Apollo, APOLLO_OPTIONS, provideNamedApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { SetContextLink } from '@apollo/client/link/context';
 import { ErrorLink } from '@apollo/client/link/error';
@@ -10,35 +10,38 @@ import { AuthService } from '../../service/auth.service';
 
 export function createApollo(httpLink: HttpLink, authService: AuthService): ApolloClient.Options {
   const errorLink = new ErrorLink(({ error }) => {
-    // 1. Catch GraphQL protocol errors (e.g., HTTP 200 with UNAUTHENTICATED error payload)
     if (CombinedGraphQLErrors.is(error)) {
       for (const err of error.errors) {
         const code = err.extensions?.['code'];
         const status = err.extensions?.['status'];
+
         if (code === 'UNAUTHENTICATED' || code === 401 || status === 401) {
           authService.handleUnauthorized();
           break;
         }
       }
+
       return;
     }
 
-    // 2. Catch network transport errors (HTTP 401 status)
     if (error && typeof error === 'object') {
       const errObj = error as unknown as Record<string, unknown>;
-      const cause = (errObj['cause'] && typeof errObj['cause'] === 'object')
-        ? (errObj['cause'] as Record<string, unknown>)
-        : null;
 
-      const status = typeof errObj['status'] === 'number'
-        ? errObj['status']
-        : typeof errObj['statusCode'] === 'number'
-          ? errObj['statusCode']
-          : cause && typeof cause['status'] === 'number'
-            ? cause['status']
-            : cause && typeof cause['statusCode'] === 'number'
-              ? cause['statusCode']
-              : null;
+      const cause =
+        errObj['cause'] && typeof errObj['cause'] === 'object'
+          ? (errObj['cause'] as Record<string, unknown>)
+          : null;
+
+      const status =
+        typeof errObj['status'] === 'number'
+          ? errObj['status']
+          : typeof errObj['statusCode'] === 'number'
+            ? errObj['statusCode']
+            : cause && typeof cause['status'] === 'number'
+              ? cause['status']
+              : cause && typeof cause['statusCode'] === 'number'
+                ? cause['statusCode']
+                : null;
 
       if (status === 401) {
         authService.handleUnauthorized();
@@ -47,9 +50,9 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
   });
 
   const authLink = new SetContextLink((prevContext) => {
-    const accessToken = typeof localStorage !== 'undefined'
-      ? localStorage.getItem('access_token')
-      : null;
+    const accessToken =
+      typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
+
     const authorization = accessToken
       ? `Bearer ${accessToken}`
       : environment.basicAuth
@@ -57,42 +60,44 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
         : null;
 
     return authorization
-      ? { headers: { ...prevContext.headers, Authorization: authorization } }
+      ? {
+          headers: {
+            ...prevContext.headers,
+            Authorization: authorization,
+          },
+        }
       : {};
   });
 
-  const http = httpLink.create({ uri: environment.graphqlUrl });
-
   return {
-    link: ApolloLink.from([errorLink, authLink, http]),
+    link: ApolloLink.from([
+      errorLink,
+      authLink,
+      httpLink.create({
+        uri: environment.graphqlUrl,
+      }),
+    ]),
     cache: new InMemoryCache(),
   };
 }
 
-export function createApolloPublic(httpLink: HttpLink): ApolloClient.Options {
-
-  const http = httpLink.create({ uri: environment.graphqlPublicUrl });
-
+export function createPublicApollo(httpLink: HttpLink): ApolloClient.Options {
   return {
-    link: ApolloLink.from([http]),
+    link: httpLink.create({
+      uri: environment.graphqlPublicUrl,
+    }),
     cache: new InMemoryCache(),
   };
 }
 
 export const graphqlProvider: ApplicationConfig['providers'] = [
-  Apollo,
-  {
-    provide: APOLLO_OPTIONS,
-    useFactory: createApollo,
-    deps: [HttpLink, AuthService],
-  },
-];
+  provideNamedApollo(() => {
+    const httpLink = inject(HttpLink);
+    const authService = inject(AuthService);
 
-export const graphqlPublicProvider: ApplicationConfig['providers'] = [
-  Apollo,
-  {
-    provide: APOLLO_OPTIONS,
-    useFactory: createApolloPublic,
-    deps: [HttpLink],
-  },
+    return {
+      default: createApollo(httpLink, authService),
+      public: createPublicApollo(httpLink),
+    };
+  }),
 ];
