@@ -86,3 +86,112 @@ input UpdateUserInput {
     eventCategoryPreferences: [EventCategory!]
     companyName: String
 }
+
+type Event {
+    id: String!
+    details: EventDetails!
+    category: EventCategory!
+    storageFolderId: String!
+    status: EventStatus!
+    createdAt: String!
+    createdBy: String
+    lastModifiedAt: String!
+    lastModifiedBy: String
+}
+
+type EventDetails {
+    title: String!
+    description: String!
+    startTime: String!
+    endTime: String
+    location: String
+    nrVolunteers: Int!
+    contactPhone: String
+    contactEmail: String
+    dressCode: EventDressCode!
+}
+
+enum EventStatus {
+    DRAFT
+    PENDING_APPROVAL
+    PUBLISHED
+    APPLICATIONS_CLOSED
+    FULL
+    IN_PROGRESS
+    COMPLETED
+    CANCELLED
+    POSTPONED
+    REJECTED
+}
+
+enum EventDressCode {
+    CASUAL
+    FORMAL
+    COSTUME
+}
+
+input CreateEventInput {
+    details: CreateEventDetailsInput!
+    category: EventCategory!
+    status: EventStatus!
+}
+
+input CreateEventDetailsInput {
+    title: EventTitleInput!
+    description: EventDescriptionInput!
+    startTime: String!
+    endTime: String
+    location: String
+    nrVolunteers: Int!
+    contactPhone: String
+    contactEmail: String
+    dressCode: EventDressCode!
+}
+
+input EventTitleInput {
+    ro: String!
+    en: String
+    ru: String
+}
+
+input EventDescriptionInput {
+    ro: String!
+    en: String
+    ru: String
+}
+
+input UpdateEventInput {
+    details: UpdateEventDetailsInput!
+    category: EventCategory!
+    status: EventStatus!
+}
+
+input UpdateEventDetailsInput {
+    title: EventTitleInput!
+    description: EventDescriptionInput!
+    startTime: String!
+    endTime: String
+    location: String
+    nrVolunteers: Int!
+    contactPhone: String
+    contactEmail: String
+    dressCode: EventDressCode!
+}
+
+type EventFile {
+    id: String!
+    eventId: String!
+    type: EventFileType!
+    storageFileId: String!
+    originalName: String!
+    contentType: String!
+    size: Int!
+    index: Int!
+    createdAt: String!
+}
+
+enum EventFileType {
+    COVER
+    GALLERY
+    ATTACHMENT
+}

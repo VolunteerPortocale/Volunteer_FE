@@ -7,6 +7,40 @@ import type * as Types from './types';
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
+export type CreateEventMutationVariables = Exact<{
+  input: Types.CreateEventInput;
+}>;
+
+
+export type CreateEventMutation = { createEvent: { id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } } };
+
+export type UpdateEventMutationVariables = Exact<{
+  id: string;
+  input: Types.UpdateEventInput;
+}>;
+
+
+export type UpdateEventMutation = { updateEvent: { id: string, category: Types.EventCategory, status: Types.EventStatus, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } } };
+
+export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllEventsQuery = { getAllEvents: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } }> };
+
+export type GetEventByIdQueryVariables = Exact<{
+  id: string;
+}>;
+
+
+export type GetEventByIdQuery = { getEventById: { id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } } };
+
+export type GetEventFilesQueryVariables = Exact<{
+  eventId: string;
+}>;
+
+
+export type GetEventFilesQuery = { getEventFiles: Array<{ id: string, eventId: string, type: Types.EventFileType, storageFileId: string, originalName: string, contentType: string, size: number, index: number, createdAt: string }> };
+
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -63,6 +97,161 @@ export type DeleteUserMutationVariables = Exact<{
 
 export type DeleteUserMutation = { deleteUser: boolean };
 
+export const CreateEventDocument = gql`
+    mutation CreateEvent($input: CreateEventInput!) {
+  createEvent(input: $input) {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    storageFolderId
+    status
+    createdAt
+    createdBy
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreateEventGQL extends Apollo.Mutation<CreateEventMutation, CreateEventMutationVariables> {
+    override document = CreateEventDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateEventDocument = gql`
+    mutation UpdateEvent($id: String!, $input: UpdateEventInput!) {
+  updateEvent(id: $id, input: $input) {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateEventGQL extends Apollo.Mutation<UpdateEventMutation, UpdateEventMutationVariables> {
+    override document = UpdateEventDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetAllEventsDocument = gql`
+    query GetAllEvents {
+  getAllEvents {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    status
+    createdAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetAllEventsGQL extends Apollo.Query<GetAllEventsQuery, GetAllEventsQueryVariables> {
+    override document = GetAllEventsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetEventByIdDocument = gql`
+    query GetEventById($id: String!) {
+  getEventById(id: $id) {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    status
+    createdAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetEventByIdGQL extends Apollo.Query<GetEventByIdQuery, GetEventByIdQueryVariables> {
+    override document = GetEventByIdDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetEventFilesDocument = gql`
+    query GetEventFiles($eventId: String!) {
+  getEventFiles(eventId: $eventId) {
+    id
+    eventId
+    type
+    storageFileId
+    originalName
+    contentType
+    size
+    index
+    createdAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetEventFilesGQL extends Apollo.Query<GetEventFilesQuery, GetEventFilesQueryVariables> {
+    override document = GetEventFilesDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const GetAllUsersDocument = gql`
     query GetAllUsers {
   getAllUsers {

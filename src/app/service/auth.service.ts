@@ -28,17 +28,16 @@ export class AuthService {
   hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
     const user = this.currentUser();
     if (!user) return false;
-
     const rolesList: readonly string[] = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
-    const allowed = rolesList.map(r => r.toLowerCase().trim());
+    const allowed = rolesList.map(r => r.toLowerCase().trim().replace(/^role_/, ''));
+    
     const userRoles = [
-      user.role?.toLowerCase().trim(),
-      ...(user.roles?.map(r => r.toLowerCase().trim()) || [])
+      user.role?.toLowerCase().trim().replace(/^role_/, ''),
+      ...(user.roles?.map(r => r.toLowerCase().trim().replace(/^role_/, '')) || [])
     ].filter(Boolean) as string[];
-
     return allowed.some(target => {
       if (target === USER_ROLES.VOLUNTEER && userRoles.includes('voluntar')) return true;
-      if (target === USER_ROLES.NGO && userRoles.includes('ong')) return true;
+      if (target === USER_ROLES.NGO && (userRoles.includes('ong') || userRoles.includes('ngo'))) return true;
       return userRoles.includes(target);
     });
   }
@@ -157,12 +156,34 @@ export class AuthService {
       ? `${givenName[0]}${familyName[0]}`.toUpperCase()
       : name.substring(0, Math.min(2, name.length)).toUpperCase();
 
+    const clientId = environment.keycloak.clientId;
     const realmRoles = (token?.['realm_access']?.['roles'] as string[]) || [];
-    const appRoles = realmRoles.filter(
-      (r) => !['default-roles-volunteer', 'offline_access', 'uma_authorization'].includes(r)
-    );
-    const role = appRoles[0] ? appRoles[0].charAt(0).toUpperCase() + appRoles[0].slice(1).toLowerCase() : 'Voluntar';
+    const customRealmRoles = (token?.['new_keycloak_realm_access_roles'] as string[]) || [];
+    const clientRoles = (token?.['resource_access']?.[clientId]?.['roles'] as string[]) || [];
+    const directRoles = (token?.['roles'] as string[]) || [];
 
-    this.currentUser.set({ name, initials, email, role, roles: appRoles });
+    const allRawRoles = Array.from(new Set([...realmRoles, ...customRealmRoles, ...clientRoles, ...directRoles]));
+
+    const ignoredRoles = new Set([
+      'default-roles-volunteer',
+      'offline_access',
+      'uma_authorization',
+    ]);
+
+    const appRoles = allRawRoles
+      .filter((r) => !ignoredRoles.has(r))
+      .map((r) => r.replace(/^ROLE_/i, ''));
+
+    // Check if registration saved role in localStorage as fallback
+    const storedRole = typeof localStorage !== 'undefined' ? localStorage.getItem('user_role') : null;
+    if (storedRole && !appRoles.some(r => r.toLowerCase() === storedRole.toLowerCase())) {
+      appRoles.push(storedRole);
+    }
+
+    const primaryRole = appRoles[0]
+      ? appRoles[0].charAt(0).toUpperCase() + appRoles[0].slice(1).toLowerCase()
+      : 'Voluntar';
+
+    this.currentUser.set({ name, initials, email, role: primaryRole, roles: appRoles });
   }
 }

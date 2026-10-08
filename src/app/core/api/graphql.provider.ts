@@ -61,7 +61,21 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
       : {};
   });
 
-  const http = httpLink.create({ uri: environment.graphqlUrl });
+    const PUBLIC_OPERATIONS = new Set([
+    'CreateUser',
+    'ValidateRegistrationOtp',
+    'ResendRegistrationOtp',
+    'IsEmailRegistered',
+  ]);
+
+  const http = httpLink.create({
+    uri: (operation) => {
+      if (operation.operationName && PUBLIC_OPERATIONS.has(operation.operationName)) {
+        return `${environment.graphqlUrl}/public`;
+      }
+      return environment.graphqlUrl;
+    },
+  });
 
   return {
     link: ApolloLink.from([errorLink, authLink, http]),

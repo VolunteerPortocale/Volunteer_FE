@@ -5,4 +5,6 @@ type Mutation {
     updateUser(input: UpdateUserInput!): User!
     suspendUser(id: String!, suspendedUntil: String!): User!
     deleteUser(id: String!): Boolean!
+    createEvent(input: CreateEventInput!): Event!
+    updateEvent(id: String!, input: UpdateEventInput!): Event!
 }

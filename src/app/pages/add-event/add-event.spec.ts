@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter, ActivatedRoute, Router } from '@angular/router';
+import { provideRouter, ActivatedRoute } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 import { AddEventComponent } from './add-event';
 import { EventService } from '../../service/event.service';
+import { CreateEventGQL } from '../../core/graphql/services';
 
 describe('AddEventComponent', () => {
   let component: AddEventComponent;
@@ -13,6 +17,8 @@ describe('AddEventComponent', () => {
       imports: [AddEventComponent],
       providers: [
         provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -21,6 +27,12 @@ describe('AddEventComponent', () => {
                 get: (key: string) => (key === 'id' ? 'eco-forest' : null),
               },
             },
+          },
+        },
+        {
+          provide: CreateEventGQL,
+          useValue: {
+            mutate: () => of({ data: { createEvent: { id: 'test-event-id' } } }),
           },
         },
       ],
