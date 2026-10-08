@@ -1,19 +1,19 @@
-import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Keycloak from 'keycloak-js';
 import { environment } from '../../environments/environment';
-import { EVENT_MANAGEMENT_ROLES, USER_ROLES } from '../config/roles.config';
+import { EVENT_MANAGEMENT_ROLES } from '../config/roles.config';
 
 export interface UserProfile {
+  id: string;
   name: string;
   initials: string;
   email: string;
-  role?: string;    // for display
-  roles?: string[]; // for permissions
+  role: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
@@ -27,20 +27,14 @@ export class AuthService {
    */
   hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
     const user = this.currentUser();
+
     if (!user) return false;
 
-    const rolesList: readonly string[] = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
-    const allowed = rolesList.map(r => r.toLowerCase().trim());
-    const userRoles = [
-      user.role?.toLowerCase().trim(),
-      ...(user.roles?.map(r => r.toLowerCase().trim()) || [])
-    ].filter(Boolean) as string[];
+    const rolesList: readonly string[] =
+      typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
+    const allowed = rolesList.map((r) => r.toLowerCase().trim());
 
-    return allowed.some(target => {
-      if (target === USER_ROLES.VOLUNTEER && userRoles.includes('voluntar')) return true;
-      if (target === USER_ROLES.NGO && userRoles.includes('ong')) return true;
-      return userRoles.includes(target);
-    });
+    return allowed.includes(user.role);
   }
 
   /**
@@ -57,7 +51,7 @@ export class AuthService {
     this.keycloak = new Keycloak({
       url: environment.keycloak.url,
       realm: environment.keycloak.realm,
-      clientId: environment.keycloak.clientId
+      clientId: environment.keycloak.clientId,
     });
     const token = localStorage.getItem('access_token') || undefined;
     const refreshToken = localStorage.getItem('refresh_token') || undefined;
@@ -69,12 +63,13 @@ export class AuthService {
         checkLoginIframe: false,
         token,
         refreshToken,
-        idToken
+        idToken,
       });
       this.isAuthenticated.set(authenticated);
       if (authenticated) {
         if (this.keycloak.token) localStorage.setItem('access_token', this.keycloak.token);
-        if (this.keycloak.refreshToken) localStorage.setItem('refresh_token', this.keycloak.refreshToken);
+        if (this.keycloak.refreshToken)
+          localStorage.setItem('refresh_token', this.keycloak.refreshToken);
         if (this.keycloak.idToken) localStorage.setItem('id_token', this.keycloak.idToken);
         this.updateCurrentUser();
       } else {
@@ -98,12 +93,12 @@ export class AuthService {
   async login(redirectUri?: string): Promise<void> {
     if (isPlatformBrowser(this.platformId) && this.keycloak) {
       await this.keycloak.login({
-        redirectUri: redirectUri || `${window.location.origin}/`
+        redirectUri: redirectUri || `${window.location.origin}/`,
       });
     }
   }
 
- async logout(redirectUri?: string): Promise<void> {
+  async logout(redirectUri?: string): Promise<void> {
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
     if (isPlatformBrowser(this.platformId)) {
@@ -112,7 +107,7 @@ export class AuthService {
       localStorage.removeItem('id_token');
       if (this.keycloak) {
         await this.keycloak.logout({
-          redirectUri: redirectUri || `${window.location.origin}/guest`
+          redirectUri: redirectUri || `${window.location.origin}/guest`,
         });
       }
     }
@@ -140,29 +135,48 @@ export class AuthService {
     await this.logout();
   }
 
+  getUserInitials(): string {
+    const givenName = this.getGivenName();
+    const familyName = this.getFamilyName();
+    const name = this.getName();
+    return givenName && familyName
+      ? `${givenName[0]}${familyName[0]}`.toUpperCase()
+      : name.substring(0, Math.min(2, name.length)).toUpperCase();
+  }
+
+  getName(): string {
+    const givenName = this.getGivenName();
+    const firstName = this.getFamilyName();
+
+    return givenName && firstName ? `${givenName} ${firstName}` : givenName || 'Utilizator';
+  }
+
+  getGivenName(): string {
+    const token = this.getToken() as Record<string, any> | undefined;
+    return token?.['given_name'] || '';
+  }
+
+  getFamilyName(): string {
+    const token = this.getToken() as Record<string, any> | undefined;
+    return token?.['family_name'] || '';
+  }
+
+
+  getUserRole(): string {
+    const token = this.getToken() as Record<string, any> | undefined;
+    return token?.['role'] || '';
+  }
+
   private updateCurrentUser(): void {
     if (!this.keycloak) return;
 
     const token = this.keycloak.tokenParsed as Record<string, any> | undefined;
-    const givenName = token?.['given_name'] || '';
-    const familyName = token?.['family_name'] || '';
-    const username = token?.['preferred_username'] || '';
     const email = token?.['email'] || '';
+    const id = token?.['externalId'] || '';
+    const name = this.getName();
+    const initials = this.getUserInitials();
+    const role = this.getUserRole();
 
-    const name = givenName && familyName
-      ? `${givenName} ${familyName}`
-      : givenName || familyName || username || 'Utilizator';
-
-    const initials = givenName && familyName
-      ? `${givenName[0]}${familyName[0]}`.toUpperCase()
-      : name.substring(0, Math.min(2, name.length)).toUpperCase();
-
-    const realmRoles = (token?.['realm_access']?.['roles'] as string[]) || [];
-    const appRoles = realmRoles.filter(
-      (r) => !['default-roles-volunteer', 'offline_access', 'uma_authorization'].includes(r)
-    );
-    const role = appRoles[0] ? appRoles[0].charAt(0).toUpperCase() + appRoles[0].slice(1).toLowerCase() : 'Voluntar';
-
-    this.currentUser.set({ name, initials, email, role, roles: appRoles });
+    this.currentUser.set({ id, name, initials, email, role });
   }
 }

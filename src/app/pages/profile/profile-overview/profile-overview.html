@@ -1,0 +1,80 @@
+<!-- Main Profile Card -->
+<div class="profile-card">
+  <div class="profile-card-header">
+    <!-- Avatar -->
+    <div class="avatar-wrap">
+      <div class="profile-avatar" [class.ngo-avatar]="true">
+          {{ 'TF' }}
+      </div>
+    </div>
+
+    <!-- Main Info -->
+    <div class="profile-info-content">
+      <div class="title-role-row">
+        <h1 class="profile-title">
+          {{ !true ? 'test' : 'ngoTest' }}
+        </h1>
+
+        @if (true) {
+          <span class="role-badge volunteer-badge">
+                  <mat-icon class="badge-icon">volunteer_activism</mat-icon>
+            {{ 'PROFILE.VOLUNTEER_ACTIVE' | translate }}
+                </span>
+        } @else {
+          <span class="role-badge ngo-badge">
+                  <mat-icon class="badge-icon">verified</mat-icon>
+            {{ 'PROFILE.NGO_VERIFIED' | translate }}
+                </span>
+          <span class="idno-badge">
+                  IDNO: {{ 'ngoIdno()' }}
+                </span>
+        }
+
+      <p class="profile-tagline">
+        {{ "tagline"}}
+      </p>
+
+      <!-- Meta attributes -->
+      <div class="profile-meta-row">
+        <div class="meta-item">
+          <mat-icon>location_on</mat-icon>
+          <span>{{ 'location' }}</span>
+        </div>
+        <div class="meta-item">
+          <mat-icon>email</mat-icon>
+          <span>{{ 'voluntar@volunteerio.md' }}</span>
+        </div>
+        <div class="meta-item">
+          <mat-icon>phone</mat-icon>
+          <span>{{'phone'}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="profile-actions-col">
+<!--      @if (!isEditing()) {-->
+<!--        <button type="button" class="btn-primary edit-profile-btn" (click)="toggleEdit()">-->
+<!--          <mat-icon>edit</mat-icon>-->
+<!--          <span>{{ 'PROFILE.EDIT_PROFILE' | translate }}</span>-->
+<!--        </button>-->
+<!--      } @else {-->
+<!--        <div class="edit-btn-group">-->
+<!--          <button type="button" class="btn-primary save-btn" (click)="saveProfile()">-->
+<!--            <mat-icon>check</mat-icon>-->
+<!--            <span>{{ 'PROFILE.SAVE' | translate }}</span>-->
+<!--          </button>-->
+<!--          <button type="button" class="btn-outline cancel-btn" (click)="cancelEdit()">-->
+<!--            <span>{{ 'PROFILE.CANCEL' | translate }}</span>-->
+<!--          </button>-->
+<!--        </div>-->
+<!--      }-->
+
+      <a routerLink="/setari" class="btn-outline settings-link-btn">
+        <mat-icon>settings</mat-icon>
+        <span>{{ 'PROFILE.ACCOUNT_SETTINGS' | translate }}</span>
+      </a>
+    </div>
+  </div>
+
+</div>
