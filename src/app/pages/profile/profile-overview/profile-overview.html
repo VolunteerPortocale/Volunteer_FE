@@ -4,7 +4,7 @@
     <!-- Avatar -->
     <div class="avatar-wrap">
       <div class="profile-avatar" [class.ngo-avatar]="true">
-          {{ 'TF' }}
+        {{ user?.firstName?.charAt(0) }}{{ user?.lastName?.charAt(0) }}
       </div>
     </div>
 
@@ -12,69 +12,65 @@
     <div class="profile-info-content">
       <div class="title-role-row">
         <h1 class="profile-title">
-          {{ !true ? 'test' : 'ngoTest' }}
+          {{ user?.firstName }} {{ user?.lastName }}
         </h1>
 
-        @if (true) {
+        @if (user?.role === 'VOLUNTEER') {
           <span class="role-badge volunteer-badge">
-                  <mat-icon class="badge-icon">volunteer_activism</mat-icon>
-            {{ 'PROFILE.VOLUNTEER_ACTIVE' | translate }}
-                </span>
+            <mat-icon class="badge-icon">volunteer_activism</mat-icon>
+            {{ 'PROFILE.ROLE.' + user?.role | translate }}
+          </span>
         } @else {
           <span class="role-badge ngo-badge">
-                  <mat-icon class="badge-icon">verified</mat-icon>
-            {{ 'PROFILE.NGO_VERIFIED' | translate }}
-                </span>
-          <span class="idno-badge">
-                  IDNO: {{ 'ngoIdno()' }}
-                </span>
+            <mat-icon class="badge-icon">verified</mat-icon>
+            {{ 'PROFILE.ROLE.' + user?.role | translate }}
+          </span>
         }
 
-      <p class="profile-tagline">
-        {{ "tagline"}}
-      </p>
+        <p class="profile-tagline">
+          {{ 'PROFILE.TAGLINE_ROLE.' + user?.role | translate }}
 
-      <!-- Meta attributes -->
-      <div class="profile-meta-row">
-        <div class="meta-item">
-          <mat-icon>location_on</mat-icon>
-          <span>{{ 'location' }}</span>
-        </div>
-        <div class="meta-item">
-          <mat-icon>email</mat-icon>
-          <span>{{ 'voluntar@volunteerio.md' }}</span>
-        </div>
-        <div class="meta-item">
-          <mat-icon>phone</mat-icon>
-          <span>{{'phone'}}</span>
+          @if (user?.eventCategoryPreferences?.length) {
+            <span>•</span>
+            {{
+              'PROFILE.TAGLINE_CATEGORY.' + user?.eventCategoryPreferences?.[0]
+                | translate
+            }}
+          }
+        </p>
+
+        <!-- Meta attributes -->
+        <div class="profile-meta-row">
+          <div class="meta-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ user?.email }}</span>
+          </div>
+
+          <div class="meta-item">
+            <mat-icon>phone</mat-icon>
+            <span>{{ user?.phoneNumber }}</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Action buttons -->
-    <div class="profile-actions-col">
-<!--      @if (!isEditing()) {-->
-<!--        <button type="button" class="btn-primary edit-profile-btn" (click)="toggleEdit()">-->
-<!--          <mat-icon>edit</mat-icon>-->
-<!--          <span>{{ 'PROFILE.EDIT_PROFILE' | translate }}</span>-->
-<!--        </button>-->
-<!--      } @else {-->
-<!--        <div class="edit-btn-group">-->
-<!--          <button type="button" class="btn-primary save-btn" (click)="saveProfile()">-->
-<!--            <mat-icon>check</mat-icon>-->
-<!--            <span>{{ 'PROFILE.SAVE' | translate }}</span>-->
-<!--          </button>-->
-<!--          <button type="button" class="btn-outline cancel-btn" (click)="cancelEdit()">-->
-<!--            <span>{{ 'PROFILE.CANCEL' | translate }}</span>-->
-<!--          </button>-->
-<!--        </div>-->
-<!--      }-->
+      <!-- Action buttons -->
+      <div class="profile-actions-col">
+        <button
+          type="button"
+          class="btn-primary edit-profile-btn"
+          (click)="onEditProfile()">
+          <mat-icon>edit</mat-icon>
+          <span>{{ 'PROFILE.EDIT_PROFILE' | translate }}</span>
+        </button>
 
-      <a routerLink="/setari" class="btn-outline settings-link-btn">
-        <mat-icon>settings</mat-icon>
-        <span>{{ 'PROFILE.ACCOUNT_SETTINGS' | translate }}</span>
-      </a>
+        <button
+          type="button"
+          class="btn-outline settings-link-btn"
+          (click)="onAccountSettings()">
+          <mat-icon>settings</mat-icon>
+          <span>{{ 'PROFILE.ACCOUNT_SETTINGS' | translate }}</span>
+        </button>
+      </div>
     </div>
   </div>
-
 </div>

@@ -53,11 +53,7 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
     const accessToken =
       typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
 
-    const authorization = accessToken
-      ? `Bearer ${accessToken}`
-      : environment.basicAuth
-        ? `Basic ${environment.basicAuth}`
-        : null;
+    const authorization =  `Bearer ${accessToken}`;
 
     return authorization
       ? {

@@ -1,132 +1,145 @@
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Keycloak from 'keycloak-js';
+
 import { environment } from '../../environments/environment';
 import { EVENT_MANAGEMENT_ROLES } from '../config/roles.config';
-
-export interface UserProfile {
-  id: string;
-  name: string;
-  initials: string;
-  email: string;
-  role: string;
-}
+import { UserSessionService } from './user-session.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly userSession = inject(UserSessionService);
+
   private keycloak: Keycloak | null = null;
+  private initPromise: Promise<boolean> | null = null;
 
-  readonly currentUser = signal<UserProfile | null>(null);
-  readonly isAuthenticated = signal<boolean>(false);
+  readonly isAuthenticated = signal(false);
 
-  /**
-   * Check if current user has any of the specified roles (case-insensitive)
-   */
-  hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
-    const user = this.currentUser();
+  // User data comes from GraphQL, not from the token.
+  readonly currentUser = this.userSession.currentUser;
+  readonly userName = this.userSession.name;
+  readonly userInitials = this.userSession.initials;
+  readonly userRole = this.userSession.role;
 
-    if (!user) return false;
+  hasRole(allowedRoles: readonly string[] | string): boolean {
+    const role = this.currentUser()?.role;
 
-    const rolesList: readonly string[] =
-      typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
-    const allowed = rolesList.map((r) => r.toLowerCase().trim());
+    if (!role) return false;
 
-    return allowed.includes(user.role);
+    const roles = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
+
+    return roles.some((allowed) => allowed.trim().toLowerCase() === role.trim().toLowerCase());
   }
 
-  /**
-   * Volunteers cannot create, edit, or moderate events; NGO and Moderator can.
-   */
   canManageEvents(): boolean {
     return this.hasRole(EVENT_MANAGEMENT_ROLES);
   }
 
-  async init(): Promise<boolean> {
+  init(): Promise<boolean> {
     if (!isPlatformBrowser(this.platformId)) {
-      return false;
+      return Promise.resolve(false);
     }
+
+    if (!this.initPromise) {
+      this.initPromise = this.initializeKeycloak();
+    }
+
+    return this.initPromise;
+  }
+
+  private async initializeKeycloak(): Promise<boolean> {
     this.keycloak = new Keycloak({
       url: environment.keycloak.url,
       realm: environment.keycloak.realm,
       clientId: environment.keycloak.clientId,
     });
-    const token = localStorage.getItem('access_token') || undefined;
-    const refreshToken = localStorage.getItem('refresh_token') || undefined;
-    const idToken = localStorage.getItem('id_token') || undefined;
+
+    this.keycloak.onAuthLogout = () => {
+      this.clearSession();
+    };
+
+    this.keycloak.onAuthRefreshError = () => {
+      this.clearSession();
+    };
+
     try {
       const authenticated = await this.keycloak.init({
         onLoad: 'check-sso',
         pkceMethod: 'S256',
         checkLoginIframe: false,
-        token,
-        refreshToken,
-        idToken,
       });
-      this.isAuthenticated.set(authenticated);
-      if (authenticated) {
-        if (this.keycloak.token) localStorage.setItem('access_token', this.keycloak.token);
-        if (this.keycloak.refreshToken)
-          localStorage.setItem('refresh_token', this.keycloak.refreshToken);
-        if (this.keycloak.idToken) localStorage.setItem('id_token', this.keycloak.idToken);
-        this.updateCurrentUser();
-      } else {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('id_token');
-        this.currentUser.set(null);
+
+      const hasToken = !!this.keycloak.token;
+      const ready = authenticated && hasToken;
+
+      this.isAuthenticated.set(ready);
+
+      if (!ready) {
+        this.clearSession();
       }
-      return authenticated;
+
+      return ready;
     } catch (error) {
       console.error('Keycloak initialization failed:', error);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('id_token');
-      this.currentUser.set(null);
-      this.isAuthenticated.set(false);
+      this.clearSession();
       return false;
     }
   }
 
-  async login(redirectUri?: string): Promise<void> {
-    if (isPlatformBrowser(this.platformId) && this.keycloak) {
-      await this.keycloak.login({
-        redirectUri: redirectUri || `${window.location.origin}/`,
-      });
+  getSubject(): string | null {
+    if (!this.isAuthenticated()) {
+      return null;
     }
+
+    return this.keycloak?.tokenParsed?.sub ?? null;
+  }
+
+  async login(redirectUri?: string): Promise<void> {
+    if (!isPlatformBrowser(this.platformId) || !this.keycloak) {
+      return;
+    }
+
+    await this.keycloak.login({
+      redirectUri: redirectUri || `${window.location.origin}/`,
+    });
   }
 
   async logout(redirectUri?: string): Promise<void> {
-    this.currentUser.set(null);
-    this.isAuthenticated.set(false);
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('id_token');
-      if (this.keycloak) {
-        await this.keycloak.logout({
-          redirectUri: redirectUri || `${window.location.origin}/guest`,
-        });
-      }
+    this.clearSession();
+
+    if (!isPlatformBrowser(this.platformId) || !this.keycloak) {
+      return;
     }
+
+    await this.keycloak.logout({
+      redirectUri: redirectUri || `${window.location.origin}/guest`,
+    });
   }
 
   async getToken(): Promise<string | null> {
-    if (!isPlatformBrowser(this.platformId) || !this.keycloak || !this.isAuthenticated()) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    // Wait for Keycloak initialization if it is still running.
+    const initialized = await this.init();
+
+    if (!initialized || !this.keycloak || !this.isAuthenticated()) {
       return null;
     }
 
     try {
-      const refreshed = await this.keycloak.updateToken(30);
-      if (refreshed && this.keycloak.token) {
-        localStorage.setItem('access_token', this.keycloak.token);
-      }
+      await this.keycloak.updateToken(30);
+
       return this.keycloak.token ?? null;
-    } catch (err) {
-      console.warn('Failed to refresh token, logging out', err);
-      await this.logout();
+    } catch (error) {
+      console.warn('Failed to refresh Keycloak token:', error);
+
+      await this.handleUnauthorized();
+
       return null;
     }
   }
@@ -136,47 +149,34 @@ export class AuthService {
   }
 
   getUserInitials(): string {
-    const givenName = this.getGivenName();
-    const familyName = this.getFamilyName();
-    const name = this.getName();
-    return givenName && familyName
-      ? `${givenName[0]}${familyName[0]}`.toUpperCase()
-      : name.substring(0, Math.min(2, name.length)).toUpperCase();
+    return this.userInitials();
   }
 
   getName(): string {
-    const givenName = this.getGivenName();
-    const firstName = this.getFamilyName();
-
-    return givenName && firstName ? `${givenName} ${firstName}` : givenName || 'Utilizator';
+    return this.userName();
   }
 
   getGivenName(): string {
-    const token = this.getToken() as Record<string, any> | undefined;
-    return token?.['given_name'] || '';
+    return this.currentUser()?.firstName ?? '';
   }
 
   getFamilyName(): string {
-    const token = this.getToken() as Record<string, any> | undefined;
-    return token?.['family_name'] || '';
+    return this.currentUser()?.lastName ?? '';
   }
-
 
   getUserRole(): string {
-    const token = this.getToken() as Record<string, any> | undefined;
-    return token?.['role'] || '';
+    return this.userRole() ?? '';
   }
 
-  private updateCurrentUser(): void {
-    if (!this.keycloak) return;
+  private clearSession(): void {
+    this.isAuthenticated.set(false);
+    this.userSession.clear();
 
-    const token = this.keycloak.tokenParsed as Record<string, any> | undefined;
-    const email = token?.['email'] || '';
-    const id = token?.['externalId'] || '';
-    const name = this.getName();
-    const initials = this.getUserInitials();
-    const role = this.getUserRole();
-
-    this.currentUser.set({ id, name, initials, email, role });
+    if (isPlatformBrowser(this.platformId)) {
+      // Cleanup from the previous implementation.
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('id_token');
+    }
   }
 }

@@ -11,8 +11,8 @@ query GetAllUsers {
   }
 }
 
-query GetUserById($id: String!) {
-  getUserById(id: $id) {
+query GetCurrentUser {
+  getCurrentUser {
     id
     firstName
     lastName
@@ -21,34 +21,8 @@ query GetUserById($id: String!) {
     role
     status
     createdAt
-    updatedAt
     eventCategoryPreferences
   }
-}
-
-mutation CreateUser($input: CreateUserInput!) {
-  createUser(input: $input) {
-    id
-    firstName
-    lastName
-    email
-    phoneNumber
-    role
-    status
-    createdAt
-  }
-}
-
-mutation ValidateRegistrationOtp($email: String!, $otp: String!) {
-  validateRegistrationOtp(email: $email, otp: $otp) {
-    id
-    email
-    status
-  }
-}
-
-mutation ResendRegistrationOtp($email: String!) {
-  resendRegistrationOtp(email: $email)
 }
 
 mutation UpdateUser($input: UpdateUserInput!) {

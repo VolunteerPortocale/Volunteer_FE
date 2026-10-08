@@ -1,4 +1,0 @@
-type Query {
-    getAllUsers: [User!]!
-    getUserById(id: String!): User!
-}

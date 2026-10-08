@@ -6,9 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_ROUTES } from '../../config/routes.config';
 import {
-  ValidateRegistrationOtpGQL,
   ResendRegistrationOtpGQL,
-} from '../../core/graphql/services';
+  ValidateRegistrationOtpGQL,
+} from '../../core/graphql/services.public';
+
 
 @Component({
   selector: 'app-otp-confirmation',

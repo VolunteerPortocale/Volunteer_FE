@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -8,7 +8,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
-import { GetCurrentUserGQL } from '../../core/graphql';
 import { ProfileOverview } from './profile-overview/profile-overview';
 
 @Component({
@@ -32,15 +31,6 @@ export class ProfileComponent implements OnInit {
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private userProfile = String;
-
-  private readonly getCurrentUserGql = inject(GetCurrentUserGQL);
-
-  // User details from AuthService
-  readonly userInitial = computed(() => {
-    const user = this.authService.currentUser();
-    if (!user) return 'PC';
-    return user.initials `|| 'PC'`;
-  });
 
   ngOnInit(): void {
     // this.getCurrentUserGql.query().subscribe({
