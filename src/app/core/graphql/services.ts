@@ -115,6 +115,34 @@ export const GetUserByIdDocument = gql`
       super(apollo);
     }
   }
+
+export const GetCurrentUserDocument = gql`
+  query GetCurrentUser {
+    getCurrentUser {
+      id
+      firstName
+      lastName
+      email
+      phoneNumber
+      role
+      status
+      createdAt
+      updatedAt
+      eventCategoryPreferences
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetCurrentUserGQL extends Apollo.Query<GetCurrentUserGQL> {
+  override document = GetCurrentUserDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
   export const CreateUserDocument = gql`
     mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
