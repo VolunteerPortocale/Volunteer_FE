@@ -16,7 +16,7 @@ const config: CodegenConfig = {
       config: {
         importSchemaTypesFrom: 'src/app/core/graphql/public/types',
         addExplicitOverride: true,
-        client: 'public',
+        namedClient: 'public',
       },
     },
   },

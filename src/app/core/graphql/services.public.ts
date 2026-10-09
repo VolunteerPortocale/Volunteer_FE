@@ -49,7 +49,7 @@ export const CreateUserDocument = gql`
   })
   export class CreateUserGQL extends Apollo.Mutation<CreateUserMutation, CreateUserMutationVariables> {
     override document = CreateUserDocument;
-    
+    override client = 'public';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -69,7 +69,7 @@ export const ValidateRegistrationOtpDocument = gql`
   })
   export class ValidateRegistrationOtpGQL extends Apollo.Mutation<ValidateRegistrationOtpMutation, ValidateRegistrationOtpMutationVariables> {
     override document = ValidateRegistrationOtpDocument;
-    
+    override client = 'public';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -85,7 +85,7 @@ export const ResendRegistrationOtpDocument = gql`
   })
   export class ResendRegistrationOtpGQL extends Apollo.Mutation<ResendRegistrationOtpMutation, ResendRegistrationOtpMutationVariables> {
     override document = ResendRegistrationOtpDocument;
-    
+    override client = 'public';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
