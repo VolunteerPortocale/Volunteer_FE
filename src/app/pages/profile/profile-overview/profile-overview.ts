@@ -15,7 +15,7 @@ export class ProfileOverview {
   private readonly authService = inject(AuthService);
 
   readonly editPersonalDetails = output<void>();
-  readonly editPreferences = output<void>();
+  readonly editSettings = output<void>();
 
   get user() {
     return this.authService.currentUser();
@@ -25,7 +25,7 @@ export class ProfileOverview {
     this.editPersonalDetails.emit();
   }
 
-  onEditPreferences(): void {
-    this.editPreferences.emit();
+  onEditSettings(): void {
+    this.editSettings.emit();
   }
 }

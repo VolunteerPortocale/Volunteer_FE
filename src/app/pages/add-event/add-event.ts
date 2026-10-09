@@ -9,8 +9,6 @@ import { TranslationService } from '../../service/translation.service';
 import { EventService } from '../../service/event.service';
 
 import { OptionItem, EVENT_TYPES } from '../../config/event-categories.config';
-export type { OptionItem };
-export { EVENT_TYPES };
 
 export type ContactMethod = 'email' | 'phone' | 'both';
 

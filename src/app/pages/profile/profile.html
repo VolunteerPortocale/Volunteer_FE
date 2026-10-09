@@ -12,7 +12,7 @@
       <!-- Main Profile Overview -->
       <app-profile-overview
         (editPersonalDetails)="togglePersonalDetails()"
-        (editPreferences)="togglePreferences()"
+        (editSettings)="toggleSettings()"
       />
 
       <!-- Edit Personal Details -->
@@ -20,9 +20,9 @@
         <app-edit-personal-details (close)="togglePersonalDetails()" />
       }
 
-      <!-- Edit Preferences -->
-      @if (showPreferences()) {
-        <app-edit-preferences (close)="togglePreferences()" />
+      <!-- Profile Settings (Language, 2FA, Notifications) -->
+      @if (showSettings()) {
+        <app-profile-settings (close)="toggleSettings()" />
       }
     </div>
   </section>

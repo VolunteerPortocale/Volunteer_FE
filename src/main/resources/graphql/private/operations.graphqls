@@ -23,6 +23,9 @@ query GetCurrentUser {
     createdAt
     eventCategoryPreferences
     biography
+    language
+    notificationsEnabled
+    twoFactorEnabled
   }
 }
 
@@ -40,7 +43,18 @@ mutation UpdateUserPreferences($input: UpdateUserPreferencesInput!) {
   updateUserPreferences(input: $input) {
     id
     eventCategoryPreferences
+    language
+    notificationsEnabled
+    twoFactorEnabled
   }
+}
+
+mutation InitiateTwoFactor {
+  initiateTwoFactor
+}
+
+mutation ConfirmTwoFactor($otp: String!) {
+  confirmTwoFactor(otp: $otp)
 }
 
 mutation SuspendUser($id: String!, $suspendedUntil: String!) {

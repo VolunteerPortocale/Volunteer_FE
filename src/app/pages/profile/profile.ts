@@ -6,7 +6,7 @@ import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { FooterComponent } from '../../common/components/footer/footer';
 import { ProfileOverview } from './profile-overview/profile-overview';
 import { EditPersonalDetails } from './edit-personal-details/edit-personal-details';
-import { EditPreferences } from './edit-preferences/edit-preferences';
+import { ProfileSettingsComponent } from './profile-settings/profile-settings';
 
 @Component({
   selector: 'app-profile',
@@ -18,24 +18,24 @@ import { EditPreferences } from './edit-preferences/edit-preferences';
     FooterComponent,
     ProfileOverview,
     EditPersonalDetails,
-    EditPreferences,
+    ProfileSettingsComponent,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
 })
 export class ProfileComponent {
   readonly showPersonalDetails = signal(false);
-  readonly showPreferences = signal(false);
+  readonly showSettings = signal(false);
 
   togglePersonalDetails(): void {
     const shouldShow = !this.showPersonalDetails();
     this.showPersonalDetails.set(shouldShow);
-    this.showPreferences.set(false);
+    this.showSettings.set(false);
   }
 
-  togglePreferences(): void {
-    const shouldShow = !this.showPreferences();
-    this.showPreferences.set(shouldShow);
+  toggleSettings(): void {
+    const shouldShow = !this.showSettings();
+    this.showSettings.set(shouldShow);
     this.showPersonalDetails.set(false);
   }
 }
