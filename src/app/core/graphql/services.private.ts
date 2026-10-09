@@ -41,7 +41,7 @@ export type ConfirmTwoFactorMutationVariables = Exact<{
 }>;
 
 
-export type ConfirmTwoFactorMutation = { confirmTwoFactor: { id: string, twoFactorEnabled: boolean } };
+export type ConfirmTwoFactorMutation = { confirmTwoFactor: boolean };
 
 export type SuspendUserMutationVariables = Exact<{
   id: string;
@@ -175,10 +175,7 @@ export const InitiateTwoFactorDocument = gql`
   }
 export const ConfirmTwoFactorDocument = gql`
     mutation ConfirmTwoFactor($otp: String!) {
-  confirmTwoFactor(otp: $otp) {
-    id
-    twoFactorEnabled
-  }
+  confirmTwoFactor(otp: $otp)
 }
     `;
 

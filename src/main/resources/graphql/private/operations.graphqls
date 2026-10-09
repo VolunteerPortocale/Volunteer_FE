@@ -54,10 +54,7 @@ mutation InitiateTwoFactor {
 }
 
 mutation ConfirmTwoFactor($otp: String!) {
-  confirmTwoFactor(otp: $otp) {
-    id
-    twoFactorEnabled
-  }
+  confirmTwoFactor(otp: $otp)
 }
 
 mutation SuspendUser($id: String!, $suspendedUntil: String!) {

@@ -201,7 +201,7 @@ export enum Language {
 export type Mutation = {
   __typename?: 'Mutation';
   confirmEnrollment: GenericPayload;
-  confirmTwoFactor: User;
+  confirmTwoFactor: Scalars['Boolean']['output'];
   createEvent: Event;
   deleteUser: Scalars['Boolean']['output'];
   enroll: Enrollment;
@@ -210,7 +210,6 @@ export type Mutation = {
   updateEvent: Event;
   updateUser: User;
   updateUserPreferences: User;
-  verifyTwoFactorLogin: User;
 };
 
 
@@ -258,12 +257,6 @@ export type MutationUpdateUserArgs = {
 
 export type MutationUpdateUserPreferencesArgs = {
   input: UpdateUserPreferencesInput;
-};
-
-
-export type MutationVerifyTwoFactorLoginArgs = {
-  email: Scalars['String']['input'];
-  otp: Scalars['String']['input'];
 };
 
 export type Query = {

@@ -1,5 +1,10 @@
-import { Component, OnInit, inject, output, signal } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, OnInit, output, signal } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 
@@ -11,7 +16,6 @@ import {
 } from '../../../core/graphql/services.private';
 import { AuthService } from '../../../service/auth.service';
 import { CurrentUserLoaderService } from '../../../service/current-user-loader.service';
-import { UserSessionService } from '../../../service/user-session.service';
 import { SupportedLanguage, TranslationService } from '../../../service/translation.service';
 
 export interface SettingsForm {
@@ -33,7 +37,6 @@ export class ProfileSettingsComponent implements OnInit {
 
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly authService = inject(AuthService);
-  private readonly userSession = inject(UserSessionService);
   private readonly currentUserLoader = inject(CurrentUserLoaderService);
   private readonly translationService = inject(TranslationService);
   private readonly updatePrefsGQL = inject(UpdateUserPreferencesGQL);
@@ -106,17 +109,15 @@ export class ProfileSettingsComponent implements OnInit {
 
       const res = await firstValueFrom(this.updatePrefsGQL.mutate({ variables: { input } }));
       const updated = res.data?.updateUserPreferences;
-      const subject = this.authService.getSubject();
 
-      if (this.user && subject && updated) {
-        this.userSession.setUser(subject, { ...this.user, ...updated });
+      if (this.user && updated) {
+        await this.currentUserLoader.refresh();
       }
 
       if (language) {
         this.translationService.setLanguage(String(language).toLowerCase() as SupportedLanguage);
       }
 
-      await this.currentUserLoader.refresh();
       this.close.emit();
     } catch (err) {
       this.error.set(err instanceof Error ? err.message : 'Eroare la salvare.');
