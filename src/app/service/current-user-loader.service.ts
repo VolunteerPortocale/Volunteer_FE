@@ -3,6 +3,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { GetCurrentUserGQL } from '../core/graphql/services.private';
 import { UserSessionService } from './user-session.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { UserSessionService } from './user-session.service';
 export class CurrentUserLoaderService {
   private readonly getCurrentUserGQL = inject(GetCurrentUserGQL);
   private readonly userSession = inject(UserSessionService);
+  private readonly authService = inject(AuthService);
 
   private loadingPromise: Promise<void> | null = null;
 
@@ -47,5 +49,17 @@ export class CurrentUserLoaderService {
     }
 
     this.userSession.setUser(subject, user);
+  }
+
+  async refresh(): Promise<void> {
+    if (this.loadingPromise) {
+      await this.loadingPromise.catch(() => {});
+    }
+
+    const subject = this.authService.getSubject();
+
+    if (!subject) return;
+
+    await this.load(subject);
   }
 }

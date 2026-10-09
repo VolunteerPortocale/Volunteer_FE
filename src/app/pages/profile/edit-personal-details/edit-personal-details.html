@@ -1,0 +1,85 @@
+<div class="edit-card">
+  <div class="edit-header">
+    <div>
+      <h2 class="edit-title">Editează Datele</h2>
+      <p class="edit-subtitle">Actualizează numărul de telefon, biografia și preferințele de categorii</p>
+    </div>
+    <button type="button" class="btn-close" (click)="close.emit()" aria-label="Închide">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="alert-error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="edit-form">
+    <!-- Phone Number -->
+    <div class="form-group phone-group">
+      <label for="phoneNumber">Număr de telefon *</label>
+      <div class="input-wrap" [class.has-error]="form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched">
+        <mat-icon>phone</mat-icon>
+        <input id="phoneNumber" type="tel" formControlName="phoneNumber" placeholder="+37360000000" />
+      </div>
+      @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
+        <span class="field-error">Numărul de telefon este obligatoriu.</span>
+      }
+    </div>
+
+    <!-- Biography -->
+    <div class="form-group">
+      <label for="biography">Biografie / Despre</label>
+      <div class="textarea-wrap">
+        <textarea
+          id="biography"
+          formControlName="biography"
+          rows="3"
+          placeholder="O scurtă descriere despre tine sau activitatea organizației..."></textarea>
+      </div>
+    </div>
+
+    <!-- Category Preferences -->
+    <div class="preferences-section">
+      <div class="section-header">
+        <span class="section-title">Preferințe & Categorii de interes</span>
+        <span class="section-counter">{{ selectedCategories().length }} selectate</span>
+      </div>
+
+      <div class="chips-container">
+        @for (item of categories; track item.id) {
+          @if (item.category) {
+            <button
+              type="button"
+              class="chip"
+              [class.active]="selectedCategories().includes(item.category)"
+              (click)="toggleCategory(item.category)">
+              @if (selectedCategories().includes(item.category)) {
+                <mat-icon class="chip-icon">check</mat-icon>
+              }
+              <span>{{ item.name }}</span>
+            </button>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="edit-actions">
+      <button type="button" class="btn-cancel" [disabled]="loading()" (click)="close.emit()">
+        Anulează
+      </button>
+      <button type="submit" class="btn-save" [disabled]="form.invalid || loading()">
+        @if (loading()) {
+          <span class="spinner"></span>
+          <span>Se salvează...</span>
+        } @else {
+          <mat-icon>save</mat-icon>
+          <span>Salvează modificările</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>

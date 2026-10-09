@@ -9,7 +9,21 @@
           <span>{{ 'PROFILE.BACK_TO_EVENTS' | translate }}</span>
         </a>
       </div>
-      <app-profile-overview />
+      <!-- Main Profile Overview -->
+      <app-profile-overview
+        (editPersonalDetails)="togglePersonalDetails()"
+        (editPreferences)="togglePreferences()"
+      />
+
+      <!-- Edit Personal Details -->
+      @if (showPersonalDetails()) {
+        <app-edit-personal-details (close)="togglePersonalDetails()" />
+      }
+
+      <!-- Edit Preferences -->
+      @if (showPreferences()) {
+        <app-edit-preferences (close)="togglePreferences()" />
+      }
     </div>
   </section>
 </div>

@@ -209,6 +209,7 @@ export type Mutation = {
   suspendUser: User;
   updateEvent: Event;
   updateUser: User;
+  updateUserPreferences: User;
   verifyTwoFactorLogin: User;
 };
 
@@ -252,6 +253,11 @@ export type MutationUpdateEventArgs = {
 
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
+};
+
+
+export type MutationUpdateUserPreferencesArgs = {
+  input: UpdateUserPreferencesInput;
 };
 
 
@@ -306,12 +312,16 @@ export type UpdateEventInput = {
 export type UpdateUserInput = {
   biography?: InputMaybe<Scalars['String']['input']>;
   companyName?: InputMaybe<Scalars['String']['input']>;
-  eventCategoryPreferences?: InputMaybe<Array<EventCategory>>;
   firstName?: InputMaybe<Scalars['String']['input']>;
-  language?: InputMaybe<Language>;
   lastName?: InputMaybe<Scalars['String']['input']>;
-  notificationsEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateUserPreferencesInput = {
+  eventCategoryPreferences?: InputMaybe<Array<EventCategory>>;
+  language?: InputMaybe<Language>;
+  notificationsEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  twoFactorEnabled?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type User = {
