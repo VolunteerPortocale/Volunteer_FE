@@ -9,6 +9,7 @@ import {
   ResendRegistrationOtpGQL,
   ValidateRegistrationOtpGQL,
 } from '../../core/graphql/services.public';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 
 
 @Component({
@@ -88,7 +89,9 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
         next: (result) => {
           this.isLoading.set(false);
           if (result.data?.validateRegistrationOtp) {
-            this.successMessage.set('Email verificat cu succes! Te redirecționăm la autentificare...');
+            this.successMessage.set(
+              'Email verificat cu succes! Te redirecționăm la autentificare...',
+            );
             setTimeout(() => {
               this.router.navigate(['/' + this.routes.LOGIN]);
             }, 1500);
@@ -96,17 +99,32 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
             this.errorMessage.set(result.error.message);
           }
         },
-        error: (err) => {
+        error: (err: unknown) => {
           this.isLoading.set(false);
-          const msg = err?.graphQLErrors?.[0]?.message || err?.message || '';
-          if (msg.includes('Invalid OTP') || msg.includes('E400_002')) {
-            this.errorMessage.set('Codul de verificare este incorect sau a expirat.');
-          } else if (msg.includes('Too many attempts') || msg.includes('E400_003')) {
-            this.errorMessage.set('Prea multe încercări incorecte. Vă rugăm să solicitați un nou cod.');
-          } else if (msg.includes('not found') || msg.includes('E404_001')) {
-            this.errorMessage.set('Utilizatorul nu a fost găsit.');
-          } else {
-            this.errorMessage.set(msg || 'Eroare la verificarea codului. Vă rugăm să încercați din nou.');
+
+          const errorCode = CombinedGraphQLErrors.is(err)
+            ? err.errors[0]?.extensions?.['code']
+            : null;
+
+          switch (errorCode) {
+            case '404-001':
+              this.errorMessage.set('Utilizatorul nu a fost găsit.');
+              break;
+
+            case '400-002':
+              this.errorMessage.set('Codul de verificare este incorect sau a expirat.');
+              break;
+
+            case '400-003':
+              this.errorMessage.set(
+                'Prea multe încercări incorecte. Vă rugăm să solicitați un nou cod.',
+              );
+              break;
+
+            default:
+              this.errorMessage.set(
+                'Eroare la verificarea codului. Vă rugăm să încercați din nou.',
+              );
           }
         },
       });
@@ -133,10 +151,8 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
           this.successMessage.set('Un nou cod de verificare a fost trimis pe adresa ta de email.');
           this.startCooldown(60);
         },
-        error: (err) => {
-          this.isResending.set(false);
-          const msg = err?.graphQLErrors?.[0]?.message || err?.message || '';
-          this.errorMessage.set(msg || 'Nu am putut retrimite codul. Vă rugăm să încercați din nou.');
+        error: () => {
+          this.errorMessage.set('Nu am putut retrimite codul. Vă rugăm să încercați din nou.');
         },
       });
   }
