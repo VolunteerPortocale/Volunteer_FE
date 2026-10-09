@@ -1,243 +1,247 @@
 enum Language {
-    RO
-    EN
-    RU
+  RO
+  EN
+  RU
 }
 
 type User {
-    id: String!
-    firstName: String!
-    lastName: String!
-    email: String!
-    phoneNumber: String!
-    role: UserRole!
-    status: UserStatus!
-    createdAt: String!
-    updatedAt: String
-    eventCategoryPreferences: [EventCategory!]
-    suspendedUntil: String
-    language: Language!
-    notificationsEnabled: Boolean!
-    forceResetPassword: Boolean!
-    twoFactorEnabled: Boolean!
-    biography: String
+  id: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+  role: UserRole!
+  status: UserStatus!
+  createdAt: String!
+  updatedAt: String
+  eventCategoryPreferences: [EventCategory!]
+  suspendedUntil: String
+  language: Language!
+  notificationsEnabled: Boolean!
+  forceResetPassword: Boolean!
+  twoFactorEnabled: Boolean!
+  biography: String
 }
 
 type GenericPayload {
-    status: GenericStatus
+  status: GenericStatus
 }
 
 enum GenericStatus {
-    OK
-    NOK
+  OK
+  NOK
 }
 
 type Event {
-    id: String!
-    details: EventDetails!
-    category: EventCategory!
-    storageFolderId: String!
-    status: EventStatus!
-    createdAt: String!
-    createdBy: String
-    lastModifiedAt: String!
-    lastModifiedBy: String
+  id: String!
+  details: EventDetails!
+  category: EventCategory!
+  storageFolderId: String!
+  status: EventStatus!
+  createdAt: String!
+  createdBy: String
+  lastModifiedAt: String!
+  lastModifiedBy: String
 }
 
 type EventDetails {
-    title: String!
-    description: String!
-    startTime: String!
-    endTime: String
-    location: String
-    nrVolunteers: Int!
-    contactPhone: String
-    contactEmail: String
-    dressCode: EventDressCode!
+  title: String!
+  description: String!
+  startTime: String!
+  endTime: String
+  location: String
+  nrVolunteers: Int!
+  contactPhone: String
+  contactEmail: String
+  dressCode: EventDressCode!
 }
 
 enum UserRole {
-    ADMIN
-    MODERATOR
-    NGO
-    VOLUNTEER
+  ADMIN
+  MODERATOR
+  NGO
+  VOLUNTEER
 }
 
 enum CreateUserRole {
-    MODERATOR
-    NGO
-    VOLUNTEER
+  MODERATOR
+  NGO
+  VOLUNTEER
 }
 
 enum UserStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }
 
 enum EventCategory {
-    SOCIAL
-    ANIMAL_CARE
-    CHILDREN_AND_YOUTH
-    EDUCATION
-    ENVIRONMENT
-    HEALTH
-    DISABILITY_SUPPORT
-    ELDERLY_CARE
-    DISASTER
-    POVERTY
-    CULTURE
-    SPORT
-    FESTIVALS
-    TECHNOLOGY
-    BUSINESS
-    EMPLOYMENT
-    SCIENCE
-    AGRICULTURE
-    CONSTRUCTION
-    RELIGION
-    HUMAN_RIGHTS
-    LEGAL
-    SAFETY
-    FAMILY
-    LGBTQ_PLUS
-    REFUGEE_SUPPORT
-    INTERNATIONAL_VOLUNTEERING
-    TOURISM
-    HERITAGE
-    MEDIA
-    GARDENING
-    PEACE
-    ADDICTION_RECOVERY
-    OTHER
+  SOCIAL
+  ANIMAL_CARE
+  CHILDREN_AND_YOUTH
+  EDUCATION
+  ENVIRONMENT
+  HEALTH
+  DISABILITY_SUPPORT
+  ELDERLY_CARE
+  DISASTER
+  POVERTY
+  CULTURE
+  SPORT
+  FESTIVALS
+  TECHNOLOGY
+  BUSINESS
+  EMPLOYMENT
+  SCIENCE
+  AGRICULTURE
+  CONSTRUCTION
+  RELIGION
+  HUMAN_RIGHTS
+  LEGAL
+  SAFETY
+  FAMILY
+  LGBTQ_PLUS
+  REFUGEE_SUPPORT
+  INTERNATIONAL_VOLUNTEERING
+  TOURISM
+  HERITAGE
+  MEDIA
+  GARDENING
+  PEACE
+  ADDICTION_RECOVERY
+  OTHER
 }
 
 enum EventStatus {
-    DRAFT
-    PENDING_APPROVAL
-    PUBLISHED
-    APPLICATIONS_CLOSED
-    FULL
-    IN_PROGRESS
-    COMPLETED
-    CANCELLED
-    POSTPONED
-    REJECTED
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
+  APPLICATIONS_CLOSED
+  FULL
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  POSTPONED
+  REJECTED
 }
 
 enum EventDressCode {
-    CASUAL
-    FORMAL
-    COSTUME
+  CASUAL
+  FORMAL
+  COSTUME
 }
 
 input CreateUserInput {
-    firstName: String!
-    lastName: String!
-    email: String!
-    phoneNumber: String!
-    role: CreateUserRole!
-    eventCategoryPreferences: [EventCategory]
-    password: String!
-    companyName: String
-    language: Language
-    notificationsEnabled: Boolean
-    biography: String
+  firstName: String!
+  lastName: String!
+  email: String!
+  phoneNumber: String!
+  role: CreateUserRole!
+  eventCategoryPreferences: [EventCategory]
+  password: String!
+  companyName: String
+  language: Language
+  notificationsEnabled: Boolean
+  biography: String
 }
 
 input UpdateUserInput {
-    firstName: String
-    lastName: String
-    phoneNumber: String
-    eventCategoryPreferences: [EventCategory!]
-    companyName: String
-    language: Language
-    notificationsEnabled: Boolean
-    biography: String
+  firstName: String
+  lastName: String
+  phoneNumber: String
+  companyName: String
+  biography: String
+}
+
+input UpdateUserPreferencesInput {
+  eventCategoryPreferences: [EventCategory!]
+  language: Language
+  notificationsEnabled: Boolean
+  twoFactorEnabled: Boolean
 }
 
 input CreateEventInput {
-    details: CreateEventDetailsInput!
-    category: EventCategory!
-    status: EventStatus!
+  details: CreateEventDetailsInput!
+  category: EventCategory!
+  status: EventStatus!
 }
 
 input CreateEventDetailsInput {
-    title: EventTitleInput!
-    description: EventDescriptionInput!
-    startTime: String!
-    endTime: String
-    location: String
-    nrVolunteers: Int!
-    contactPhone: String
-    contactEmail: String
-    dressCode: EventDressCode!
+  title: EventTitleInput!
+  description: EventDescriptionInput!
+  startTime: String!
+  endTime: String
+  location: String
+  nrVolunteers: Int!
+  contactPhone: String
+  contactEmail: String
+  dressCode: EventDressCode!
 }
 
 input EventTitleInput {
-    ro: String!
-    en: String
-    ru: String
+  ro: String!
+  en: String
+  ru: String
 }
 input EventDescriptionInput {
-    ro: String!
-    en: String
-    ru: String
+  ro: String!
+  en: String
+  ru: String
 }
 
 input UpdateEventInput{
-    details: UpdateEventDetailsInput!
-    category: EventCategory!
-    status: EventStatus!
+  details: UpdateEventDetailsInput!
+  category: EventCategory!
+  status: EventStatus!
 }
 
 input UpdateEventDetailsInput{
-    title: EventTitleInput!
-    description: EventDescriptionInput!
-    startTime: String!
-    endTime: String
-    location: String
-    nrVolunteers: Int!
-    contactPhone: String
-    contactEmail: String
-    dressCode: EventDressCode!
+  title: EventTitleInput!
+  description: EventDescriptionInput!
+  startTime: String!
+  endTime: String
+  location: String
+  nrVolunteers: Int!
+  contactPhone: String
+  contactEmail: String
+  dressCode: EventDressCode!
 }
 
 type Enrollment {
-    id: ID!
-    eventId: String!
-    userId: String!
-    status: EnrollmentStatus!
+  id: ID!
+  eventId: String!
+  userId: String!
+  status: EnrollmentStatus!
 }
 
 enum EnrollmentStatus {
-    ENROLLED
-    CONFIRMED
-    COMPLETED
+  ENROLLED
+  CONFIRMED
+  COMPLETED
 }
 
 input CreateEnrollmentInput {
-    eventId: String!
+  eventId: String!
 }
 
 input ConfirmEnrollmentInput {
-    enrollmentId: String!
+  enrollmentId: String!
 }
 
 type EventFile {
-    id: String!
-    eventId: String!
-    type: EventFileType!
-    storageFileId: String!
-    originalName: String!
-    contentType: String!
-    size: Int!
-    index: Int!
-    createdAt: String!
+  id: String!
+  eventId: String!
+  type: EventFileType!
+  storageFileId: String!
+  originalName: String!
+  contentType: String!
+  size: Int!
+  index: Int!
+  createdAt: String!
 }
 
 enum EventFileType {
-    COVER
-    GALLERY
-    ATTACHMENT
+  COVER
+  GALLERY
+  ATTACHMENT
 }

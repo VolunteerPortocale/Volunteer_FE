@@ -15,7 +15,7 @@ export type GetAllUsersQuery = { getAllUsers: Array<{ id: string, firstName: str
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { getCurrentUser: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string, eventCategoryPreferences: Array<Types.EventCategory> | null } };
+export type GetCurrentUserQuery = { getCurrentUser: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string, eventCategoryPreferences: Array<Types.EventCategory> | null, biography: string | null } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: Types.UpdateUserInput;
@@ -76,6 +76,7 @@ export const GetCurrentUserDocument = gql`
     status
     createdAt
     eventCategoryPreferences
+    biography
   }
 }
     `;
