@@ -42,7 +42,7 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
   readonly successMessage = signal<string | null>(null);
   readonly resendCooldown = signal<number>(0);
 
-  private timerInterval: any = null;
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit(): void {
     const emailParam = this.route.snapshot.queryParamMap.get('email') || '';
@@ -164,7 +164,10 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
     this.timerInterval = setInterval(() => {
       const current = this.resendCooldown();
       if (current <= 1) {
-        clearInterval(this.timerInterval);
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+          this.timerInterval = null;
+        }
         this.resendCooldown.set(0);
       } else {
         this.resendCooldown.set(current - 1);
