@@ -7,8 +7,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
 import { EventService } from '../../service/event.service';
-
+import { switchMap, map } from 'rxjs';
 import { OptionItem, EVENT_TYPES } from '../../config/event-categories.config';
+import { CreateEventGQL } from '../../core/graphql/services.private';
+import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../core/graphql/private/types';
+
 export type { OptionItem };
 export { EVENT_TYPES };
 
@@ -20,6 +23,7 @@ export interface AttachedFile {
   size: number;
   formattedSize: string;
   type: string;
+  rawFile?: File;
 }
 
 
@@ -56,7 +60,10 @@ export class AddEventComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly eventService = inject(EventService);
   readonly translationService = inject(TranslationService);
+  private readonly createEventGQL = inject(CreateEventGQL);
 
+  readonly isSubmitting = signal<boolean>(false);
+  readonly errorMessage = signal<string | null>(null);
   readonly eventTypesList = EVENT_TYPES;
   readonly dressCodesList = DRESS_CODES;
   readonly durationsList = DURATIONS;
@@ -218,6 +225,7 @@ export class AddEventComponent implements OnInit {
       size: file.size,
       formattedSize: this.formatFileSize(file.size),
       type: file.type || file.name.split('.').pop() || 'file',
+      rawFile: file,
     }));
     this.attachedFiles.set([...this.attachedFiles(), ...newFiles]);
   }
@@ -258,35 +266,132 @@ export class AddEventComponent implements OnInit {
     }
   }
 
+  private toIsoString(dateStr: string | null | undefined): string | null {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? null : date.toISOString();
+  }
+
   onSubmit(): void {
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
       return;
     }
 
-    const payload = {
-      title: this.eventForm.value.title?.trim(),
-      description: this.eventForm.value.description?.trim(),
-      startDateTime: this.eventForm.value.startDateTime || '',
-      endDateTime: this.eventForm.value.endDateTime || '',
-      location: this.eventForm.value.location?.trim(),
-      volunteers: Number(this.eventForm.value.volunteers) || 10,
-      email: this.eventForm.value.email?.trim(),
-      phone: this.eventForm.value.phone?.trim(),
-      eventTypes: this.selectedEventTypes(),
-      dressCode: this.selectedDressCode(),
-      duration: this.selectedDuration(),
-      contactMethod: this.selectedContactMethod(),
-      attachedFiles: this.attachedFiles(),
-    };
-
+    // Edit mode continues using local update for now
     if (this.isEditMode()) {
+      const payload = {
+        title: this.eventForm.value.title?.trim(),
+        description: this.eventForm.value.description?.trim(),
+        startDateTime: this.eventForm.value.startDateTime || '',
+        endDateTime: this.eventForm.value.endDateTime || '',
+        location: this.eventForm.value.location?.trim(),
+        volunteers: Number(this.eventForm.value.volunteers) || 10,
+        email: this.eventForm.value.email?.trim(),
+        phone: this.eventForm.value.phone?.trim(),
+        eventTypes: this.selectedEventTypes(),
+        dressCode: this.selectedDressCode(),
+        duration: this.selectedDuration(),
+        contactMethod: this.selectedContactMethod(),
+        attachedFiles: this.attachedFiles(),
+      };
       this.eventService.updateEvent(this.eventId()!, payload);
-    } else {
-      this.eventService.addEvent(payload);
+      this.isSubmitted.set(true);
+      return;
     }
 
-    this.isSubmitted.set(true);
+    const titleStr = this.eventForm.value.title?.trim() || '';
+    const descStr = this.eventForm.value.description?.trim() || '';
+    const startTimeIso = this.toIsoString(this.eventForm.value.startDateTime);
+
+    if (!startTimeIso) {
+      this.errorMessage.set('Data de început este obligatorie și invalidă.');
+      return;
+    }
+
+    // Resolve category and dress code enums
+    const selectedCategoryItem = this.eventTypesList.find(
+      (t) => t.id === this.selectedEventTypes()[0]
+    );
+    const category = (selectedCategoryItem?.category || EventCategory.Social) as EventCategory;
+
+    const dressCode =
+      this.selectedDressCode().toUpperCase() === 'FORMAL'
+        ? EventDressCode.Formal
+        : EventDressCode.Casual;
+
+    const input: CreateEventInput = {
+      category,
+      status: EventStatus.Published,
+      details: {
+        title: { ro: titleStr, en: titleStr, ru: titleStr },
+        description: { ro: descStr, en: descStr, ru: descStr },
+        startTime: startTimeIso,
+        endTime: this.toIsoString(this.eventForm.value.endDateTime),
+        location: this.eventForm.value.location?.trim() || null,
+        nrVolunteers: Number(this.eventForm.value.volunteers) || 1,
+        contactPhone: this.eventForm.value.phone?.trim() || null,
+        contactEmail: this.eventForm.value.email?.trim() || null,
+        dressCode,
+      },
+    };
+
+    this.isSubmitting.set(true);
+    this.errorMessage.set(null);
+
+    // Step 1: GraphQL Create Event
+    this.createEventGQL
+      .mutate({
+        variables: { input }
+      })
+      .pipe(
+        switchMap((result) => {
+          const createdEvent = result.data?.createEvent;
+          if (!createdEvent?.id) {
+            throw new Error('Nu s-a putut genera identificatorul evenimentului.');
+          }
+
+          const rawFiles = this.attachedFiles()
+            .map((f) => f.rawFile)
+            .filter((f): f is File => !!f);
+
+          // Step 2: REST Upload Files with eventId
+          return this.eventService.uploadEventFiles(createdEvent.id, rawFiles).pipe(
+            map(() => createdEvent)
+          );
+        })
+      )
+      .subscribe({
+        next: (createdEvent) => {
+          // Keep local state in sync for home dashboard
+          this.eventService.addEvent({
+            id: createdEvent.id,
+            title: titleStr,
+            description: descStr,
+            startDateTime: this.eventForm.value.startDateTime || '',
+            endDateTime: this.eventForm.value.endDateTime || '',
+            location: this.eventForm.value.location?.trim(),
+            volunteers: Number(this.eventForm.value.volunteers) || 10,
+            email: this.eventForm.value.email?.trim(),
+            phone: this.eventForm.value.phone?.trim(),
+            eventTypes: this.selectedEventTypes(),
+            dressCode: this.selectedDressCode(),
+            duration: this.selectedDuration(),
+            contactMethod: this.selectedContactMethod(),
+            attachedFiles: this.attachedFiles(),
+          });
+
+          this.isSubmitting.set(false);
+          this.isSubmitted.set(true);
+        },
+        error: (err) => {
+          console.error('Error creating event:', err);
+          this.isSubmitting.set(false);
+          this.errorMessage.set(
+            err.message || 'A apărut o eroare la salvarea evenimentului. Te rugăm să încerci din nou.'
+          );
+        },
+      });
   }
 
   resetForm(): void {
@@ -308,6 +413,8 @@ export class AddEventComponent implements OnInit {
     this.attachedFiles.set([]);
     this.isDragging.set(false);
     this.isSubmitted.set(false);
+    this.isSubmitting.set(false);
+    this.errorMessage.set(null);
   }
 
   goBack(): void {

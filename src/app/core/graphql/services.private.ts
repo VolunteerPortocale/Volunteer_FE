@@ -46,6 +46,13 @@ export type DeleteUserMutationVariables = Exact<{
 
 export type DeleteUserMutation = { deleteUser: boolean };
 
+export type CreateEventMutationVariables = Exact<{
+  input: Types.CreateEventInput;
+}>;
+
+
+export type CreateEventMutation = { createEvent: { id: string } };
+
 export const GetAllUsersDocument = gql`
     query GetAllUsers {
   getAllUsers {
@@ -170,6 +177,24 @@ export const DeleteUserDocument = gql`
   })
   export class DeleteUserGQL extends Apollo.Mutation<DeleteUserMutation, DeleteUserMutationVariables> {
     override document = DeleteUserDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const CreateEventDocument = gql`
+    mutation CreateEvent($input: CreateEventInput!) {
+  createEvent(input: $input) {
+    id
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreateEventGQL extends Apollo.Mutation<CreateEventMutation, CreateEventMutationVariables> {
+    override document = CreateEventDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

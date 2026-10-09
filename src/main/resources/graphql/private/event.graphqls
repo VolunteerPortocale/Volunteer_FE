@@ -1,0 +1,94 @@
+mutation CreateEvent($input: CreateEventInput!) {
+  createEvent(input: $input) {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    storageFolderId
+    status
+    createdAt
+    createdBy
+  }
+}
+
+mutation UpdateEvent($id: String!, $input: UpdateEventInput!) {
+  updateEvent(id: $id, input: $input) {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    status
+  }
+}
+
+query GetAllEvents {
+  getAllEvents {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    status
+    createdAt
+  }
+}
+
+query GetEventById($id: String!) {
+  getEventById(id: $id) {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    category
+    status
+    createdAt
+  }
+}
+
+query GetEventFiles($eventId: String!) {
+  getEventFiles(eventId: $eventId) {
+    id
+    eventId
+    type
+    storageFileId
+    originalName
+    contentType
+    size
+    index
+    createdAt
+  }
+}
