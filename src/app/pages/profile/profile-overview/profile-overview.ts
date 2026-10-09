@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
@@ -16,15 +16,18 @@ export class ProfileOverview {
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
+  readonly editPersonalDetails = output<void>();
+  readonly editPreferences = output<void>();
+
   get user() {
     return this.authService.currentUser();
   }
 
-  onEditProfile(): void {
-    // Open edit profile dialog or enable editing mode
+  onEditPersonalDetails(): void {
+    this.editPersonalDetails.emit();
   }
 
-  onAccountSettings(): void {
-    void this.router.navigate(['/setari']);
+  onEditPreferences(): void {
+    this.editPreferences.emit();
   }
 }

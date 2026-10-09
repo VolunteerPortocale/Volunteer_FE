@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -9,6 +9,8 @@ import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
 import { ProfileOverview } from './profile-overview/profile-overview';
+import { EditPersonalDetails } from './edit-personal-details/edit-personal-details';
+import { EditPreferences } from './edit-preferences/edit-preferences';
 
 @Component({
   selector: 'app-profile',
@@ -23,6 +25,8 @@ import { ProfileOverview } from './profile-overview/profile-overview';
     TranslatePipe,
     FooterComponent,
     ProfileOverview,
+    EditPersonalDetails,
+    EditPreferences,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.scss',
@@ -30,7 +34,8 @@ import { ProfileOverview } from './profile-overview/profile-overview';
 export class ProfileComponent implements OnInit {
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private userProfile = String;
+  readonly showPersonalDetails = signal(false);
+  readonly showPreferences = signal(false);
 
   ngOnInit(): void {
     // this.getCurrentUserGql.query().subscribe({
@@ -71,5 +76,19 @@ export class ProfileComponent implements OnInit {
     // if (current?.email && this.isNgo()) {
     //   this.ngoEmail.set(current.email);
     // }
+  }
+
+  togglePersonalDetails(): void {
+    const shouldShow = !this.showPersonalDetails();
+
+    this.showPersonalDetails.set(shouldShow);
+    this.showPreferences.set(false);
+  }
+
+  togglePreferences(): void {
+    const shouldShow = !this.showPreferences();
+
+    this.showPreferences.set(shouldShow);
+    this.showPersonalDetails.set(false);
   }
 }
