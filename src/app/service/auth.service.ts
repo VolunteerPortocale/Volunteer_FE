@@ -1,137 +1,145 @@
-import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
+import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import Keycloak from 'keycloak-js';
-import { environment } from '../../environments/environment';
-import { EVENT_MANAGEMENT_ROLES, USER_ROLES } from '../config/roles.config';
 
-export interface UserProfile {
-  name: string;
-  initials: string;
-  email: string;
-  role?: string;    // for display
-  roles?: string[]; // for permissions
-}
+import { environment } from '../../environments/environment';
+import { EVENT_MANAGEMENT_ROLES } from '../config/roles.config';
+import { UserSessionService } from './user-session.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly userSession = inject(UserSessionService);
+
   private keycloak: Keycloak | null = null;
+  private initPromise: Promise<boolean> | null = null;
 
-  readonly currentUser = signal<UserProfile | null>(null);
-  readonly isAuthenticated = signal<boolean>(false);
+  readonly isAuthenticated = signal(false);
 
-  /**
-   * Check if current user has any of the specified roles (case-insensitive)
-   */
-  hasRole(allowedRoles: readonly string[] | string[] | string): boolean {
-    const user = this.currentUser();
-    if (!user) return false;
+  // User data comes from GraphQL, not from the token.
+  readonly currentUser = this.userSession.currentUser;
+  readonly userName = this.userSession.name;
+  readonly userInitials = this.userSession.initials;
+  readonly userRole = this.userSession.role;
 
-    const rolesList: readonly string[] = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
-    const allowed = rolesList.map(r => r.toLowerCase().trim());
-    const userRoles = [
-      user.role?.toLowerCase().trim(),
-      ...(user.roles?.map(r => r.toLowerCase().trim()) || [])
-    ].filter(Boolean) as string[];
+  hasRole(allowedRoles: readonly string[] | string): boolean {
+    const role = this.currentUser()?.role;
 
-    return allowed.some(target => {
-      if (target === USER_ROLES.VOLUNTEER && userRoles.includes('voluntar')) return true;
-      if (target === USER_ROLES.NGO && userRoles.includes('ong')) return true;
-      return userRoles.includes(target);
-    });
+    if (!role) return false;
+
+    const roles = typeof allowedRoles === 'string' ? [allowedRoles] : allowedRoles;
+
+    return roles.some((allowed) => allowed.trim().toLowerCase() === role.trim().toLowerCase());
   }
 
-  /**
-   * Volunteers cannot create, edit, or moderate events; NGO and Moderator can.
-   */
   canManageEvents(): boolean {
     return this.hasRole(EVENT_MANAGEMENT_ROLES);
   }
 
-  async init(): Promise<boolean> {
+  init(): Promise<boolean> {
     if (!isPlatformBrowser(this.platformId)) {
-      return false;
+      return Promise.resolve(false);
     }
+
+    if (!this.initPromise) {
+      this.initPromise = this.initializeKeycloak();
+    }
+
+    return this.initPromise;
+  }
+
+  private async initializeKeycloak(): Promise<boolean> {
     this.keycloak = new Keycloak({
       url: environment.keycloak.url,
       realm: environment.keycloak.realm,
-      clientId: environment.keycloak.clientId
+      clientId: environment.keycloak.clientId,
     });
-    const token = localStorage.getItem('access_token') || undefined;
-    const refreshToken = localStorage.getItem('refresh_token') || undefined;
-    const idToken = localStorage.getItem('id_token') || undefined;
+
+    this.keycloak.onAuthLogout = () => {
+      this.clearSession();
+    };
+
+    this.keycloak.onAuthRefreshError = () => {
+      this.clearSession();
+    };
+
     try {
       const authenticated = await this.keycloak.init({
         onLoad: 'check-sso',
         pkceMethod: 'S256',
         checkLoginIframe: false,
-        token,
-        refreshToken,
-        idToken
       });
-      this.isAuthenticated.set(authenticated);
-      if (authenticated) {
-        if (this.keycloak.token) localStorage.setItem('access_token', this.keycloak.token);
-        if (this.keycloak.refreshToken) localStorage.setItem('refresh_token', this.keycloak.refreshToken);
-        if (this.keycloak.idToken) localStorage.setItem('id_token', this.keycloak.idToken);
-        this.updateCurrentUser();
-      } else {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('id_token');
-        this.currentUser.set(null);
+
+      const hasToken = !!this.keycloak.token;
+      const ready = authenticated && hasToken;
+
+      this.isAuthenticated.set(ready);
+
+      if (!ready) {
+        this.clearSession();
       }
-      return authenticated;
+
+      return ready;
     } catch (error) {
       console.error('Keycloak initialization failed:', error);
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('id_token');
-      this.currentUser.set(null);
-      this.isAuthenticated.set(false);
+      this.clearSession();
       return false;
     }
   }
 
-  async login(redirectUri?: string): Promise<void> {
-    if (isPlatformBrowser(this.platformId) && this.keycloak) {
-      await this.keycloak.login({
-        redirectUri: redirectUri || `${window.location.origin}/`
-      });
+  getSubject(): string | null {
+    if (!this.isAuthenticated()) {
+      return null;
     }
+
+    return this.keycloak?.tokenParsed?.sub ?? null;
   }
 
- async logout(redirectUri?: string): Promise<void> {
-    this.currentUser.set(null);
-    this.isAuthenticated.set(false);
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('id_token');
-      if (this.keycloak) {
-        await this.keycloak.logout({
-          redirectUri: redirectUri || `${window.location.origin}/guest`
-        });
-      }
+  async login(redirectUri?: string): Promise<void> {
+    if (!isPlatformBrowser(this.platformId) || !this.keycloak) {
+      return;
     }
+
+    await this.keycloak.login({
+      redirectUri: redirectUri || `${window.location.origin}/`,
+    });
+  }
+
+  async logout(redirectUri?: string): Promise<void> {
+    this.clearSession();
+
+    if (!isPlatformBrowser(this.platformId) || !this.keycloak) {
+      return;
+    }
+
+    await this.keycloak.logout({
+      redirectUri: redirectUri || `${window.location.origin}/guest`,
+    });
   }
 
   async getToken(): Promise<string | null> {
-    if (!isPlatformBrowser(this.platformId) || !this.keycloak || !this.isAuthenticated()) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    // Wait for Keycloak initialization if it is still running.
+    const initialized = await this.init();
+
+    if (!initialized || !this.keycloak || !this.isAuthenticated()) {
       return null;
     }
 
     try {
-      const refreshed = await this.keycloak.updateToken(30);
-      if (refreshed && this.keycloak.token) {
-        localStorage.setItem('access_token', this.keycloak.token);
-      }
+      await this.keycloak.updateToken(30);
+
       return this.keycloak.token ?? null;
-    } catch (err) {
-      console.warn('Failed to refresh token, logging out', err);
-      await this.logout();
+    } catch (error) {
+      console.warn('Failed to refresh Keycloak token:', error);
+
+      await this.handleUnauthorized();
+
       return null;
     }
   }
@@ -140,29 +148,35 @@ export class AuthService {
     await this.logout();
   }
 
-  private updateCurrentUser(): void {
-    if (!this.keycloak) return;
+  getUserInitials(): string {
+    return this.userInitials();
+  }
 
-    const token = this.keycloak.tokenParsed as Record<string, any> | undefined;
-    const givenName = token?.['given_name'] || '';
-    const familyName = token?.['family_name'] || '';
-    const username = token?.['preferred_username'] || '';
-    const email = token?.['email'] || '';
+  getName(): string {
+    return this.userName();
+  }
 
-    const name = givenName && familyName
-      ? `${givenName} ${familyName}`
-      : givenName || familyName || username || 'Utilizator';
+  getGivenName(): string {
+    return this.currentUser()?.firstName ?? '';
+  }
 
-    const initials = givenName && familyName
-      ? `${givenName[0]}${familyName[0]}`.toUpperCase()
-      : name.substring(0, Math.min(2, name.length)).toUpperCase();
+  getFamilyName(): string {
+    return this.currentUser()?.lastName ?? '';
+  }
 
-    const realmRoles = (token?.['realm_access']?.['roles'] as string[]) || [];
-    const appRoles = realmRoles.filter(
-      (r) => !['default-roles-volunteer', 'offline_access', 'uma_authorization'].includes(r)
-    );
-    const role = appRoles[0] ? appRoles[0].charAt(0).toUpperCase() + appRoles[0].slice(1).toLowerCase() : 'Voluntar';
+  getUserRole(): string {
+    return this.userRole() ?? '';
+  }
 
-    this.currentUser.set({ name, initials, email, role, roles: appRoles });
+  private clearSession(): void {
+    this.isAuthenticated.set(false);
+    this.userSession.clear();
+
+    if (isPlatformBrowser(this.platformId)) {
+      // Cleanup from the previous implementation.
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('id_token');
+    }
   }
 }

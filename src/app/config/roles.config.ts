@@ -2,6 +2,7 @@ export const USER_ROLES = {
   VOLUNTEER: 'volunteer',
   NGO: 'ngo',
   MODERATOR: 'moderator',
+  ADMIN: 'admin',
 } as const;
 
 export type AppUserRole = typeof USER_ROLES[keyof typeof USER_ROLES];

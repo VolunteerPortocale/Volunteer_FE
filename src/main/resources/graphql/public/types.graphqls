@@ -1,5 +1,5 @@
 type User {
-    id: ID!
+    id: String!
     firstName: String!
     lastName: String!
     email: String!
@@ -10,25 +10,25 @@ type User {
     updatedAt: String
     eventCategoryPreferences: [EventCategory!]
     suspendedUntil: String
+    language: Language!
+    notificationsEnabled: Boolean!
+    forceResetPassword: Boolean!
+    twoFactorEnabled: Boolean!
+    biography: String
 }
 
-enum UserRole {
-    ADMIN
-    MODERATOR
-    NGO
-    VOLUNTEER
-}
-
-enum CreateUserRole {
-    MODERATOR
-    NGO
-    VOLUNTEER
-}
-
-enum UserStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
+input CreateUserInput {
+    firstName: String!
+    lastName: String!
+    email: String!
+    phoneNumber: String!
+    role: CreateUserRole!
+    eventCategoryPreferences: [EventCategory]
+    password: String!
+    companyName: String
+    language: Language
+    notificationsEnabled: Boolean
+    biography: String
 }
 
 enum EventCategory {
@@ -68,21 +68,27 @@ enum EventCategory {
     OTHER
 }
 
-input CreateUserInput {
-    firstName: String!
-    lastName: String!
-    email: String!
-    phoneNumber: String!
-    role: CreateUserRole!
-    eventCategoryPreferences: [EventCategory]
-    password: String!
-    companyName: String
+enum UserRole {
+    ADMIN
+    MODERATOR
+    NGO
+    VOLUNTEER
 }
 
-input UpdateUserInput {
-    firstName: String
-    lastName: String
-    phoneNumber: String
-    eventCategoryPreferences: [EventCategory!]
-    companyName: String
+enum CreateUserRole {
+    MODERATOR
+    NGO
+    VOLUNTEER
+}
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+}
+
+enum Language {
+    RO
+    EN
+    RU
 }

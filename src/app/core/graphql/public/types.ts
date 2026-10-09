@@ -10,11 +10,14 @@ export type Scalars = {
 };
 
 export type CreateUserInput = {
+  biography?: InputMaybe<Scalars['String']['input']>;
   companyName?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   eventCategoryPreferences?: InputMaybe<Array<InputMaybe<EventCategory>>>;
   firstName: Scalars['String']['input'];
+  language?: InputMaybe<Language>;
   lastName: Scalars['String']['input'];
+  notificationsEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   password: Scalars['String']['input'];
   phoneNumber: Scalars['String']['input'];
   role: CreateUserRole;
@@ -63,13 +66,16 @@ export enum EventCategory {
   Tourism = 'TOURISM'
 }
 
+export enum Language {
+  En = 'EN',
+  Ro = 'RO',
+  Ru = 'RU'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   createUser: User;
-  deleteUser: Scalars['Boolean']['output'];
   resendRegistrationOtp: Scalars['Boolean']['output'];
-  suspendUser: User;
-  updateUser: User;
   validateRegistrationOtp: User;
 };
 
@@ -79,24 +85,8 @@ export type MutationCreateUserArgs = {
 };
 
 
-export type MutationDeleteUserArgs = {
-  id: Scalars['String']['input'];
-};
-
-
 export type MutationResendRegistrationOtpArgs = {
   email: Scalars['String']['input'];
-};
-
-
-export type MutationSuspendUserArgs = {
-  id: Scalars['String']['input'];
-  suspendedUntil: Scalars['String']['input'];
-};
-
-
-export type MutationUpdateUserArgs = {
-  input: UpdateUserInput;
 };
 
 
@@ -107,35 +97,31 @@ export type MutationValidateRegistrationOtpArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  getAllUsers: Array<User>;
-  getUserById: User;
+  isEmailRegistered: Scalars['Boolean']['output'];
 };
 
 
-export type QueryGetUserByIdArgs = {
-  id: Scalars['String']['input'];
-};
-
-export type UpdateUserInput = {
-  companyName?: InputMaybe<Scalars['String']['input']>;
-  eventCategoryPreferences?: InputMaybe<Array<EventCategory>>;
-  firstName?: InputMaybe<Scalars['String']['input']>;
-  lastName?: InputMaybe<Scalars['String']['input']>;
-  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+export type QueryIsEmailRegisteredArgs = {
+  email: Scalars['String']['input'];
 };
 
 export type User = {
   __typename?: 'User';
+  biography?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   eventCategoryPreferences?: Maybe<Array<EventCategory>>;
   firstName: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
+  forceResetPassword: Scalars['Boolean']['output'];
+  id: Scalars['String']['output'];
+  language: Language;
   lastName: Scalars['String']['output'];
+  notificationsEnabled: Scalars['Boolean']['output'];
   phoneNumber: Scalars['String']['output'];
   role: UserRole;
   status: UserStatus;
   suspendedUntil?: Maybe<Scalars['String']['output']>;
+  twoFactorEnabled: Scalars['Boolean']['output'];
   updatedAt?: Maybe<Scalars['String']['output']>;
 };
 

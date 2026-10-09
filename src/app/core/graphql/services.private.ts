@@ -2,7 +2,7 @@
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-import type * as Types from './types';
+import type * as Types from './private/types';
 
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
@@ -12,34 +12,10 @@ export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetAllUsersQuery = { getAllUsers: Array<{ id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string }> };
 
-export type GetUserByIdQueryVariables = Exact<{
-  id: string;
-}>;
+export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserByIdQuery = { getUserById: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string, updatedAt: string | null, eventCategoryPreferences: Array<Types.EventCategory> | null } };
-
-export type CreateUserMutationVariables = Exact<{
-  input: Types.CreateUserInput;
-}>;
-
-
-export type CreateUserMutation = { createUser: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string } };
-
-export type ValidateRegistrationOtpMutationVariables = Exact<{
-  email: string;
-  otp: string;
-}>;
-
-
-export type ValidateRegistrationOtpMutation = { validateRegistrationOtp: { id: string, email: string, status: Types.UserStatus } };
-
-export type ResendRegistrationOtpMutationVariables = Exact<{
-  email: string;
-}>;
-
-
-export type ResendRegistrationOtpMutation = { resendRegistrationOtp: boolean };
+export type GetCurrentUserQuery = { getCurrentUser: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string, eventCategoryPreferences: Array<Types.EventCategory> | null } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: Types.UpdateUserInput;
@@ -83,14 +59,14 @@ export const GetAllUsersDocument = gql`
   })
   export class GetAllUsersGQL extends Apollo.Query<GetAllUsersQuery, GetAllUsersQueryVariables> {
     override document = GetAllUsersDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
   }
-export const GetUserByIdDocument = gql`
-    query GetUserById($id: String!) {
-  getUserById(id: $id) {
+export const GetCurrentUserDocument = gql`
+    query GetCurrentUser {
+  getCurrentUser {
     id
     firstName
     lastName
@@ -99,91 +75,17 @@ export const GetUserByIdDocument = gql`
     role
     status
     createdAt
-    updatedAt
     eventCategoryPreferences
   }
 }
     `;
 
   @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
   })
-  export class GetUserByIdGQL extends Apollo.Query<GetUserByIdQuery, GetUserByIdQueryVariables> {
-    override document = GetUserByIdDocument;
-
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-  export const CreateUserDocument = gql`
-    mutation CreateUser($input: CreateUserInput!) {
-  createUser(input: $input) {
-    id
-    firstName
-    lastName
-    email
-    phoneNumber
-    role
-    status
-    createdAt
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root',
-  })
-  export class CreateUserGQL extends Apollo.Mutation<
-    CreateUserMutation,
-    CreateUserMutationVariables
-  > {
-    override document = CreateUserDocument;
-    override client = 'public';
-
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const ValidateRegistrationOtpDocument = gql`
-    mutation ValidateRegistrationOtp($email: String!, $otp: String!) {
-  validateRegistrationOtp(email: $email, otp: $otp) {
-    id
-    email
-    status
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root',
-  })
-  export class ValidateRegistrationOtpGQL extends Apollo.Mutation<
-    ValidateRegistrationOtpMutation,
-    ValidateRegistrationOtpMutationVariables
-  > {
-    override document = ValidateRegistrationOtpDocument;
-    override client = 'public';
-
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const ResendRegistrationOtpDocument = gql`
-    mutation ResendRegistrationOtp($email: String!) {
-  resendRegistrationOtp(email: $email)
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root',
-  })
-  export class ResendRegistrationOtpGQL extends Apollo.Mutation<
-    ResendRegistrationOtpMutation,
-    ResendRegistrationOtpMutationVariables
-  > {
-    override document = ResendRegistrationOtpDocument;
-    override client = 'public';
-
+  export class GetCurrentUserGQL extends Apollo.Query<GetCurrentUserQuery, GetCurrentUserQueryVariables> {
+    override document = GetCurrentUserDocument;
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -204,7 +106,7 @@ export const UpdateUserDocument = gql`
   })
   export class UpdateUserGQL extends Apollo.Mutation<UpdateUserMutation, UpdateUserMutationVariables> {
     override document = UpdateUserDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -224,7 +126,7 @@ export const SuspendUserDocument = gql`
   })
   export class SuspendUserGQL extends Apollo.Mutation<SuspendUserMutation, SuspendUserMutationVariables> {
     override document = SuspendUserDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
@@ -240,7 +142,7 @@ export const DeleteUserDocument = gql`
   })
   export class DeleteUserGQL extends Apollo.Mutation<DeleteUserMutation, DeleteUserMutationVariables> {
     override document = DeleteUserDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }

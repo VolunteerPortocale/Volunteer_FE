@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -38,10 +38,10 @@ export interface AuthProject {
     MatIconModule,
     MatButtonModule,
     TranslatePipe,
-    FooterComponent
+    FooterComponent,
   ],
   templateUrl: './home-auth.html',
-  styleUrl: './home-auth.scss'
+  styleUrl: './home-auth.scss',
 })
 export class HomeAuthComponent implements OnInit {
   readonly authService = inject(AuthService);
@@ -83,7 +83,7 @@ export class HomeAuthComponent implements OnInit {
           formattedDate = new Date(e.startDateTime).toLocaleDateString(locale, {
             day: 'numeric',
             month: 'long',
-            year: 'numeric'
+            year: 'numeric',
           });
         } catch {
           formattedDate = e.startDateTime;
@@ -128,9 +128,11 @@ export class HomeAuthComponent implements OnInit {
         locationKey,
         date: formattedDate,
         spotsOccupied: spotsText,
-        imageUrl: e.imageUrl || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
+        imageUrl:
+          e.imageUrl ||
+          'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
         email: e.email,
-        phone: e.phone
+        phone: e.phone,
       };
     });
   });
@@ -146,12 +148,7 @@ export class HomeAuthComponent implements OnInit {
     const user = this.currentUser();
     if (!user) return '';
 
-    let displayName = user.name || '';
-    if (displayName.includes('@')) {
-      displayName = displayName.split('@')[0];
-    } else if (displayName.includes(' ')) {
-      displayName = displayName.split(' ')[0];
-    }
+    let displayName = this.authService.getName();
 
     if (!displayName && user.email) {
       displayName = user.email.split('@')[0];
@@ -164,7 +161,7 @@ export class HomeAuthComponent implements OnInit {
     { id: 'all', labelKey: 'HOME_AUTH.FILTERS.ALL' },
     { id: 'ecology', labelKey: 'HOME_AUTH.FILTERS.ECOLOGY' },
     { id: 'education', labelKey: 'HOME_AUTH.FILTERS.EDUCATION' },
-    { id: 'animals', labelKey: 'HOME_AUTH.FILTERS.ANIMALS' }
+    { id: 'animals', labelKey: 'HOME_AUTH.FILTERS.ANIMALS' },
   ];
 
   readonly filteredProjects = computed(() => {
@@ -172,17 +169,24 @@ export class HomeAuthComponent implements OnInit {
     const query = this.searchQuery().trim().toLowerCase();
     const projects = this.allProjects();
 
-    return projects.filter(project => {
+    return projects.filter((project) => {
       const matchesCategory = category === 'all' || project.categoryFilter === category;
       if (!matchesCategory) return false;
 
       if (!query) return true;
 
-      const title = project.titleKey ? this.translationService.translate(project.titleKey) : project.fallbackTitle;
-      const desc = project.descriptionKey ? this.translationService.translate(project.descriptionKey) : project.fallbackDescription;
-      const loc = project.locationKey ? this.translationService.translate(project.locationKey) : project.location;
+      const title = project.titleKey
+        ? this.translationService.translate(project.titleKey)
+        : project.fallbackTitle;
+      const desc = project.descriptionKey
+        ? this.translationService.translate(project.descriptionKey)
+        : project.fallbackDescription;
+      const loc = project.locationKey
+        ? this.translationService.translate(project.locationKey)
+        : project.location;
 
-      const searchableText = `${title} ${desc} ${loc} ${project.fallbackTitle} ${project.organization} ${project.location}`.toLowerCase();
+      const searchableText =
+        `${title} ${desc} ${loc} ${project.fallbackTitle} ${project.organization} ${project.location}`.toLowerCase();
       return searchableText.includes(query);
     });
   });

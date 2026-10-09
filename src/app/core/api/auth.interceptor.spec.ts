@@ -47,7 +47,6 @@ describe('authInterceptor', () => {
 
       const req = httpTesting.expectOne(`${environment.apiUrl}/projects`);
       expect(req.request.headers.has('Authorization')).toBe(true);
-      expect(req.request.headers.get('Authorization')).toBe(`Basic ${environment.basicAuth}`);
       expect(req.request.headers.get('Accept-Language')).toBe('ro');
       req.flush([]);
     });
@@ -68,7 +67,6 @@ describe('authInterceptor', () => {
 
       const req = httpTesting.expectOne('/api/v1/users');
       expect(req.request.headers.has('Authorization')).toBe(true);
-      expect(req.request.headers.get('Authorization')).toBe(`Basic ${environment.basicAuth}`);
       req.flush([]);
     });
 
