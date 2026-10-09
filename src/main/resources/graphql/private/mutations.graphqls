@@ -1,0 +1,13 @@
+type Mutation {
+  updateUser(input: UpdateUserInput!): User!
+  updateUserPreferences(input: UpdateUserPreferencesInput!): User!
+  suspendUser(id: String!, suspendedUntil: String!): User!
+  deleteUser(id: String!): Boolean!
+  createEvent(input: CreateEventInput!): Event!
+  updateEvent(id: String!, input: UpdateEventInput!): Event!
+  enroll(input: CreateEnrollmentInput!): Enrollment!
+  confirmEnrollment(input: ConfirmEnrollmentInput!): GenericPayload!
+  initiateTwoFactor: Boolean!
+  confirmTwoFactor(otp: String!): User!
+  verifyTwoFactorLogin(email: String!, otp: String!): User!
+}

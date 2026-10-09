@@ -23,11 +23,11 @@
       <aside class="settings-sidebar">
         <div class="user-brief-card">
           <div class="user-avatar-circle">
-            {{ authService.currentUser()?.initials || 'PC' }}
+            {{ authService.getUserInitials() || 'N/A' }}
           </div>
           <div class="user-brief-text">
-            <strong>{{ authService.currentUser()?.name || 'Pavel Ciobanu' }}</strong>
-            <span>{{ authService.currentUser()?.email || 'voluntar@volunteerio.md' }}</span>
+            <strong>{{ authService.getName() || 'N/A' }}</strong>
+            <span>{{ authService.currentUser()?.email || 'N/A' }}</span>
           </div>
         </div>
 

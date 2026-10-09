@@ -1,10 +1,9 @@
 export const environment = {
   production: true,
   envName: 'Production',
-  apiUrl: 'https://api.volunteerio.md',
-  graphqlUrl: 'https://api.volunteerio.md/graphql',
-  basicAuth: '',
-  // ADD THIS:
+  apiUrl: 'https://volunteer-be-rs60.onrender.com/api',
+  graphqlPublicUrl: 'https://volunteer-be-rs60.onrender.com/graphql/public',
+  graphqlUrl: 'https://volunteer-be-rs60.onrender.com/graphql',
   keycloak: {
     url: 'https://volunteer-kc.duckdns.org',
     realm: 'volunteer',
