@@ -17,13 +17,14 @@
 
       <!-- Edit Personal Details -->
       @if (showPersonalDetails()) {
-        <app-edit-personal-details />
+        <app-edit-personal-details (close)="togglePersonalDetails()" />
       }
 
       <!-- Edit Preferences -->
       @if (showPreferences()) {
-        <app-edit-preferences />
-      }    </div>
+        <app-edit-preferences (close)="togglePreferences()" />
+      }
+    </div>
   </section>
 </div>
 <app-footer />

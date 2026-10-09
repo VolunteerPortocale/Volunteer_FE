@@ -22,7 +22,14 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { updateUser: { id: string, firstName: string, lastName: string, phoneNumber: string } };
+export type UpdateUserMutation = { updateUser: { id: string, firstName: string, lastName: string, phoneNumber: string, biography: string | null } };
+
+export type UpdateUserPreferencesMutationVariables = Exact<{
+  input: Types.UpdateUserPreferencesInput;
+}>;
+
+
+export type UpdateUserPreferencesMutation = { updateUserPreferences: { id: string, eventCategoryPreferences: Array<Types.EventCategory> | null } };
 
 export type SuspendUserMutationVariables = Exact<{
   id: string;
@@ -98,6 +105,7 @@ export const UpdateUserDocument = gql`
     firstName
     lastName
     phoneNumber
+    biography
   }
 }
     `;
@@ -107,6 +115,25 @@ export const UpdateUserDocument = gql`
   })
   export class UpdateUserGQL extends Apollo.Mutation<UpdateUserMutation, UpdateUserMutationVariables> {
     override document = UpdateUserDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const UpdateUserPreferencesDocument = gql`
+    mutation UpdateUserPreferences($input: UpdateUserPreferencesInput!) {
+  updateUserPreferences(input: $input) {
+    id
+    eventCategoryPreferences
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class UpdateUserPreferencesGQL extends Apollo.Mutation<UpdateUserPreferencesMutation, UpdateUserPreferencesMutationVariables> {
+    override document = UpdateUserPreferencesDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
