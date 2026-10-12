@@ -49,9 +49,8 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
     }
   });
 
-  const authLink = new SetContextLink((prevContext) => {
-    const accessToken =
-      typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
+  const authLink = new SetContextLink(async (prevContext) => {
+    const accessToken = await authService.getToken();
 
     return accessToken
       ? {

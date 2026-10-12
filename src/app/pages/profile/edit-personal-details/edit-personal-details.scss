@@ -66,6 +66,17 @@
   gap: 20px;
 }
 
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -246,20 +257,20 @@
   }
 
   .btn-cancel {
-    background: #f1f5f9;
-    color: #475569;
+    background: var(--color-bg-hover, #f1f5f9);
+    color: var(--color-text-muted, #475569);
 
     &:hover:not(:disabled) {
-      background: #e2e8f0;
+      background: var(--color-border, #e2e8f0);
     }
   }
 
   .btn-save {
-    background: #2b4c3f;
-    color: #ffffff;
+    background: var(--color-primary);
+    color: var(--color-white);
 
     &:hover:not(:disabled) {
-      background: #1f3a2e;
+      background: var(--color-primary-hover);
       box-shadow: 0 4px 12px rgba(43, 76, 63, 0.25);
     }
 

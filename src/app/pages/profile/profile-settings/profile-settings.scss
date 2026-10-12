@@ -150,7 +150,7 @@
     height: 0;
 
     &:checked + .slider {
-      background-color: #2b4c3f;
+      background-color: var(--color-primary);
 
       &:before {
         transform: translateX(20px);
@@ -162,7 +162,7 @@
     position: relative;
     width: 44px;
     height: 24px;
-    background-color: #cbd5e1;
+    background-color: var(--color-border-subtle, #cbd5e1);
     border-radius: 24px;
     transition: background-color 0.25s ease;
     flex-shrink: 0;
@@ -174,7 +174,7 @@
       width: 18px;
       left: 3px;
       bottom: 3px;
-      background-color: #ffffff;
+      background-color: var(--color-white);
       border-radius: 50%;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
       transition: transform 0.25s ease;
@@ -184,12 +184,12 @@
   .switch-status {
     font-size: 0.8rem;
     font-weight: 700;
-    color: #64748b;
+    color: var(--color-text-muted);
     min-width: 28px;
   }
 
   input:checked ~ .switch-status {
-    color: #2b4c3f;
+    color: var(--color-primary);
   }
 }
 
@@ -199,14 +199,14 @@
   gap: 12px;
   margin-top: 8px;
   padding-top: 20px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--color-border, #f1f5f9);
 
   button {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    border-radius: 10px;
+    border-radius: var(--btn-border-radius, 10px);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
@@ -220,21 +220,21 @@
   }
 
   .btn-cancel {
-    background: #f1f5f9;
-    color: #475569;
+    background: var(--color-bg-hover, #f1f5f9);
+    color: var(--color-text-muted, #475569);
 
     &:hover:not(:disabled) {
-      background: #e2e8f0;
-      color: #1e293b;
+      background: var(--color-border, #e2e8f0);
+      color: var(--color-text-body, #1e293b);
     }
   }
 
   .btn-save {
-    background: #2b4c3f;
-    color: #ffffff;
+    background: var(--color-primary);
+    color: var(--color-white);
 
     &:hover:not(:disabled) {
-      background: #223c31;
+      background: var(--color-primary-hover);
     }
   }
 }

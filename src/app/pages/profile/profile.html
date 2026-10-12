@@ -11,6 +11,8 @@
       </div>
       <!-- Main Profile Overview -->
       <app-profile-overview
+        [isEditingPersonalDetails]="showPersonalDetails()"
+        [isEditingSettings]="showSettings()"
         (editPersonalDetails)="togglePersonalDetails()"
         (editSettings)="toggleSettings()"
       />

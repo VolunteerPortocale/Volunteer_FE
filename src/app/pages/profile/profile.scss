@@ -8,11 +8,11 @@
 .profile-hero-banner {
   background: linear-gradient(
       135deg,
-      #1f3a2e 0%,
-      #2b4c3f 60%,
+      var(--color-primary-hover) 0%,
+      var(--color-primary) 60%,
       #366050 100%
   );
-  color: #ffffff;
+  color: var(--color-white);
   padding: 32px 0 64px;
   position: relative;
 }
