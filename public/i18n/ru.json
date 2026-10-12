@@ -181,8 +181,9 @@
     },
     "DRESS_CODE_LABEL": "Дресс-код",
     "DRESS_CODES": {
-      "CASUAL": "Casual (Повседневный)",
-      "FORMAL": "Formal (Официальный)"
+      "CASUAL": "Повседневный",
+      "FORMAL": "Официальный",
+      "COSTUME": "Костюм"
     },
     "DURATION_LABEL": "Продолжительность",
     "DURATIONS": {

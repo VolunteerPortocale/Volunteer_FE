@@ -182,7 +182,8 @@
     "DRESS_CODE_LABEL": "Cod vestimentar",
     "DRESS_CODES": {
       "CASUAL": "Casual",
-      "FORMAL": "Formal"
+      "FORMAL": "Formal",
+      "COSTUME": "Costum"
     },
     "DURATION_LABEL": "Durata evenimentului",
     "DURATIONS": {
