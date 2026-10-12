@@ -34,13 +34,13 @@ export const routes: Routes = [
     path: APP_ROUTES.ADD_EVENT,
     canActivate: [authGuard, roleGuard],
     data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR] },
-    loadComponent: () => import('./pages/add-event/add-event').then(m => m.AddEventComponent)
+    loadComponent: () => import('./pages/event-management/add-event/add-event').then(m => m.AddEvent)
   },
   {
     path: APP_ROUTES.EDIT_EVENT,
     canActivate: [authGuard, roleGuard],
     data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR] },
-    loadComponent: () => import('./pages/add-event/add-event').then(m => m.AddEventComponent)
+    loadComponent: () => import('./pages/event-management/edit-event/edit-event').then(m => m.EditEvent)
   },
   {
     path: APP_ROUTES.ADMIN_EVENT,

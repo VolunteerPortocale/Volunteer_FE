@@ -1,7 +1,0 @@
-type Query {
-    getAllUsers: [User!]!
-    getUserById(id: String!): User!
-    getAllEvents: [Event!]!
-    getEventById(id: String!): Event!
-    getEventFiles(eventId: String!): [EventFile!]!
-}
