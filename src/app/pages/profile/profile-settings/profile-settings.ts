@@ -8,7 +8,7 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 
-import { Language, UpdateUserPreferencesInput } from '../../../core/graphql/private/types';
+import { Language, UpdateUserPreferencesInput } from '../../../core/graphql/types';
 import {
   ConfirmTwoFactorGQL,
   InitiateTwoFactorGQL,

@@ -4,7 +4,7 @@ import { MatIcon } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 
 import { EVENT_TYPES } from '../../../config/event-categories.config';
-import { EventCategory } from '../../../core/graphql/public/types';
+import { EventCategory } from '../../../core/graphql/types';
 import { UpdateUserGQL, UpdateUserPreferencesGQL } from '../../../core/graphql/services.private';
 import { AuthService } from '../../../service/auth.service';
 import { CurrentUserLoaderService } from '../../../service/current-user-loader.service';
