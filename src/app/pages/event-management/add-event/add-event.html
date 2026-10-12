@@ -139,71 +139,47 @@
             <label>{{ 'ADD_EVENT.EVENT_TYPES_LABEL' | translate }}</label>
             <span class="field-hint">{{ 'ADD_EVENT.EVENT_TYPES_HINT' | translate }}</span>
 
-            <!-- Dropdown Trigger -->
-            <button
-              type="button"
-              class="category-dropdown-trigger"
-              [class.open]="categoryDropdownOpen()"
-              (click)="toggleCategoryDropdown()"
-            >
-              <span class="dropdown-label">{{ dropdownTriggerLabel }}</span>
-              <mat-icon class="dropdown-chevron" [class.rotated]="categoryDropdownOpen()">
-                expand_more
-              </mat-icon>
-            </button>
-
-            <!-- Selected Tags Preview -->
-            @if (selectedEventTypes().length > 0 && !categoryDropdownOpen()) {
-              <div class="selected-tags-row">
-                @for (type of eventTypesList; track type.id) {
-                  @if (selectedEventTypes().includes(type.id)) {
-                    <span class="selected-tag">
-                      {{ getCategoryLabel(type) }}
-                      <mat-icon class="tag-remove" (click)="toggleEventType(type.id)">close</mat-icon>
-                    </span>
-                  }
-                }
-              </div>
-            }
-
-            <!-- Collapsible Categories Grid -->
-            @if (categoryDropdownOpen()) {
-              <div class="category-dropdown-panel">
-                <div class="event-types-grid">
-                  @for (type of eventTypesList; track type.id) {
-                    <button
-                      type="button"
-                      class="type-toggle-btn"
-                      [class.active]="selectedEventTypes().includes(type.id)"
-                      (click)="toggleEventType(type.id)"
-                    >
-                      <span class="custom-checkbox" [class.checked]="selectedEventTypes().includes(type.id)">
-                        @if (selectedEventTypes().includes(type.id)) {
-                          <mat-icon>check</mat-icon>
-                        }
-                      </span>
-                      <span class="type-label">{{ getCategoryLabel(type) }}</span>
-                    </button>
-                  }
-                </div>
-              </div>
-            }
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-select formControlName="category">
+                @for (type of eventTypesArray; track type) {
+                <mat-option [value]="type">
+                  {{ ('ADD_EVENT.TYPES.' + type) | translate }}
+                </mat-option>
+             }
+              </mat-select>
+            </mat-form-field>
           </div>
 
           <!-- Dress Code -->
           <div class="field-group">
             <label>{{ 'ADD_EVENT.DRESS_CODE_LABEL' | translate }}</label>
             <div class="toggle-group">
-              @for (dress of dressCodesList; track dress.id) {
-                <button
-                  type="button"
-                  class="pill-toggle-btn"
-                  [class.active]="selectedDressCode() === dress.id"
-                  (click)="setDressCode(dress.id)"
-                >
-                  {{ dress.labelKey | translate }}
-                </button>
-              }
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedDressCode() === dressCodes.Casual"
+                (click)="selectedDressCode.set(dressCodes.Casual)"
+              >
+                {{ 'ADD_EVENT.DRESS_CODES.CASUAL' | translate }}
+              </button>
+
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedDressCode() === dressCodes.Formal"
+                (click)="selectedDressCode.set(dressCodes.Formal)"
+              >
+                {{ 'ADD_EVENT.DRESS_CODES.FORMAL' | translate }}
+              </button>
+
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedDressCode() === dressCodes.Costume"
+                (click)="selectedDressCode.set(dressCodes.Costume)"
+              >
+                {{ 'ADD_EVENT.DRESS_CODES.COSTUME' | translate }}
+              </button>
             </div>
           </div>
 
