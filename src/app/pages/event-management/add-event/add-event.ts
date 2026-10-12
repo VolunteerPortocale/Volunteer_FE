@@ -4,6 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
 import { switchMap, map } from 'rxjs';
@@ -26,6 +28,8 @@ export interface AttachedFile {
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
+    MatSelectModule,
+    MatFormFieldModule,
     TranslatePipe,
   ],
   templateUrl: './add-event.html',
@@ -41,8 +45,10 @@ export class AddEvent {
 
   readonly isSubmitting = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly eventTypesList = EVENT_TYPES;
-  readonly dressCodesList = DRESS_CODES;
+  readonly eventTypes = EventCategory;
+  readonly eventTypesArray = Object.values(EventCategory);
+  readonly dressCodes = EventDressCode;
+  readonly dressCodesArray = Object.values(EventDressCode);
 
   // Edit Mode state
   readonly eventId = signal<string | null>(null);
@@ -51,8 +57,7 @@ export class AddEvent {
   // Reactive state using Signals
   readonly isSubmitted = signal<boolean>(false);
   readonly selectedEventTypes = signal<string[]>([]);
-  readonly selectedDressCode = signal<string>('casual');
-  readonly selectedDuration = signal<string>('1_day');
+  readonly selectedDressCode = signal<EventDressCode>(EventDressCode.Casual);
   readonly categoryDropdownOpen = signal<boolean>(false);
   readonly attachedFiles = signal<AttachedFile[]>([]);
   readonly isDragging = signal<boolean>(false);
@@ -65,6 +70,7 @@ export class AddEvent {
     endDateTime: [''],
     location: ['', Validators.required],
     volunteers: [10, [Validators.required, Validators.min(1)]],
+    category: [EventCategory.Social, Validators.required],
     email: ['contact@ong.ro', [Validators.email]],
     phone: ['+373 69 000 000'],
   });
@@ -166,6 +172,14 @@ export class AddEvent {
           return 'table_chart';
         default:
           return 'insert_drive_file';
+      }
+    }
+    
+    onFileSelected(event: Event): void {
+      const input = event.target as HTMLInputElement;
+      if (input.files) {
+        this.addFiles(Array.from(input.files));
+      input.value = '';
       }
     }
 }
