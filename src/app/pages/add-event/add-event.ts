@@ -10,7 +10,7 @@ import { EventService } from '../../service/event.service';
 import { switchMap, map } from 'rxjs';
 import { OptionItem, EVENT_TYPES } from '../../config/event-categories.config';
 import { CreateEventGQL } from '../../core/graphql/services.private';
-import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../core/graphql/private/types';
+import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../core/graphql/types';
 
 export type { OptionItem };
 export { EVENT_TYPES };
