@@ -3,7 +3,7 @@
   <div class="profile-card-header">
     <!-- Avatar -->
     <div class="avatar-wrap">
-      <div class="profile-avatar" [class.ngo-avatar]="true">
+      <div class="profile-avatar" [class.ngo-avatar]="user?.role !== 'VOLUNTEER'">
         {{ user?.firstName?.charAt(0) }}{{ user?.lastName?.charAt(0) }}
       </div>
     </div>
@@ -66,7 +66,7 @@
         <button
           type="button"
           class="btn-outline settings-link-btn"
-          (click)="onEditPreferences()">
+          (click)="onEditSettings()">
           <mat-icon>settings</mat-icon>
           <span>{{ 'PROFILE.ACCOUNT_SETTINGS' | translate }}</span>
         </button>

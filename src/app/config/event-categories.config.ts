@@ -1,4 +1,4 @@
-import { EventCategory } from '../core/graphql/public/types';
+import { EventCategory } from '../core/graphql/types';
 
 export interface OptionItem {
   id: string;

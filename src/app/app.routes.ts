@@ -75,8 +75,7 @@ export const routes: Routes = [
   },
   {
     path: APP_ROUTES.SETTINGS,
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/settings/settings').then(m => m.SettingsComponent)
+    redirectTo: APP_ROUTES.PROFILE
   },
   {
     path: APP_ROUTES.TERMS,

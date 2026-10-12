@@ -2,7 +2,7 @@
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-import type * as Types from './private/types';
+import type * as Types from './types';
 
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
@@ -15,7 +15,7 @@ export type GetAllUsersQuery = { getAllUsers: Array<{ id: string, firstName: str
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { getCurrentUser: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string, eventCategoryPreferences: Array<Types.EventCategory> | null, biography: string | null } };
+export type GetCurrentUserQuery = { getCurrentUser: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string, eventCategoryPreferences: Array<Types.EventCategory> | null, biography: string | null, language: Types.Language, notificationsEnabled: boolean, twoFactorEnabled: boolean } };
 
 export type UpdateUserMutationVariables = Exact<{
   input: Types.UpdateUserInput;
@@ -29,7 +29,19 @@ export type UpdateUserPreferencesMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserPreferencesMutation = { updateUserPreferences: { id: string, eventCategoryPreferences: Array<Types.EventCategory> | null } };
+export type UpdateUserPreferencesMutation = { updateUserPreferences: { id: string, eventCategoryPreferences: Array<Types.EventCategory> | null, language: Types.Language, notificationsEnabled: boolean, twoFactorEnabled: boolean } };
+
+export type InitiateTwoFactorMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type InitiateTwoFactorMutation = { initiateTwoFactor: boolean };
+
+export type ConfirmTwoFactorMutationVariables = Exact<{
+  otp: string;
+}>;
+
+
+export type ConfirmTwoFactorMutation = { confirmTwoFactor: boolean };
 
 export type SuspendUserMutationVariables = Exact<{
   id: string;
@@ -91,6 +103,9 @@ export const GetCurrentUserDocument = gql`
     createdAt
     eventCategoryPreferences
     biography
+    language
+    notificationsEnabled
+    twoFactorEnabled
   }
 }
     `;
@@ -132,6 +147,9 @@ export const UpdateUserPreferencesDocument = gql`
   updateUserPreferences(input: $input) {
     id
     eventCategoryPreferences
+    language
+    notificationsEnabled
+    twoFactorEnabled
   }
 }
     `;
@@ -141,6 +159,38 @@ export const UpdateUserPreferencesDocument = gql`
   })
   export class UpdateUserPreferencesGQL extends Apollo.Mutation<UpdateUserPreferencesMutation, UpdateUserPreferencesMutationVariables> {
     override document = UpdateUserPreferencesDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const InitiateTwoFactorDocument = gql`
+    mutation InitiateTwoFactor {
+  initiateTwoFactor
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class InitiateTwoFactorGQL extends Apollo.Mutation<InitiateTwoFactorMutation, InitiateTwoFactorMutationVariables> {
+    override document = InitiateTwoFactorDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ConfirmTwoFactorDocument = gql`
+    mutation ConfirmTwoFactor($otp: String!) {
+  confirmTwoFactor(otp: $otp)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ConfirmTwoFactorGQL extends Apollo.Mutation<ConfirmTwoFactorMutation, ConfirmTwoFactorMutationVariables> {
+    override document = ConfirmTwoFactorDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
