@@ -1,5 +1,8 @@
 import { Injectable, signal, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export type ContactMethod = 'email' | 'phone' | 'both';
 
@@ -120,6 +123,7 @@ const INITIAL_EVENTS: EventItem[] = [
   providedIn: 'root',
 })
 export class EventService {
+  private readonly http = inject(HttpClient);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly storageKey = 'volunteerio_events_data';
 
@@ -193,6 +197,58 @@ export class EventService {
     this.events.set(filtered);
     this.saveEvents(filtered);
     return true;
+  }
+  
+    /**
+   * Uploads an individual file for an event via REST multipart.
+   * Matches backend endpoint POST /api/v1/events/{eventId}/files?type={type}&index={index}
+   */
+  uploadEventFile(
+    eventId: string,
+    file: File,
+    type: 'COVER' | 'GALLERY' | 'ATTACHMENT',
+    index: number = 0
+  ): Observable<unknown> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(
+      `${environment.apiUrl}/v1/events/${eventId}/files?type=${type}&index=${index}`,
+      formData
+    );
+  }
+
+  /**
+   * Uploads all selected files adhering to backend limits:
+   * - 1st image -> COVER (index 0)
+   * - Next images -> GALLERY (up to 3)
+   * - Documents -> ATTACHMENT (up to 2)
+   */
+  uploadEventFiles(eventId: string, files: File[]): Observable<unknown[]> {
+    if (!files || files.length === 0) {
+      return of([]);
+    }
+
+    const images = files.filter((f) => f.type.startsWith('image/'));
+    const docs = files.filter((f) => !f.type.startsWith('image/'));
+
+    const uploads: Observable<unknown>[] = [];
+
+    // First image is COVER
+    if (images.length > 0) {
+      uploads.push(this.uploadEventFile(eventId, images[0], 'COVER', 0));
+    }
+
+    // Up to 3 gallery images
+    for (let i = 1; i < Math.min(images.length, 4); i++) {
+      uploads.push(this.uploadEventFile(eventId, images[i], 'GALLERY', i - 1));
+    }
+
+    // Up to 2 non-image attachments
+    for (let i = 0; i < Math.min(docs.length, 2); i++) {
+      uploads.push(this.uploadEventFile(eventId, docs[i], 'ATTACHMENT', i));
+    }
+
+    return forkJoin(uploads);
   }
 
   private resolveCategoryTagKey(firstType?: string): string {

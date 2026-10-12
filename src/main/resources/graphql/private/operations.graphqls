@@ -54,3 +54,9 @@ mutation SuspendUser($id: String!, $suspendedUntil: String!) {
 mutation DeleteUser($id: String!) {
   deleteUser(id: $id)
 }
+
+mutation CreateEvent($input: CreateEventInput!) {
+  createEvent(input: $input) {
+    id
+  }
+}

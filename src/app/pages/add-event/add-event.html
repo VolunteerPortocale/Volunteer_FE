@@ -394,12 +394,24 @@
           </div>
         </div>
 
+
+                @if (errorMessage()) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
         <!-- 7. ACTIONS -->
-        <div class="form-actions">
-          <button type="submit" class="btn-primary submit-btn">
-            {{ (isEditMode() ? 'ADD_EVENT.SAVE_BTN' : 'ADD_EVENT.SUBMIT_BTN') | translate }}
+                <div class="form-actions">
+          <button type="submit" class="btn-primary submit-btn" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span>Se procesează...</span>
+            } @else {
+              {{ (isEditMode() ? 'ADD_EVENT.SAVE_BTN' : 'ADD_EVENT.SUBMIT_BTN') | translate }}
+            }
           </button>
-          <button type="button" class="btn-outline draft-btn" (click)="goBack()">
+          <button type="button" class="btn-outline draft-btn" (click)="goBack()" [disabled]="isSubmitting()">
             {{ 'ADD_EVENT.DRAFT_BTN' | translate }}
           </button>
         </div>
