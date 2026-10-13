@@ -14,6 +14,7 @@ import {
   InitiateTwoFactorGQL,
   UpdateUserPreferencesGQL,
 } from '../../../core/graphql/services.private';
+import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { AuthService } from '../../../service/auth.service';
 import { CurrentUserLoaderService } from '../../../service/current-user-loader.service';
 import { SupportedLanguage, TranslationService } from '../../../service/translation.service';
@@ -28,7 +29,7 @@ export interface SettingsForm {
 @Component({
   selector: 'app-profile-settings',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIcon],
+  imports: [ReactiveFormsModule, MatIcon, TranslatePipe],
   templateUrl: './profile-settings.html',
   styleUrl: './profile-settings.scss',
 })
@@ -44,9 +45,9 @@ export class ProfileSettingsComponent implements OnInit {
   private readonly confirm2faGQL = inject(ConfirmTwoFactorGQL);
 
   readonly languages = [
-    { value: Language.Ro, label: 'Română' },
-    { value: Language.En, label: 'English' },
-    { value: Language.Ru, label: 'Русский' },
+    { value: Language.Ro, labelKey: 'PROFILE.SETTINGS.LANGUAGES.RO' },
+    { value: Language.En, labelKey: 'PROFILE.SETTINGS.LANGUAGES.EN' },
+    { value: Language.Ru, labelKey: 'PROFILE.SETTINGS.LANGUAGES.RU' },
   ];
 
   readonly loading = signal(false);
@@ -76,7 +77,7 @@ export class ProfileSettingsComponent implements OnInit {
         await firstValueFrom(this.init2faGQL.mutate());
         this.otpSent.set(true);
       } catch {
-        this.error.set('Nu s-a putut trimite codul 2FA pe email.');
+        this.error.set(this.translationService.translate('PROFILE.SETTINGS.ERROR_2FA_INIT'));
       }
     } else if (!enabled) {
       this.otpSent.set(false);
@@ -94,7 +95,7 @@ export class ProfileSettingsComponent implements OnInit {
     try {
       if (twoFactorEnabled && !this.user?.twoFactorEnabled) {
         if (!cleanOtp) {
-          this.error.set('Te rugăm să introduci codul OTP primit pe email.');
+          this.error.set(this.translationService.translate('PROFILE.SETTINGS.ERROR_OTP_REQUIRED'));
           this.loading.set(false);
           return;
         }
@@ -120,7 +121,9 @@ export class ProfileSettingsComponent implements OnInit {
 
       this.close.emit();
     } catch (err) {
-      this.error.set(err instanceof Error ? err.message : 'Eroare la salvare.');
+      this.error.set(
+        err instanceof Error ? err.message : this.translationService.translate('PROFILE.SETTINGS.ERROR_SAVE')
+      );
     } finally {
       this.loading.set(false);
     }

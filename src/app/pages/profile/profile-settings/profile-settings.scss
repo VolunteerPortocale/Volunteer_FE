@@ -185,7 +185,8 @@
     font-size: 0.8rem;
     font-weight: 700;
     color: var(--color-text-muted);
-    min-width: 28px;
+    min-width: 38px;
+    text-align: center;
   }
 
   input:checked ~ .switch-status {

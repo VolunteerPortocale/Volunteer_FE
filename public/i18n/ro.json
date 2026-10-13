@@ -56,32 +56,32 @@
     "CARD_ACTION": "Află mai mult"
   },
   "FOOTER": {
-    "TAGLINE": "Platforma națională de voluntariat și implicare civică din Republica Moldova.",
+    "TAGLINE": "Conectăm voluntarii pasionați cu organizațiile non-guvernamentale din Republica Moldova pentru un impact civic real.",
     "EXPLORE_TITLE": "Explorează",
-    "PROJECTS": "Toate proiectele",
-    "CATEGORIES": "Cauze și domenii",
-    "ORGANIZATIONS": "Organizații partenere",
-    "CALENDAR": "Calendar evenimente",
-    "ORGANIZATIONS_TITLE": "Pentru Organizații",
-    "ADD_EVENT": "Publică un eveniment",
-    "NGO_REGISTER": "Înregistrează un ONG",
-    "GUIDELINES": "Ghidul organizatorului",
-    "RESOURCES": "Resurse și bune practici",
+    "PROJECTS": "Proiecte Civice",
+    "CATEGORIES": "Categorii",
+    "ORGANIZATIONS": "Organizații Active",
+    "CALENDAR": "Calendar Evenimente",
+    "ORGANIZATIONS_TITLE": "Pentru ONG-uri",
+    "ADD_EVENT": "Publică Eveniment",
+    "NGO_REGISTER": "Înregistrare ONG",
+    "GUIDELINES": "Ghidul Voluntariatului",
+    "RESOURCES": "Resurse Utile",
     "ABOUT_TITLE": "Despre Noi",
-    "MISSION": "Misiunea noastră",
-    "IMPACT": "Impact comunitar",
-    "STORIES": "Povești de succes",
-    "CONTACT": "Contact și asistență",
-    "NEWSLETTER_TITLE": "Rămâi conectat",
-    "NEWSLETTER_DESC": "Abonează-te pentru a primi oportunități noi de voluntariat direct pe email.",
+    "MISSION": "Misiune & Viziune",
+    "IMPACT": "Impact Comunitar",
+    "STORIES": "Povești de Succes",
+    "CONTACT": "Contact & Suport",
+    "NEWSLETTER_TITLE": "Abonează-te la Noutăți",
+    "NEWSLETTER_DESC": "Primește săptămânal oportunități noi de voluntariat din localitatea ta.",
     "EMAIL_PLACEHOLDER": "Adresa ta de email...",
     "SUBSCRIBE_BTN": "Abonează-te",
-    "SUBSCRIBE_SUCCESS": "Mulțumim pentru abonare!",
-    "TERMS": "Termeni și condiții",
-    "PRIVACY": "Politica de confidențialitate",
-    "COOKIES": "Cookie-uri",
+    "SUBSCRIBE_SUCCESS": "Te-ai abonat cu succes!",
+    "TERMS": "Termeni și Condiții",
+    "PRIVACY": "Politica de Confidențialitate",
+    "COOKIES": "Politica Cookie-uri",
     "ALL_RIGHTS": "Toate drepturile rezervate.",
-    "MADE_WITH": "Dezvoltat cu pasiune pentru comunitate în Republica Moldova."
+    "MADE_WITH": "Creat cu dăruire pentru comunitatea din Republica Moldova"
   },
   "PROJECTS": {
     "CARD_1": {
@@ -262,6 +262,9 @@
     "ALREADY_HAVE_ACCOUNT": "Ai deja cont?",
     "LOGIN_LINK": "Autentifică-te",
     "SUBMIT_BTN": "Creează contul",
+    "PHONE": "Număr de telefon",
+    "PHONE_PLACEHOLDER": "ex. +373 69 123 456",
+    "SUBMITTING": "Se procesează...",
     "ERRORS": {
       "NAME_REQUIRED": "Numele este obligatoriu (maxim 100 de caractere).",
       "FIRST_NAME_REQUIRED": "Prenumele este obligatoriu.",
@@ -271,12 +274,7 @@
       "PASSWORD_MIN": "Parola trebuie să conțină minim 8 caractere.",
       "PASSWORD_MISMATCH": "Parolele nu coincid.",
       "CONFIRM_PASSWORD_REQUIRED": "Confirmarea parolei este obligatorie.",
-      "TERMS_REQUIRED": "Trebuie să accepți termenii și condițiile."
-    },
-    "PHONE": "Număr de telefon",
-    "PHONE_PLACEHOLDER": "ex. +373 69 123 456",
-    "SUBMITTING": "Se procesează...",
-    "ERRORS": {
+      "TERMS_REQUIRED": "Trebuie să accepți termenii și condițiile.",
       "PHONE_REQUIRED": "Numărul de telefon este obligatoriu.",
       "PHONE_INVALID": "Introduceți un număr de telefon valid.",
       "EMAIL_EXISTS": "Un cont cu această adresă de email există deja."
@@ -376,6 +374,29 @@
       "SAVING": "Se salvează...",
       "CLOSE_ARIA": "Închide",
       "ERROR_SAVE": "Eroare la salvare."
+    },
+    "SETTINGS": {
+      "TITLE": "Setări Cont",
+      "SUBTITLE": "Limbă, notificări și autentificare în doi pași",
+      "CLOSE_ARIA": "Închide",
+      "LANGUAGE_LABEL": "Limba platformei",
+      "LANGUAGES": {
+        "RO": "Română (RO)",
+        "EN": "Engleză (EN)",
+        "RU": "Rusă (RU)"
+      },
+      "NOTIFICATIONS_LABEL": "Activează notificările pe email",
+      "TWO_FACTOR_LABEL": "Activează autentificarea în doi pași",
+      "STATUS_ON": "ON",
+      "STATUS_OFF": "OFF",
+      "OTP_LABEL": "Cod de verificare OTP",
+      "OTP_PLACEHOLDER": "123456",
+      "CANCEL": "Anulează",
+      "SAVE": "Salvează setările",
+      "SAVING": "Se salvează...",
+      "ERROR_2FA_INIT": "Nu s-a putut trimite codul 2FA pe email.",
+      "ERROR_OTP_REQUIRED": "Te rugăm să introduci codul OTP primit pe email.",
+      "ERROR_SAVE": "Eroare la salvare."
     }
   },
   "SETTINGS_PAGE": {
@@ -452,33 +473,6 @@
       "DESC": "Alătură-te miilor de cetățeni activi care construiesc o Moldovă mai curată, mai empatică și mai unită.",
       "BTN": "Găsește un Proiect Acum"
     }
-  },
-  "FOOTER": {
-    "TAGLINE": "Conectăm voluntarii pasionați cu organizațiile non-guvernamentale din Republica Moldova pentru un impact civic real.",
-    "EXPLORE_TITLE": "Explorează",
-    "PROJECTS": "Proiecte Civice",
-    "CATEGORIES": "Categorii",
-    "ORGANIZATIONS": "Organizații Active",
-    "CALENDAR": "Calendar Evenimente",
-    "ORGANIZATIONS_TITLE": "Pentru ONG-uri",
-    "ADD_EVENT": "Publică Eveniment",
-    "NGO_REGISTER": "Înregistrare ONG",
-    "GUIDELINES": "Ghidul Voluntariatului",
-    "RESOURCES": "Resurse Utile",
-    "ABOUT_TITLE": "Despre Noi",
-    "MISSION": "Misiune & Viziune",
-    "IMPACT": "Impact Comunitar",
-    "STORIES": "Povești de Succes",
-    "CONTACT": "Contact & Suport",
-    "NEWSLETTER_TITLE": "Abonează-te la Noutăți",
-    "NEWSLETTER_DESC": "Primește săptămânal oportunități noi de voluntariat din localitatea ta.",
-    "EMAIL_PLACEHOLDER": "Adresa ta de email...",
-    "SUBSCRIBE_SUCCESS": "Te-ai abonat cu succes!",
-    "ALL_RIGHTS": "Toate drepturile rezervate.",
-    "TERMS": "Termeni și Condiții",
-    "PRIVACY": "Politica de Confidențialitate",
-    "COOKIES": "Politica Cookie-uri",
-    "MADE_WITH": "Creat cu dăruire pentru comunitatea din Republica Moldova"
   },
   "LEGAL": {
     "HERO": {
@@ -662,6 +656,8 @@
       "POST_EVENT_TOOLTIP": "Disponibil după finalizarea evenimentului"
     },
     "HERO": {
+      "DEFAULT_TITLE": "Plantăm păduri comunitare - Strășeni",
+      "DEFAULT_DESC": "Alătură-te echipei noastre pentru a planta peste 2.000 de puieți și a revitaliza spațiile verzi locale.",
       "ACTIVE_BADGE": "Eveniment activ",
       "VOLUNTEERS_REGISTERED": "voluntari înscriși",
       "VOLUNTEERS_CONFIRMED_QR": "prezenți confirmați QR",
