@@ -61,8 +61,12 @@ export class AddEvent {
 
   // The Reactive Form
   readonly eventForm = this.fb.group({
-    title: ['', [Validators.required, Validators.minLength(5)]],
-    description: ['', [Validators.required, Validators.minLength(20)]],
+    titleRo: ['', [Validators.required, Validators.minLength(5)]],
+    titleEn: [''],
+    titleRu: [''],
+    descriptionRo: ['', [Validators.required, Validators.minLength(20)]],
+    descriptionEn: [''],
+    descriptionRu: [''],
     startDateTime: ['', Validators.required],
     endDateTime: [''],
     location: ['', Validators.required],
@@ -90,8 +94,12 @@ export class AddEvent {
       return;
     }
 
-    const titleStr = this.eventForm.value.title?.trim() || '';
-    const descStr = this.eventForm.value.description?.trim() || '';
+    const titleStrEn = this.eventForm.value.titleEn?.trim() || '';
+    const titleStrRo = this.eventForm.value.titleRo?.trim() || '';
+    const titleStrRu = this.eventForm.value.titleRu?.trim() || '';
+    const descStrEn = this.eventForm.value.descriptionEn?.trim() || '';
+    const descStrRo = this.eventForm.value.descriptionRo?.trim() || '';
+    const descStrRu = this.eventForm.value.descriptionRu?.trim() || '';
     const startTimeIso = this.toIsoString(this.eventForm.value.startDateTime);
 
     if (!startTimeIso) {
@@ -104,8 +112,8 @@ export class AddEvent {
       category: this.eventForm.value.category as EventCategory,
       status: EventStatus.Published,
       details: {
-        title: { ro: titleStr, en: titleStr, ru: titleStr },
-        description: { ro: descStr, en: descStr, ru: descStr },
+        title: { ro: titleStrRo, en: titleStrEn, ru: titleStrRu },
+        description: { ro: descStrRo, en: descStrEn, ru: descStrRu },
         startTime: startTimeIso,
         endTime: this.toIsoString(this.eventForm.value.endDateTime),
         location: this.eventForm.value.location?.trim() || null,

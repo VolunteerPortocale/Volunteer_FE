@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatIcon } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 
-import { EVENT_TYPES } from '../../../config/event-categories.config';
 import { EventCategory } from '../../../core/graphql/types';
 import { UpdateUserGQL, UpdateUserPreferencesGQL } from '../../../core/graphql/services.private';
 import { AuthService } from '../../../service/auth.service';
@@ -27,7 +26,7 @@ export class EditPersonalDetails implements OnInit {
   private readonly userSession = inject(UserSessionService);
   private readonly currentUserLoaderService = inject(CurrentUserLoaderService);
 
-  readonly categories = EVENT_TYPES.filter((c) => !!c.category);
+  readonly categories = Object.values(EventCategory);
   readonly selectedCategories = signal<EventCategory[]>([]);
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);

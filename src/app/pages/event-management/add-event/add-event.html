@@ -39,7 +39,21 @@
             <span class="field-hint">{{ 'ADD_EVENT.TITLE_HINT' | translate }}</span>
             <input
               type="text"
-              formControlName="title"
+              formControlName="titleRo"
+              [placeholder]="'ADD_EVENT.TITLE_PLACEHOLDER' | translate"
+              class="form-input"
+            />
+
+            <input
+              type="text"
+              formControlName="titleRu"
+              [placeholder]="'ADD_EVENT.TITLE_PLACEHOLDER' | translate"
+              class="form-input"
+            />
+
+            <input
+              type="text"
+              formControlName="titleEn"
               [placeholder]="'ADD_EVENT.TITLE_PLACEHOLDER' | translate"
               class="form-input"
             />
@@ -49,7 +63,21 @@
             <label>{{ 'ADD_EVENT.DESC_LABEL' | translate }}</label>
             <span class="field-hint">{{ 'ADD_EVENT.DESC_HINT' | translate }}</span>
             <textarea
-              formControlName="description"
+              formControlName="descriptionRo"
+              rows="4"
+              [placeholder]="'ADD_EVENT.DESC_PLACEHOLDER' | translate"
+              class="form-input textarea"
+            ></textarea>
+
+            <textarea
+              formControlName="descriptionRu"
+              rows="4"
+              [placeholder]="'ADD_EVENT.DESC_PLACEHOLDER' | translate"
+              class="form-input textarea"
+            ></textarea>
+
+            <textarea
+              formControlName="descriptionEn"
               rows="4"
               [placeholder]="'ADD_EVENT.DESC_PLACEHOLDER' | translate"
               class="form-input textarea"
