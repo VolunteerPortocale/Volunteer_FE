@@ -10,7 +10,7 @@ import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
 import { switchMap, map } from 'rxjs';
 import { CreateEventGQL } from '../../../core/graphql/services.private';
-import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../../core/graphql/private/types';
+import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../../core/graphql/types';
 
 export interface AttachedFile {
   id: string;
