@@ -4,6 +4,42 @@
 }
 
 // ── Top Bar ──
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lang-switcher-pills {
+  display: flex;
+  background-color: var(--color-light-grey, #f1f3f2);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+
+  .lang-pill {
+    border: none;
+    background: transparent;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-medium-grey, #666);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      color: var(--color-dark-grey, #222);
+    }
+
+    &.active {
+      background-color: var(--color-primary, #2b4c3f);
+      color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
 .moderator-topbar {
   background-color: var(--color-white);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -174,7 +210,7 @@
     resize: vertical;
     min-height: 100px;
   }
-  
+
   &.ng-invalid.ng-touched {
     border-color: #d32f2f;
   }

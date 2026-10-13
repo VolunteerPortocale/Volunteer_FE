@@ -8,17 +8,19 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
-import { switchMap, map } from 'rxjs';
+import { of, switchMap, map, Observable, forkJoin } from 'rxjs';
 import { CreateEventGQL } from '../../../core/graphql/services.private';
 import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../../core/graphql/types';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 export interface AttachedFile {
   id: string;
   name: string;
   size: number;
   formattedSize: string;
-  type: string;
   rawFile?: File;
+  type: EventFileType;
 }
 
 @Component({
@@ -41,6 +43,7 @@ export class AddEvent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   readonly translationService = inject(TranslationService);
+  private readonly http = inject(HttpClient);
   private readonly createEventGQL = inject(CreateEventGQL);
 
   readonly isSubmitting = signal<boolean>(false);
@@ -53,11 +56,22 @@ export class AddEvent {
   // Edit Mode state
   readonly eventId = signal<string | null>(null);
   readonly isEditMode = computed(() => !!this.eventId());
+  readonly activeLang = signal<'ro' | 'en' | 'ru'>('ro');
+  readonly activeFileType = signal<EventFileType>(EventFileType.COVER);
 
   // Reactive state using Signals
   readonly selectedDressCode = signal<EventDressCode>(EventDressCode.Casual);
   readonly attachedFiles = signal<AttachedFile[]>([]);
   readonly isDragging = signal<boolean>(false);
+  readonly EventFileType = EventFileType;
+  readonly fileLimits: Record<EventFileType, number> = {
+    [EventFileType.COVER]: 1,
+    [EventFileType.GALLERY]: 3,
+    [EventFileType.ATTACHMENT]: 2,
+  };
+  readonly currentTabFiles = computed(() =>
+    this.attachedFiles().filter((f) => f.type === this.activeFileType())
+  );
 
   // The Reactive Form
   readonly eventForm = this.fb.group({
@@ -130,6 +144,44 @@ export class AddEvent {
 
     this.createEventGQL
       .mutate({ variables: { input } })
+      .pipe(
+        switchMap((result) => {
+          // Inside switchMap((result) => { ... })
+            const eventId = result.data?.createEvent?.id;
+            if (!eventId) {
+              throw new Error('Nu s-a putut obține identificatorul evenimentului.');
+            }
+
+            const coverFiles = this.attachedFiles()
+              .filter((f) => f.type === EventFileType.COVER)
+              .map((f) => f.rawFile)
+              .filter((f): f is File => !!f);
+
+            const galleryFiles = this.attachedFiles()
+              .filter((f) => f.type === EventFileType.GALLERY)
+              .map((f) => f.rawFile)
+              .filter((f): f is File => !!f);
+
+            const attachmentFiles = this.attachedFiles()
+              .filter((f) => f.type === EventFileType.ATTACHMENT)
+              .map((f) => f.rawFile)
+              .filter((f): f is File => !!f);
+
+            const uploads: Observable<unknown>[] = [];
+
+            if (coverFiles.length > 0) {
+              uploads.push(this.uploadEventFiles(eventId, coverFiles, EventFileType.COVER));
+            }
+            if (galleryFiles.length > 0) {
+              uploads.push(this.uploadEventFiles(eventId, galleryFiles, EventFileType.GALLERY));
+            }
+            if (attachmentFiles.length > 0) {
+              uploads.push(this.uploadEventFiles(eventId, attachmentFiles, EventFileType.ATTACHMENT));
+            }
+
+            return uploads.length > 0 ? forkJoin(uploads) : of(null);
+})
+      )
       .subscribe({
         next: () => {
           this.isSubmitting.set(false);
@@ -138,7 +190,7 @@ export class AddEvent {
         error: (err) => {
           this.isSubmitting.set(false);
           this.errorMessage.set(
-            err.message || 'A apărut o eroare la salvarea evenimentului.'
+            err.message || 'A apărut o eroare la salvarea evenimentului sau fișierelor.'
           );
         },
       });
@@ -191,16 +243,26 @@ export class AddEvent {
     }
   
     private addFiles(files: File[]): void {
-      const newFiles: AttachedFile[] = files.map((file) => ({
-        id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        name: file.name,
-        size: file.size,
-        formattedSize: this.formatFileSize(file.size),
-        type: file.type || file.name.split('.').pop() || 'file',
-        rawFile: file,
-      }));
-      this.attachedFiles.set([...this.attachedFiles(), ...newFiles]);
+    const activeType = this.activeFileType();
+    const limit = this.fileLimits[activeType];
+    const existingCount = this.currentTabFiles().length;
+    const availableSlots = limit - existingCount;
+    if (availableSlots <= 0) {
+      this.errorMessage.set(`Ați atins limita maximă de ${limit} fișier(e) pentru această categorie.`);
+      return;
     }
+    // Take only up to the available slots
+    const filesToAdd = files.slice(0, availableSlots);
+    const newFiles: AttachedFile[] = filesToAdd.map((file) => ({
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      name: file.name,
+      size: file.size,
+      formattedSize: this.formatFileSize(file.size),
+      type: activeType,
+      rawFile: file
+    }));
+    this.attachedFiles.set([...this.attachedFiles(), ...newFiles]);
+  }
   
     removeFile(fileId: string): void {
       this.attachedFiles.set(this.attachedFiles().filter((f) => f.id !== fileId));
@@ -245,4 +307,27 @@ export class AddEvent {
       input.value = '';
       }
     }
+
+    // Uploads all attached files in a single batch to the backend
+    private uploadEventFiles(eventId: string, files: File[], type: EventFileType) {
+    if (!files || files.length === 0) {
+      return of(null); // No files to upload, proceed immediately
+    }
+
+    const formData = new FormData();
+    // Appends each file under the 'files' key expected by @RequestPart files: List<MultipartFile>
+    files.forEach((file) => formData.append('files', file));
+
+    return this.http.post(
+      `${environment.apiUrl}/v1/events/${eventId}/files/batch?type=${type}`,
+      formData
+    );
+  }
+  
+}
+
+export enum EventFileType {
+  ATTACHMENT = 'ATTACHMENT',
+  COVER = 'COVER',
+  GALLERY = 'GALLERY'
 }
