@@ -88,17 +88,17 @@
       </div>
 
       <div class="chips-container">
-        @for (item of categories; track item.id) {
-          @if (item.category) {
+        @for (item of categories; track item) {
+          @if (item) {
             <button
               type="button"
               class="chip"
-              [class.active]="selectedCategories().includes(item.category)"
-              (click)="toggleCategory(item.category)">
-              @if (selectedCategories().includes(item.category)) {
+              [class.active]="selectedCategories().includes(item)"
+              (click)="toggleCategory(item)">
+              @if (selectedCategories().includes(item)) {
                 <mat-icon class="chip-icon">check</mat-icon>
               }
-              <span>{{ item.name }}</span>
+              <span>{{ item }}</span>
             </button>
           }
         }

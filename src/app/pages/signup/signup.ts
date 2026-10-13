@@ -12,7 +12,6 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_ROUTES } from '../../config/routes.config';
-import { EVENT_TYPES, OptionItem } from '../../config/event-categories.config';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
 import { CreateUserRole, EventCategory } from '../../core/graphql/types';
@@ -58,12 +57,12 @@ export class SignupComponent {
   readonly translationService = inject(TranslationService);
 
   readonly routes = APP_ROUTES;
-  readonly eventTypesList = EVENT_TYPES;
+  readonly eventTypesList = Object.values(EventCategory);
 
   // UI state signals
   readonly role = signal<AccountRole>('volunteer');
   readonly showPassword = signal<boolean>(false);
-  readonly selectedInterests = signal<string[]>([]);
+  readonly selectedInterests = signal<EventCategory[]>([]);
   readonly categoryDropdownOpen = signal<boolean>(false);
   readonly isSubmitted = signal<boolean>(false);
   readonly isLoading = signal<boolean>(false);
@@ -122,21 +121,21 @@ export class SignupComponent {
   /**
    * Toggle an interest/category selection
    */
-  toggleInterest(interestId: string): void {
+  toggleInterest(category: EventCategory): void {
     const current = this.selectedInterests();
-    if (current.includes(interestId)) {
-      this.selectedInterests.set(current.filter((id) => id !== interestId));
+    if (current.includes(category)) {
+      this.selectedInterests.set(current.filter((c) => c !== category));
     } else {
-      this.selectedInterests.set([...current, interestId]);
+      this.selectedInterests.set([...current, category]);
     }
   }
 
   /**
    * Resolve translated label for category item
    */
-  getCategoryLabel(type: OptionItem): string {
-    const translated = this.translationService.translate(type.labelKey);
-    return translated && translated !== type.labelKey ? translated : type.name;
+  getCategoryLabel(type: EventCategory): string {
+    const translated = this.translationService.translate(type);
+    return translated && translated !== type ? translated : type;
   }
 
   /**
@@ -151,15 +150,6 @@ export class SignupComponent {
     const suffix = this.translationService.translate('ADD_EVENT.CATEGORIES_COUNT');
     const validSuffix = suffix && suffix !== 'ADD_EVENT.CATEGORIES_COUNT' ? suffix : 'categorii selectate';
     return `${count} ${validSuffix}`;
-  }
-
-  /**
-   * Returns selected category enums matching GraphQL EventCategory
-   */
-  getSelectedCategories(): EventCategory[] {
-    return this.selectedInterests()
-      .map((id) => this.eventTypesList.find((item) => item.id === id)?.category)
-      .filter((cat): cat is EventCategory => Boolean(cat));
   }
 
   /**
@@ -185,7 +175,7 @@ export class SignupComponent {
       password: val.password || '',
       role: isNgo ? CreateUserRole.Ngo : CreateUserRole.Volunteer,
       companyName: isNgo ? val.orgName?.trim() || null : null,
-      eventCategoryPreferences: !isNgo ? this.getSelectedCategories() : [],
+      eventCategoryPreferences: !isNgo ? this.selectedInterests() : [],
     };
 
         this.createUserGQL.mutate({ variables: { input } }).subscribe({

@@ -273,11 +273,11 @@
             <!-- Selected Tags Preview -->
             @if (selectedInterests().length > 0 && !categoryDropdownOpen()) {
               <div class="selected-tags-row">
-                @for (type of eventTypesList; track type.id) {
-                  @if (selectedInterests().includes(type.id)) {
+                @for (type of eventTypesList; track type) {
+                  @if (selectedInterests().includes(type)) {
                     <span class="selected-tag">
                       {{ getCategoryLabel(type) }}
-                      <mat-icon class="tag-remove" (click)="toggleInterest(type.id)">close</mat-icon>
+                      <mat-icon class="tag-remove" (click)="toggleInterest(type)">close</mat-icon>
                     </span>
                   }
                 }
@@ -288,15 +288,15 @@
             @if (categoryDropdownOpen()) {
               <div class="category-dropdown-panel">
                 <div class="event-types-grid">
-                  @for (type of eventTypesList; track type.id) {
+                  @for (type of eventTypesList; track type) {
                     <button
                       type="button"
                       class="type-toggle-btn"
-                      [class.active]="selectedInterests().includes(type.id)"
-                      (click)="toggleInterest(type.id)"
+                      [class.active]="selectedInterests().includes(type)"
+                      (click)="toggleInterest(type)"
                     >
-                      <span class="custom-checkbox" [class.checked]="selectedInterests().includes(type.id)">
-                        @if (selectedInterests().includes(type.id)) {
+                      <span class="custom-checkbox" [class.checked]="selectedInterests().includes(type)">
+                        @if (selectedInterests().includes(type)) {
                           <mat-icon>check</mat-icon>
                         }
                       </span>
