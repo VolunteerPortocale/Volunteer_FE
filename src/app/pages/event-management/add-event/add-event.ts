@@ -55,10 +55,7 @@ export class AddEvent {
   readonly isEditMode = computed(() => !!this.eventId());
 
   // Reactive state using Signals
-  readonly isSubmitted = signal<boolean>(false);
-  readonly selectedEventTypes = signal<string[]>([]);
   readonly selectedDressCode = signal<EventDressCode>(EventDressCode.Casual);
-  readonly categoryDropdownOpen = signal<boolean>(false);
   readonly attachedFiles = signal<AttachedFile[]>([]);
   readonly isDragging = signal<boolean>(false);
 
@@ -79,7 +76,65 @@ export class AddEvent {
     this.router.navigate(['/']);
   }
 
-  onSubmit(): void {}
+  // convert datetime to ISO for backend
+  private toIsoString(dateStr: string | null | undefined): string | null {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? null : date.toISOString();
+  }
+
+  onSubmit(): void {
+    if (this.eventForm.invalid) {
+      this.eventForm.markAllAsTouched();
+      this.errorMessage.set('Vă rugăm să completați toate câmpurile obligatorii corect.');
+      return;
+    }
+
+    const titleStr = this.eventForm.value.title?.trim() || '';
+    const descStr = this.eventForm.value.description?.trim() || '';
+    const startTimeIso = this.toIsoString(this.eventForm.value.startDateTime);
+
+    if (!startTimeIso) {
+      this.errorMessage.set('Data de început este obligatorie.');
+      return;
+    }
+
+    // payload matching CreateEventInput
+    const input: CreateEventInput = {
+      category: this.eventForm.value.category as EventCategory,
+      status: EventStatus.Published,
+      details: {
+        title: { ro: titleStr, en: titleStr, ru: titleStr },
+        description: { ro: descStr, en: descStr, ru: descStr },
+        startTime: startTimeIso,
+        endTime: this.toIsoString(this.eventForm.value.endDateTime),
+        location: this.eventForm.value.location?.trim() || null,
+        nrVolunteers: Number(this.eventForm.value.volunteers) || 1,
+        contactPhone: this.eventForm.value.phone?.trim() || null,
+        contactEmail: this.eventForm.value.email?.trim() || null,
+        dressCode: this.selectedDressCode(),
+      },
+    };
+
+    // send graphql mutation to backend
+    this.isSubmitting.set(true);
+    this.errorMessage.set(null);
+
+    this.createEventGQL
+      .mutate({ variables: { input } })
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.isSubmitting.set(false);
+          this.errorMessage.set(
+            err.message || 'A apărut o eroare la salvarea evenimentului.'
+          );
+        },
+      });
+  }
 
   get formattedDateSummary(): string {
     const start = this.eventForm.value.startDateTime;
