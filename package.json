@@ -14,9 +14,10 @@
     "test": "ng test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "codegen:shared": "graphql-codegen --config codegen.shared.ts",
     "codegen:public": "graphql-codegen --config codegen.public.ts",
     "codegen:private": "graphql-codegen --config codegen.private.ts",
-    "codegen": "pnpm codegen:public && pnpm codegen:private",
+    "codegen": "pnpm codegen:shared && pnpm codegen:public && pnpm codegen:private",
     "serve:ssr:volunteerio": "node dist/volunteerio/server/server.mjs"
   },
   "private": true,

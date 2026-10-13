@@ -14,7 +14,7 @@ export class TranslationService {
 
   // Reactive state using Angular 21 Signals
   readonly currentLang = signal<SupportedLanguage>('ro');
-  private readonly translations = signal<Record<string, any>>({});
+  private readonly translations = signal<Record<string, unknown>>({});
 
   constructor() {
     const initialLang = this.getSavedLanguage();
@@ -25,7 +25,7 @@ export class TranslationService {
    * Switches the active language and loads the corresponding JSON dictionary
    */
   setLanguage(lang: SupportedLanguage): void {
-    this.http.get<Record<string, any>>(`/i18n/${lang}.json`).subscribe({
+    this.http.get<Record<string, unknown>>(`/i18n/${lang}.json`).subscribe({
       next: (data) => {
         this.translations.set(data);
         this.currentLang.set(lang);
@@ -46,7 +46,12 @@ export class TranslationService {
    */
   translate(key: string): string {
     const dict = this.translations();
-    const result = key.split('.').reduce((obj, k) => obj?.[k], dict);
+    const result = key.split('.').reduce<unknown>((obj, k) => {
+      if (obj && typeof obj === 'object') {
+        return (obj as Record<string, unknown>)[k];
+      }
+      return undefined;
+    }, dict);
     return typeof result === 'string' ? result : key;
   }
 

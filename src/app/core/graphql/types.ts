@@ -75,6 +75,7 @@ export type Event = {
   createdAt: Scalars['String']['output'];
   createdBy?: Maybe<Scalars['String']['output']>;
   details: EventDetails;
+  files?: Maybe<Array<EventFile>>;
   id: Scalars['String']['output'];
   lastModifiedAt: Scalars['String']['output'];
   lastModifiedBy?: Maybe<Scalars['String']['output']>;
@@ -197,99 +198,6 @@ export enum Language {
   Ro = 'RO',
   Ru = 'RU'
 }
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  confirmEnrollment: GenericPayload;
-  confirmTwoFactor: User;
-  createEvent: Event;
-  deleteUser: Scalars['Boolean']['output'];
-  enroll: Enrollment;
-  initiateTwoFactor: Scalars['Boolean']['output'];
-  suspendUser: User;
-  updateEvent: Event;
-  updateUser: User;
-  updateUserPreferences: User;
-  verifyTwoFactorLogin: User;
-};
-
-
-export type MutationConfirmEnrollmentArgs = {
-  input: ConfirmEnrollmentInput;
-};
-
-
-export type MutationConfirmTwoFactorArgs = {
-  otp: Scalars['String']['input'];
-};
-
-
-export type MutationCreateEventArgs = {
-  input: CreateEventInput;
-};
-
-
-export type MutationDeleteUserArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type MutationEnrollArgs = {
-  input: CreateEnrollmentInput;
-};
-
-
-export type MutationSuspendUserArgs = {
-  id: Scalars['String']['input'];
-  suspendedUntil: Scalars['String']['input'];
-};
-
-
-export type MutationUpdateEventArgs = {
-  id: Scalars['String']['input'];
-  input: UpdateEventInput;
-};
-
-
-export type MutationUpdateUserArgs = {
-  input: UpdateUserInput;
-};
-
-
-export type MutationUpdateUserPreferencesArgs = {
-  input: UpdateUserPreferencesInput;
-};
-
-
-export type MutationVerifyTwoFactorLoginArgs = {
-  email: Scalars['String']['input'];
-  otp: Scalars['String']['input'];
-};
-
-export type Query = {
-  __typename?: 'Query';
-  getAllEvents: Array<Event>;
-  getAllUsers: Array<User>;
-  getCurrentUser: User;
-  getEventById: Event;
-  getEventFiles: Array<EventFile>;
-  getUserById: User;
-};
-
-
-export type QueryGetEventByIdArgs = {
-  id: Scalars['String']['input'];
-};
-
-
-export type QueryGetEventFilesArgs = {
-  eventId: Scalars['String']['input'];
-};
-
-
-export type QueryGetUserByIdArgs = {
-  id: Scalars['String']['input'];
-};
 
 export type UpdateEventDetailsInput = {
   contactEmail?: InputMaybe<Scalars['String']['input']>;

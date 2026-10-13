@@ -1,0 +1,80 @@
+<div class="edit-card">
+  <div class="edit-header">
+    <div>
+      <h2 class="edit-title">Setări Cont</h2>
+      <p class="edit-subtitle">Limbă, notificări și autentificare în doi pași</p>
+    </div>
+    <button type="button" class="btn-close" (click)="close.emit()" aria-label="Închide">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="alert-error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="edit-form">
+    <!-- Language Selection -->
+    <div class="form-group">
+      <label for="language">Limba platformei</label>
+      <div class="input-wrap">
+        <mat-icon>language</mat-icon>
+        <select id="language" formControlName="language">
+          @for (lang of languages; track lang.value) {
+            <option [value]="lang.value">{{ lang.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Notifications Toggle -->
+    <div class="toggle-group">
+      <span class="toggle-label">Activează notificările pe email</span>
+      <label class="switch">
+        <input type="checkbox" formControlName="notificationsEnabled" />
+        <span class="slider"></span>
+        <span class="switch-status">{{ form.controls.notificationsEnabled.value ? 'ON' : 'OFF' }}</span>
+      </label>
+    </div>
+
+    <!-- 2FA Toggle -->
+    <div class="toggle-group">
+      <span class="toggle-label">Activează autentificarea în doi pași</span>
+      <label class="switch">
+        <input type="checkbox" formControlName="twoFactorEnabled" (change)="onToggle2Fa()" />
+        <span class="slider"></span>
+        <span class="switch-status">{{ form.controls.twoFactorEnabled.value ? 'ON' : 'OFF' }}</span>
+      </label>
+    </div>
+
+    <!-- OTP Input for 2FA verification -->
+    @if (otpSent()) {
+      <div class="form-group otp-group">
+        <label for="otp">Cod de verificare OTP</label>
+        <div class="input-wrap">
+          <mat-icon>pin</mat-icon>
+          <input id="otp" type="text" formControlName="otp" placeholder="123456" maxlength="6" />
+        </div>
+      </div>
+    }
+
+    <!-- Form Actions -->
+    <div class="edit-actions">
+      <button type="button" class="btn-cancel" [disabled]="loading()" (click)="close.emit()">
+        Anulează
+      </button>
+      <button type="submit" class="btn-save" [disabled]="loading()">
+        @if (loading()) {
+          <span class="spinner"></span>
+          <span>Se salvează...</span>
+        } @else {
+          <mat-icon>save</mat-icon>
+          <span>Salvează setările</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>

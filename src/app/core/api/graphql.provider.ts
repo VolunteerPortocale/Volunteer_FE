@@ -1,6 +1,6 @@
 import { ApplicationConfig, inject } from '@angular/core';
 import { ApolloClient, InMemoryCache, ApolloLink } from '@apollo/client/core';
-import { Apollo, APOLLO_OPTIONS, provideNamedApollo } from 'apollo-angular';
+import { provideNamedApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { SetContextLink } from '@apollo/client/link/context';
 import { ErrorLink } from '@apollo/client/link/error';
@@ -53,13 +53,11 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
     const accessToken =
       typeof localStorage !== 'undefined' ? localStorage.getItem('access_token') : null;
 
-    const authorization =  `Bearer ${accessToken}`;
-
-    return authorization
+    return accessToken
       ? {
           headers: {
             ...prevContext.headers,
-            Authorization: authorization,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       : {};

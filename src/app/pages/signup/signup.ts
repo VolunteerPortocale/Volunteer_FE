@@ -15,7 +15,7 @@ import { APP_ROUTES } from '../../config/routes.config';
 import { EVENT_TYPES, OptionItem } from '../../config/event-categories.config';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
-import { CreateUserRole, EventCategory } from '../../core/graphql/public/types';
+import { CreateUserRole, EventCategory } from '../../core/graphql/types';
 import { CreateUserGQL } from '../../core/graphql/services.public';
 
 export type AccountRole = 'volunteer' | 'ngo';
