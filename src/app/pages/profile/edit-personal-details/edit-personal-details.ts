@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { EVENT_TYPES } from '../../../config/event-categories.config';
 import { EventCategory } from '../../../core/graphql/types';
 import { UpdateUserGQL, UpdateUserPreferencesGQL } from '../../../core/graphql/services.private';
+import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { AuthService } from '../../../service/auth.service';
 import { CurrentUserLoaderService } from '../../../service/current-user-loader.service';
 import { UserSessionService } from '../../../service/user-session.service';
@@ -13,7 +14,7 @@ import { UserSessionService } from '../../../service/user-session.service';
 @Component({
   selector: 'app-edit-personal-details',
   standalone: true,
-  imports: [ReactiveFormsModule, MatIcon],
+  imports: [ReactiveFormsModule, MatIcon, TranslatePipe],
   templateUrl: './edit-personal-details.html',
   styleUrl: './edit-personal-details.scss',
 })
@@ -41,6 +42,8 @@ export class EditPersonalDetails implements OnInit {
   ngOnInit(): void {
     const user = this.user;
     this.form = this.fb.group({
+      firstName: [user?.firstName ?? '', [Validators.required, Validators.minLength(2)]],
+      lastName: [user?.lastName ?? '', [Validators.required, Validators.minLength(2)]],
       phoneNumber: [user?.phoneNumber ?? '', [Validators.required]],
       biography: [user?.biography ?? ''],
     });
@@ -64,7 +67,7 @@ export class EditPersonalDetails implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    const { phoneNumber, biography } = this.form.value;
+    const { firstName, lastName, phoneNumber, biography } = this.form.value;
     const categories = this.selectedCategories();
     const user = this.user;
 
@@ -74,8 +77,8 @@ export class EditPersonalDetails implements OnInit {
           this.updateUserGQL.mutate({
             variables: {
               input: {
-                firstName: user?.firstName,
-                lastName: user?.lastName,
+                firstName: firstName?.trim(),
+                lastName: lastName?.trim(),
                 phoneNumber: phoneNumber?.trim(),
                 biography: biography?.trim() ?? '',
               },
@@ -100,6 +103,8 @@ export class EditPersonalDetails implements OnInit {
       if (user && subject && updatedUser) {
         this.userSession.setUser(subject, {
           ...user,
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
           phoneNumber: updatedUser.phoneNumber,
           biography: updatedUser.biography,
           eventCategoryPreferences: updatedPrefs?.eventCategoryPreferences ?? categories,

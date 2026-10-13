@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
 import { TranslatePipe } from '../../../common/pipes/translate-pipe';
@@ -13,6 +13,9 @@ import { AuthService } from '../../../service/auth.service';
 })
 export class ProfileOverview {
   private readonly authService = inject(AuthService);
+
+  readonly isEditingPersonalDetails = input<boolean>(false);
+  readonly isEditingSettings = input<boolean>(false);
 
   readonly editPersonalDetails = output<void>();
   readonly editSettings = output<void>();

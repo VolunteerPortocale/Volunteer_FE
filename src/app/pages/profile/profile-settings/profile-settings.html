@@ -1,10 +1,14 @@
 <div class="edit-card">
   <div class="edit-header">
     <div>
-      <h2 class="edit-title">Setări Cont</h2>
-      <p class="edit-subtitle">Limbă, notificări și autentificare în doi pași</p>
+      <h2 class="edit-title">{{ 'PROFILE.SETTINGS.TITLE' | translate }}</h2>
+      <p class="edit-subtitle">{{ 'PROFILE.SETTINGS.SUBTITLE' | translate }}</p>
     </div>
-    <button type="button" class="btn-close" (click)="close.emit()" aria-label="Închide">
+    <button
+      type="button"
+      class="btn-close"
+      (click)="close.emit()"
+      [attr.aria-label]="'PROFILE.SETTINGS.CLOSE_ARIA' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -19,12 +23,12 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="edit-form">
     <!-- Language Selection -->
     <div class="form-group">
-      <label for="language">Limba platformei</label>
+      <label for="language">{{ 'PROFILE.SETTINGS.LANGUAGE_LABEL' | translate }}</label>
       <div class="input-wrap">
         <mat-icon>language</mat-icon>
         <select id="language" formControlName="language">
           @for (lang of languages; track lang.value) {
-            <option [value]="lang.value">{{ lang.label }}</option>
+            <option [value]="lang.value">{{ lang.labelKey | translate }}</option>
           }
         </select>
       </div>
@@ -32,31 +36,40 @@
 
     <!-- Notifications Toggle -->
     <div class="toggle-group">
-      <span class="toggle-label">Activează notificările pe email</span>
+      <span class="toggle-label">{{ 'PROFILE.SETTINGS.NOTIFICATIONS_LABEL' | translate }}</span>
       <label class="switch">
         <input type="checkbox" formControlName="notificationsEnabled" />
         <span class="slider"></span>
-        <span class="switch-status">{{ form.controls.notificationsEnabled.value ? 'ON' : 'OFF' }}</span>
+        <span class="switch-status">
+          {{ (form.controls.notificationsEnabled.value ? 'PROFILE.SETTINGS.STATUS_ON' : 'PROFILE.SETTINGS.STATUS_OFF') | translate }}
+        </span>
       </label>
     </div>
 
     <!-- 2FA Toggle -->
     <div class="toggle-group">
-      <span class="toggle-label">Activează autentificarea în doi pași</span>
+      <span class="toggle-label">{{ 'PROFILE.SETTINGS.TWO_FACTOR_LABEL' | translate }}</span>
       <label class="switch">
         <input type="checkbox" formControlName="twoFactorEnabled" (change)="onToggle2Fa()" />
         <span class="slider"></span>
-        <span class="switch-status">{{ form.controls.twoFactorEnabled.value ? 'ON' : 'OFF' }}</span>
+        <span class="switch-status">
+          {{ (form.controls.twoFactorEnabled.value ? 'PROFILE.SETTINGS.STATUS_ON' : 'PROFILE.SETTINGS.STATUS_OFF') | translate }}
+        </span>
       </label>
     </div>
 
     <!-- OTP Input for 2FA verification -->
     @if (otpSent()) {
       <div class="form-group otp-group">
-        <label for="otp">Cod de verificare OTP</label>
+        <label for="otp">{{ 'PROFILE.SETTINGS.OTP_LABEL' | translate }}</label>
         <div class="input-wrap">
           <mat-icon>pin</mat-icon>
-          <input id="otp" type="text" formControlName="otp" placeholder="123456" maxlength="6" />
+          <input
+            id="otp"
+            type="text"
+            formControlName="otp"
+            [placeholder]="'PROFILE.SETTINGS.OTP_PLACEHOLDER' | translate"
+            maxlength="6" />
         </div>
       </div>
     }
@@ -64,17 +77,18 @@
     <!-- Form Actions -->
     <div class="edit-actions">
       <button type="button" class="btn-cancel" [disabled]="loading()" (click)="close.emit()">
-        Anulează
+        {{ 'PROFILE.SETTINGS.CANCEL' | translate }}
       </button>
       <button type="submit" class="btn-save" [disabled]="loading()">
         @if (loading()) {
           <span class="spinner"></span>
-          <span>Se salvează...</span>
+          <span>{{ 'PROFILE.SETTINGS.SAVING' | translate }}</span>
         } @else {
           <mat-icon>save</mat-icon>
-          <span>Salvează setările</span>
+          <span>{{ 'PROFILE.SETTINGS.SAVE' | translate }}</span>
         }
       </button>
     </div>
   </form>
 </div>
+
