@@ -182,17 +182,8 @@
     "DRESS_CODE_LABEL": "Dress code",
     "DRESS_CODES": {
       "CASUAL": "Casual",
-      "FORMAL": "Formal"
-    },
-    "DURATION_LABEL": "Event duration",
-    "DURATIONS": {
-      "1_DAY": "One day",
-      "2_DAYS": "Two days",
-      "3_DAYS": "Three days",
-      "4_DAYS": "Four days",
-      "5_DAYS": "Five days",
-      "6_DAYS": "Six days",
-      "7_DAYS": "Seven days"
+      "FORMAL": "Formal",
+      "COSTUME": "Costume"
     },
     "SECTION_CONTACT": "Volunteer contact",
     "CONTACT_METHOD_LABEL": "Contact method",
