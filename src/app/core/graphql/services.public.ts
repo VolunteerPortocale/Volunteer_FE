@@ -29,6 +29,11 @@ export type ResendRegistrationOtpMutationVariables = Exact<{
 
 export type ResendRegistrationOtpMutation = { resendRegistrationOtp: boolean };
 
+export type GetLastThreeActiveEventsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLastThreeActiveEventsQuery = { getLastThreeActiveEvents: Array<{ id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, lastModifiedAt: string, lastModifiedBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number }> | null }> | null };
+
 export const CreateUserDocument = gql`
     mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
@@ -85,6 +90,50 @@ export const ResendRegistrationOtpDocument = gql`
   })
   export class ResendRegistrationOtpGQL extends Apollo.Mutation<ResendRegistrationOtpMutation, ResendRegistrationOtpMutationVariables> {
     override document = ResendRegistrationOtpDocument;
+    override client = 'public';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetLastThreeActiveEventsDocument = gql`
+    query GetLastThreeActiveEvents {
+  getLastThreeActiveEvents {
+    id
+    category
+    storageFolderId
+    status
+    createdAt
+    createdBy
+    lastModifiedAt
+    lastModifiedBy
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    files {
+      id
+      eventId
+      type
+      originalName
+      contentType
+      size
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetLastThreeActiveEventsGQL extends Apollo.Query<GetLastThreeActiveEventsQuery, GetLastThreeActiveEventsQueryVariables> {
+    override document = GetLastThreeActiveEventsDocument;
     override client = 'public';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

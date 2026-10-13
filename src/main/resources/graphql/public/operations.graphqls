@@ -22,3 +22,36 @@ mutation ValidateRegistrationOtp($email: String!, $otp: String!) {
 mutation ResendRegistrationOtp($email: String!) {
   resendRegistrationOtp(email: $email)
 }
+
+query GetLastThreeActiveEvents {
+    getLastThreeActiveEvents {
+        id
+        category
+        storageFolderId
+        status
+        createdAt
+        createdBy
+        lastModifiedAt
+        lastModifiedBy
+        details {
+            title
+            description
+            startTime
+            endTime
+            location
+            nrVolunteers
+            contactPhone
+            contactEmail
+            dressCode
+        }
+        files {
+            id
+            eventId
+            type
+            originalName
+            contentType
+            size
+        }
+    }
+}
+

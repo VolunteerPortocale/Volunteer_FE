@@ -22,10 +22,10 @@ export type CreateEventDetailsInput = {
   contactPhone?: InputMaybe<Scalars['String']['input']>;
   description: EventDescriptionInput;
   dressCode: EventDressCode;
-  startTime: Scalars['String']['input'];
   endTime?: InputMaybe<Scalars['String']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
   nrVolunteers: Scalars['Int']['input'];
+  startTime: Scalars['String']['input'];
   title: EventTitleInput;
 };
 

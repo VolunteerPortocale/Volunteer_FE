@@ -149,17 +149,3 @@ query GetEventById($id: String!) {
     createdAt
   }
 }
-
-query GetEventFiles($eventId: String!) {
-  getEventFiles(eventId: $eventId) {
-    id
-    eventId
-    type
-    storageFileId
-    originalName
-    contentType
-    size
-    index
-    createdAt
-  }
-}
