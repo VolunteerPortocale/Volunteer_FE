@@ -110,6 +110,15 @@ mutation UpdateEvent($id: String!, $input: UpdateEventInput!) {
   }
 }
 
+mutation Enroll($input: CreateEnrollmentInput!) {
+  enroll(input: $input) {
+    id
+    eventId
+    userId
+    status
+  }
+}
+
 query GetAllEvents {
   getAllEvents {
     id

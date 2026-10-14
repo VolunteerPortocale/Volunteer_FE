@@ -1,8 +1,14 @@
-import { Injectable, inject, signal, PLATFORM_ID } from '@angular/core';
+import { Injectable, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
 export type SupportedLanguage = 'ro' | 'en' | 'ru';
+
+export const LANGUAGE_LOCALES: Record<SupportedLanguage, string> = {
+  ro: 'ro-RO',
+  en: 'en-US',
+  ru: 'ru-RU',
+} as const;
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +20,7 @@ export class TranslationService {
 
   // Reactive state using Angular 21 Signals
   readonly currentLang = signal<SupportedLanguage>('ro');
+  readonly currentLocale = computed(() => LANGUAGE_LOCALES[this.currentLang()] ?? 'ro-RO');
   private readonly translations = signal<Record<string, unknown>>({});
 
   constructor() {

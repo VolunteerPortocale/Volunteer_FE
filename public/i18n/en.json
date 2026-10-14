@@ -47,7 +47,15 @@
       "APPLY_BTN": "Sign Up as Volunteer",
       "ALREADY_APPLIED": "Enrolled",
       "CLOSE_BTN": "Close",
-      "APPLIED_SUCCESS": "Congratulations! You have successfully enrolled in this civic initiative."
+      "APPLIED_SUCCESS": "Congratulations! You have successfully enrolled in this civic initiative.",
+      "ENROLLING": "Enrolling...",
+      "VOLUNTEER_ONLY_HINT": "Only users logged in as volunteers can enroll in events.",
+      "ERRORS": {
+        "AUTH_REQUIRED": "You must be logged in to enroll.",
+        "VOLUNTEER_ONLY": "Only volunteers can enroll in events.",
+        "ALREADY_ENROLLED": "You are already enrolled in this event.",
+        "GENERIC": "An error occurred while enrolling in the event."
+      }
     }
   },
   "HOME": {

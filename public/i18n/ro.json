@@ -47,7 +47,15 @@
       "APPLY_BTN": "Înscrie-te ca Voluntar",
       "ALREADY_APPLIED": "Ești înscris",
       "CLOSE_BTN": "Închide",
-      "APPLIED_SUCCESS": "Felicitări! Te-ai înscris cu succes la această acțiune civică."
+      "APPLIED_SUCCESS": "Felicitări! Te-ai înscris cu succes la această acțiune civică.",
+      "ENROLLING": "Se înscrie...",
+      "VOLUNTEER_ONLY_HINT": "Doar utilizatorii autentificați ca voluntari se pot înscrie la evenimente.",
+      "ERRORS": {
+        "AUTH_REQUIRED": "Trebuie să fii autentificat pentru a te înscrie.",
+        "VOLUNTEER_ONLY": "Doar voluntarii se pot înscrie la evenimente.",
+        "ALREADY_ENROLLED": "Ești deja înscris la acest eveniment.",
+        "GENERIC": "A apărut o eroare la înscrierea la eveniment."
+      }
     }
   },
   "HOME": {

@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,8 +9,14 @@ import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
 import { EventService } from '../../service/event.service';
 import { TranslationService } from '../../service/translation.service';
+import { EnrollmentService } from '../../service/enrollment.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { GetLastThreeActiveEventsGQL, GetLastThreeActiveEventsQuery } from '../../core/graphql/services.public';
+import { EventFileType } from '../../core/graphql/types';
+import { environment } from '../../../environments/environment';
 
 export type CategoryFilter = 'all' | 'ecology' | 'education' | 'animals';
+export type DbEvent = NonNullable<NonNullable<GetLastThreeActiveEventsQuery['getLastThreeActiveEvents']>[number]>;
 
 export interface AuthProject {
   id: string;
@@ -48,91 +54,67 @@ export class HomeAuthComponent implements OnInit {
   readonly translationService = inject(TranslationService);
   private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
+  private readonly enrollmentService = inject(EnrollmentService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly getLastThreeActiveEventsGQL = inject(GetLastThreeActiveEventsGQL);
+
+  private readonly rawEvents = signal<DbEvent[]>([]);
 
   readonly allProjects = computed<AuthProject[]>(() => {
-    const lang = this.translationService.currentLang();
-    const locale = lang === 'en' ? 'en-US' : lang === 'ru' ? 'ru-RU' : 'ro-RO';
+    const locale = this.translationService.currentLocale();
+    const soonText = this.translationService.translate('HOME_AUTH.SOON');
+    const spotsTemplate = this.translationService.translate('HOME_AUTH.SPOTS_AVAILABLE');
 
-    return this.eventService.events().map((e) => {
-      let titleKey = e.titleKey || '';
-      let descriptionKey = e.descriptionKey || '';
-      let locationKey = e.locationKey || '';
-      let occupiedCount = e.occupiedSpots;
+    return this.rawEvents().map((e) => {
+      const details = e.details;
+      const cover = e.files?.find((f) => f.type === EventFileType.Cover);
+      const imageUrl = cover?.id
+        ? `${environment.apiUrl}/v1/files/${cover.id}/content`
+        : 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80';
 
-      if (e.id === 'eco-forest') {
-        titleKey = titleKey || 'PROJECTS.CARD_1.TITLE';
-        descriptionKey = descriptionKey || 'PROJECTS.CARD_1.DESCRIPTION';
-        locationKey = locationKey || 'PROJECTS.CARD_1.LOCATION';
-        occupiedCount = occupiedCount ?? 32;
-      } else if (e.id === 'senior-digital') {
-        titleKey = titleKey || 'PROJECTS.CARD_2.TITLE';
-        descriptionKey = descriptionKey || 'PROJECTS.CARD_2.DESCRIPTION';
-        locationKey = locationKey || 'PROJECTS.CARD_2.LOCATION';
-        occupiedCount = occupiedCount ?? 14;
-      } else if (e.id === 'shelter-animals') {
-        titleKey = titleKey || 'PROJECTS.CARD_3.TITLE';
-        descriptionKey = descriptionKey || 'PROJECTS.CARD_3.DESCRIPTION';
-        locationKey = locationKey || 'PROJECTS.CARD_3.LOCATION';
-        occupiedCount = occupiedCount ?? 18;
-      }
-
-      // Format date according to active language locale
-      let formattedDate: string;
-      if (e.startDateTime) {
+      const startTime = details?.startTime;
+      let date: string;
+      if (startTime) {
         try {
-          formattedDate = new Date(e.startDateTime).toLocaleDateString(locale, {
+          date = new Date(startTime).toLocaleDateString(locale, {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
           });
         } catch {
-          formattedDate = e.startDateTime;
+          date = startTime;
         }
       } else {
-        formattedDate = this.translationService.translate('HOME_AUTH.SOON');
+        date = soonText;
       }
 
-      // Format spots occupied according to active language
-      let spotsText: string;
-      const total = e.volunteers;
-      if (occupiedCount !== undefined && total) {
-        if (lang === 'en') {
-          spotsText = `${occupiedCount} of ${total} spots filled`;
-        } else if (lang === 'ru') {
-          spotsText = `${occupiedCount} из ${total} мест занято`;
-        } else {
-          spotsText = `${occupiedCount} din ${total} locuri ocupate`;
-        }
-      } else if (total) {
-        if (lang === 'en') {
-          spotsText = `${total} spots available`;
-        } else if (lang === 'ru') {
-          spotsText = `${total} мест доступно`;
-        } else {
-          spotsText = `${total} locuri disponibile`;
-        }
-      } else {
-        spotsText = e.spotsOccupied || '';
-      }
+      const total = details?.nrVolunteers ?? 10;
+      const spotsOccupied = spotsTemplate.includes('{total}')
+        ? spotsTemplate.replace('{total}', total.toString())
+        : `${total} locuri disponibile`;
 
       return {
-        id: e.id,
-        categoryTagKey: e.categoryTagKey || 'HOME_AUTH.FILTERS.ECOLOGY',
-        categoryFilter: (e.categoryFilter as CategoryFilter) || 'all',
-        organization: e.organization,
-        titleKey,
-        fallbackTitle: e.title,
-        descriptionKey,
-        fallbackDescription: e.description,
-        location: e.location,
-        locationKey,
-        date: formattedDate,
-        spotsOccupied: spotsText,
-        imageUrl:
-          e.imageUrl ||
-          'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
-        email: e.email,
-        phone: e.phone,
+        id: e.id ?? '',
+        titleKey: '',
+        fallbackTitle: details?.title ?? '',
+        descriptionKey: '',
+        fallbackDescription: details?.description ?? '',
+        categoryTagKey: `PROFILE.TAGLINE_CATEGORY.${e.category}`,
+        categoryFilter:
+          e.category === 'ENVIRONMENT'
+            ? 'ecology'
+            : e.category === 'EDUCATION'
+              ? 'education'
+              : e.category === 'ANIMAL_CARE'
+                ? 'animals'
+                : 'all',
+        organization: 'Organizație Comunitară',
+        location: details?.location || 'Moldova',
+        date,
+        spotsOccupied,
+        imageUrl,
+        email: details?.contactEmail ?? undefined,
+        phone: details?.contactPhone ?? undefined,
       };
     });
   });
@@ -141,7 +123,9 @@ export class HomeAuthComponent implements OnInit {
   readonly searchQuery = signal<string>('');
   readonly bookmarkedIds = signal<Set<string>>(new Set());
   readonly selectedProjectModal = signal<AuthProject | null>(null);
-  readonly appliedProjectIds = signal<Set<string>>(new Set());
+  readonly enrollmentErrorKey = signal<string | null>(null);
+  readonly isEnrolling = this.enrollmentService.isEnrolling;
+  readonly isVolunteer = computed(() => this.enrollmentService.isVolunteer());
 
   readonly currentUser = this.authService.currentUser;
   readonly userNickname = computed(() => {
@@ -194,7 +178,20 @@ export class HomeAuthComponent implements OnInit {
   ngOnInit(): void {
     if (!this.authService.isAuthenticated()) {
       this.authService.login();
+      return;
     }
+
+    this.getLastThreeActiveEventsGQL
+      .watch({ fetchPolicy: 'cache-first' })
+      .valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        const rawEvents = result.data?.getLastThreeActiveEvents ?? [];
+        const validEvents = rawEvents.filter(
+          (e): e is NonNullable<typeof e> => !!e && !!e.details
+        );
+        this.rawEvents.set(validEvents as unknown as DbEvent[]);
+      });
   }
 
   setCategory(category: CategoryFilter): void {
@@ -232,17 +229,23 @@ export class HomeAuthComponent implements OnInit {
   }
 
   closeModal(): void {
+    this.enrollmentErrorKey.set(null);
     this.selectedProjectModal.set(null);
   }
 
-  applyToEvent(projectId: string): void {
-    const set = new Set(this.appliedProjectIds());
-    set.add(projectId);
-    this.appliedProjectIds.set(set);
+  async applyToEvent(projectId: string): Promise<void> {
+    this.enrollmentErrorKey.set(null);
+
+    try {
+      await this.enrollmentService.enrollToEvent(projectId);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'HOME_AUTH.MODAL.ERRORS.GENERIC';
+      this.enrollmentErrorKey.set(message);
+    }
   }
 
   isApplied(projectId: string): boolean {
-    return this.appliedProjectIds().has(projectId);
+    return this.enrollmentService.isEnrolled(projectId);
   }
 
   editProject(projectId: string, event?: Event): void {
