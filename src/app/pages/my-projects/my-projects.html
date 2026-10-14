@@ -1,0 +1,165 @@
+<main class="my-projects-container">
+  <header class="page-header">
+    <h1 class="page-title">{{ 'NAV.MY_PROJECTS' | translate }}</h1>
+  </header>
+
+  @if (enrolledEvents().length > 0) {
+    <div class="projects-grid">
+      @for (event of enrolledEvents(); track event.id) {
+        <article class="project-card" (click)="viewEvent(event)">
+          <div class="card-media">
+            <img [src]="event.imageUrl" [alt]="event.title" class="card-image" loading="lazy" />
+            <span class="enrolled-badge">
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ 'MY_PROJECTS_PAGE.ENROLLED_BADGE' | translate }}</span>
+            </span>
+          </div>
+
+          <div class="card-content">
+            <span class="category">{{ (event.categoryTagKey || '') | translate }}</span>
+            <h3 class="card-title">{{ event.titleKey ? (event.titleKey | translate) : event.title }}</h3>
+            <p class="card-desc">{{ event.descriptionKey ? (event.descriptionKey | translate) : event.description }}</p>
+
+            <div class="card-meta">
+              <span class="meta-item">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ event.locationKey ? (event.locationKey | translate) : event.location }}</span>
+              </span>
+              <span class="meta-item">
+                <mat-icon>event</mat-icon>
+                <span>{{ event.startDateTime | date: 'mediumDate' }}</span>
+              </span>
+            </div>
+
+            <div class="card-footer">
+              <button type="button" class="btn-view-details">
+                {{ 'HOME_AUTH.VIEW_PROJECT' | translate }}
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <div class="empty-icon-circle">
+        <mat-icon>event_busy</mat-icon>
+      </div>
+      <h2 class="empty-title">{{ 'MY_PROJECTS_PAGE.EMPTY_TITLE' | translate }}</h2>
+      <p class="empty-desc">{{ 'MY_PROJECTS_PAGE.EMPTY_DESC' | translate }}</p>
+      <a routerLink="/" class="btn-explore">{{ 'MY_PROJECTS_PAGE.EXPLORE_BTN' | translate }}</a>
+    </div>
+  }
+
+  <!-- Event Details Modal Dialog -->
+  @if (selectedEvent(); as modalEvent) {
+    <div class="event-modal-backdrop" (click)="closeModal()">
+      <div class="event-modal-dialog" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          class="modal-close-btn"
+          (click)="closeModal()"
+          [title]="'HOME_AUTH.MODAL.CLOSE_BTN' | translate"
+          aria-label="Close modal"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+
+        <div class="modal-header-image">
+          <img
+            [src]="modalEvent.imageUrl"
+            [alt]="modalEvent.titleKey ? (modalEvent.titleKey | translate) : modalEvent.title"
+          />
+          <span class="category-badge">
+            {{ (modalEvent.categoryTagKey || '') | translate }}
+          </span>
+        </div>
+
+        <div class="modal-content-body">
+          <div class="applied-banner">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{ 'MY_PROJECTS_PAGE.ENROLLED_BANNER' | translate }}</span>
+          </div>
+
+          @if (modalEvent.organization) {
+            <span class="modal-org-label">{{ modalEvent.organization }}</span>
+          }
+          <h2 class="modal-event-title">
+            {{ modalEvent.titleKey ? (modalEvent.titleKey | translate) : modalEvent.title }}
+          </h2>
+
+          <div class="modal-meta-grid">
+            <div class="modal-meta-box">
+              <mat-icon>event</mat-icon>
+              <div>
+                <span class="meta-label">{{ 'HOME_AUTH.MODAL.DATE_TIME' | translate }}</span>
+                <span class="meta-val">
+                  @if (modalEvent.startDateTime) {
+                    {{ modalEvent.startDateTime | date: 'mediumDate' }} ({{ modalEvent.startDateTime | date: 'shortTime' }})
+                  }
+                </span>
+              </div>
+            </div>
+
+            <div class="modal-meta-box">
+              <mat-icon>location_on</mat-icon>
+              <div>
+                <span class="meta-label">{{ 'HOME_AUTH.MODAL.LOCATION' | translate }}</span>
+                <span class="meta-val">
+                  {{ modalEvent.locationKey ? (modalEvent.locationKey | translate) : modalEvent.location }}
+                </span>
+              </div>
+            </div>
+
+            <div class="modal-meta-box">
+              <mat-icon>people_outline</mat-icon>
+              <div>
+                <span class="meta-label">{{ 'HOME_AUTH.MODAL.SPOTS_STATUS' | translate }}</span>
+                <span class="meta-val">
+                  {{ modalEvent.spotsOccupied }}
+                </span>
+              </div>
+            </div>
+
+            @if (modalEvent.dressCode) {
+              <div class="modal-meta-box">
+                <mat-icon>checkroom</mat-icon>
+                <div>
+                  <span class="meta-label">{{ 'ADD_EVENT.DRESS_CODE_LABEL' | translate }}</span>
+                  <span class="meta-val">{{ modalEvent.dressCode | translate }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="modal-desc-section">
+            <h4>{{ 'HOME_AUTH.MODAL.ABOUT_EVENT' | translate }}</h4>
+            <p>{{ modalEvent.descriptionKey ? (modalEvent.descriptionKey | translate) : modalEvent.description }}</p>
+          </div>
+
+          @if (modalEvent.email || modalEvent.phone) {
+            <div class="modal-contact-row">
+              <span class="contact-lbl">{{ 'HOME_AUTH.MODAL.CONTACT' | translate }}</span>
+              <div class="contact-badges">
+                @if (modalEvent.email) {
+                  <span class="contact-pill"><mat-icon>email</mat-icon> {{ modalEvent.email }}</span>
+                }
+                @if (modalEvent.phone) {
+                  <span class="contact-pill"><mat-icon>phone</mat-icon> {{ modalEvent.phone }}</span>
+                }
+              </div>
+            </div>
+          }
+
+          <div class="modal-actions-footer">
+            <button type="button" class="btn-outline modal-cancel-btn" (click)="closeModal()">
+              {{ 'HOME_AUTH.MODAL.CLOSE_BTN' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</main>
+
+<app-footer />

@@ -12,6 +12,14 @@
     "SETTINGS": "Setări",
     "LOGOUT": "Deconectare"
   },
+  "MY_PROJECTS_PAGE": {
+    "TITLE": "Proiectele mele",
+    "ENROLLED_BADGE": "Înscris",
+    "ENROLLED_BANNER": "Ești înscris la acest eveniment",
+    "EMPTY_TITLE": "Nu ești înscris la niciun eveniment",
+    "EMPTY_DESC": "Explorează inițiativele disponibile pe platformă și implică-te!",
+    "EXPLORE_BTN": "Explorează Evenimente"
+  },
   "HOME_AUTH": {
     "GREETING": "Bine ai revenit",
     "TITLE": "Unde vrei să faci o schimbare?",

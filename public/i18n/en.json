@@ -12,6 +12,14 @@
     "SETTINGS": "Settings",
     "LOGOUT": "Log out"
   },
+  "MY_PROJECTS_PAGE": {
+    "TITLE": "My projects",
+    "ENROLLED_BADGE": "Enrolled",
+    "ENROLLED_BANNER": "You are enrolled in this event",
+    "EMPTY_TITLE": "You are not enrolled in any events yet",
+    "EMPTY_DESC": "Explore available initiatives on the platform and get involved!",
+    "EXPLORE_BTN": "Explore Events"
+  },
   "HOME_AUTH": {
     "GREETING": "Welcome back",
     "TITLE": "Where do you want to make a change?",
