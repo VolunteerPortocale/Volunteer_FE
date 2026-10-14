@@ -8,9 +8,7 @@
       <!-- Col 1: Brand Info & Socials -->
       <div class="footer-col brand-col">
         <a [routerLink]="brandRoute()" class="footer-brand-logo">
-          <div class="brand-icon-circle">
-            <img src="assets/icons/brand-logo.svg" alt="Volunteerio Logo" class="brand-svg" />
-          </div>
+          <img src="favicon.ico" alt="Volunteerio Logo" class="brand-logo-img" />
           <span class="brand-name">VOLUNTEERIO</span>
         </a>
 
@@ -68,45 +66,6 @@
         </ul>
       </div>
 
-      <!-- Col 5: Newsletter Subscription Card -->
-      <div class="footer-col newsletter-col">
-        <div class="newsletter-card">
-          <div class="newsletter-header">
-            <mat-icon class="newsletter-icon">mark_email_read</mat-icon>
-            <h4 class="newsletter-title">{{ 'FOOTER.NEWSLETTER_TITLE' | translate }}</h4>
-          </div>
-          <p class="newsletter-desc">
-            {{ 'FOOTER.NEWSLETTER_DESC' | translate }}
-          </p>
-
-          @if (subscribed()) {
-            <div class="subscribe-success">
-              <mat-icon class="success-icon">check_circle</mat-icon>
-              <span>{{ 'FOOTER.SUBSCRIBE_SUCCESS' | translate }}</span>
-            </div>
-          } @else {
-            <form (submit)="onSubscribe($event)" class="newsletter-form">
-              <div class="newsletter-input-wrap">
-                <input
-                  type="email"
-                  [ngModel]="email()"
-                  (ngModelChange)="email.set($event)"
-                  name="footerEmail"
-                  [placeholder]="'FOOTER.EMAIL_PLACEHOLDER' | translate"
-                  class="newsletter-input"
-                  required
-                />
-                <button type="submit" class="newsletter-submit-btn" aria-label="Subscribe to newsletter">
-                  <mat-icon>send</mat-icon>
-                </button>
-              </div>
-              @if (errorMessage()) {
-                <span class="newsletter-error">{{ errorMessage() }}</span>
-              }
-            </form>
-          }
-        </div>
-      </div>
     </div>
 
     <!-- Bottom Bar (Legal, Copyright & Scroll to Top) -->

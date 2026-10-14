@@ -1,3 +1,5 @@
 type Query {
     isEmailRegistered(email: String!): Boolean!
+    getLastThreeActiveEvents: [Event!]
+    getEventFiles(eventId: String!): [EventFile!]!
 }

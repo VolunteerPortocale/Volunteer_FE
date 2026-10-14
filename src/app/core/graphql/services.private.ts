@@ -85,13 +85,6 @@ export type GetEventByIdQueryVariables = Exact<{
 
 export type GetEventByIdQuery = { getEventById: { id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } } };
 
-export type GetEventFilesQueryVariables = Exact<{
-  eventId: string;
-}>;
-
-
-export type GetEventFilesQuery = { getEventFiles: Array<{ id: string, eventId: string, type: Types.EventFileType, storageFileId: string, originalName: string, contentType: string, size: number, index: number, createdAt: string }> };
-
 export const GetAllUsersDocument = gql`
     query GetAllUsers {
   getAllUsers {
@@ -383,32 +376,6 @@ export const GetEventByIdDocument = gql`
   })
   export class GetEventByIdGQL extends Apollo.Query<GetEventByIdQuery, GetEventByIdQueryVariables> {
     override document = GetEventByIdDocument;
-    
-    constructor(apollo: Apollo.Apollo) {
-      super(apollo);
-    }
-  }
-export const GetEventFilesDocument = gql`
-    query GetEventFiles($eventId: String!) {
-  getEventFiles(eventId: $eventId) {
-    id
-    eventId
-    type
-    storageFileId
-    originalName
-    contentType
-    size
-    index
-    createdAt
-  }
-}
-    `;
-
-  @Injectable({
-    providedIn: 'root'
-  })
-  export class GetEventFilesGQL extends Apollo.Query<GetEventFilesQuery, GetEventFilesQueryVariables> {
-    override document = GetEventFilesDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
