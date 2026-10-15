@@ -1,0 +1,90 @@
+<main class="ngo-management-container">
+  <!-- Top Hero & Actions Bar -->
+  <header class="ngo-hero-header">
+    <div class="ngo-hero-content">
+      <div class="ngo-badge">
+        <mat-icon class="badge-icon">business</mat-icon>
+        <span>{{ 'NAV.ORGANIZATIONS' | translate }} &bull; Modul Administrare ONG</span>
+      </div>
+      <h1 class="ngo-page-title">Proiectele Mele (ONG)</h1>
+      <p class="ngo-page-subtitle">
+        Coordonează inițiativele civice, gestionează evenimentele publicate și monitorizează impactul comunitar în timp real.
+      </p>
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p class="loading-text">Se încarcă proiectele din baza de date...</p>
+    </div>
+  } @else {
+    <!-- Metric Statistics Cards Component -->
+    <app-ngo-metrics
+      [totalEvents]="totalProjectsCount()"
+      [activeEvents]="activeProjectsCount()"
+      [completedEvents]="completedProjectsCount()"
+      [totalCapacity]="totalCapacityNeeded()"
+    />
+
+    <!-- Filter & Search Toolbar Component -->
+    <app-ngo-filter-toolbar
+      [searchQuery]="searchQuery()"
+      [selectedStatus]="selectedStatus()"
+      [selectedCategory]="selectedCategory()"
+      [categories]="categoriesList()"
+      (searchChange)="searchQuery.set($event)"
+      (statusChange)="selectedStatus.set($event)"
+      (categoryChange)="selectedCategory.set($event)"
+    />
+
+    <!-- Projects Grid -->
+    @if (filteredEvents().length > 0) {
+      <section class="ngo-projects-grid">
+        @for (item of filteredEvents(); track item.id) {
+          <app-ngo-event-card
+            [event]="item"
+            (edit)="editEvent($event)"
+            (preview)="openPreview($event)"
+          />
+        }
+      </section>
+    } @else {
+      <!-- Empty State -->
+      <section class="ngo-empty-state">
+        <div class="empty-icon-wrap">
+          <mat-icon>event_busy</mat-icon>
+        </div>
+        <h3 class="empty-title">Nu a fost găsit niciun proiect</h3>
+        <p class="empty-desc">
+          @if (searchQuery() || selectedCategory() !== 'all' || selectedStatus() !== 'all') {
+            Niciun eveniment nu corespunde filtrelor selectate. Încearcă să resetezi căutarea.
+          } @else {
+            Nu ai publicat încă niciun eveniment de voluntariat. Mobilizează comunitatea creând primul tău proiect!
+          }
+        </p>
+
+        @if (searchQuery() || selectedCategory() !== 'all' || selectedStatus() !== 'all') {
+          <div class="empty-actions">
+            <button
+              type="button"
+              class="btn-outline"
+              (click)="searchQuery.set(''); selectedCategory.set('all'); selectedStatus.set('all')"
+            >
+              Resetează filtrele
+            </button>
+          </div>
+        }
+      </section>
+    }
+  }
+
+  <!-- Modal Component: Event Preview -->
+  <app-ngo-event-preview-modal
+    [event]="previewModalEvent()"
+    (close)="closePreview()"
+    (edit)="editEvent($event)"
+  />
+</main>
+
+<app-footer></app-footer>

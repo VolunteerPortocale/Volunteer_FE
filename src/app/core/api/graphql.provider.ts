@@ -54,11 +54,11 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
 
     return accessToken
       ? {
-          headers: {
-            ...prevContext.headers,
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        headers: {
+          ...prevContext.headers,
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
       : {};
   });
 

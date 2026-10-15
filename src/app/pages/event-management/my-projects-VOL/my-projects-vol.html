@@ -3,31 +3,45 @@
     <h1 class="page-title">{{ 'NAV.MY_PROJECTS' | translate }}</h1>
   </header>
 
-  @if (enrolledEvents().length > 0) {
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p class="loading-text">Se încarcă proiectele tale...</p>
+    </div>
+  } @else if (enrolledEvents().length > 0) {
     <div class="projects-grid">
-      @for (event of enrolledEvents(); track event.id) {
-        <article class="project-card" (click)="viewEvent(event)">
+      @for (item of enrolledEvents(); track item.event.id) {
+        <article class="project-card" (click)="viewEvent(item)">
           <div class="card-media">
-            <img [src]="event.imageUrl" [alt]="event.title" class="card-image" loading="lazy" />
-            <span class="enrolled-badge">
-              <mat-icon>check_circle</mat-icon>
-              <span>{{ 'MY_PROJECTS_PAGE.ENROLLED_BADGE' | translate }}</span>
-            </span>
+            <img [src]="getCoverImageUrl(item.event)" [alt]="item.event.details.title" class="card-image" loading="lazy" />
+            @if (item.enrollmentStatus === 'CONFIRMED') {
+              <span class="enrolled-badge confirmed">
+                <mat-icon>verified</mat-icon>
+                <span>Confirmat</span>
+              </span>
+            } @else {
+              <span class="enrolled-badge">
+                <mat-icon>check_circle</mat-icon>
+                <span>{{ 'MY_PROJECTS_PAGE.ENROLLED_BADGE' | translate }}</span>
+              </span>
+            }
           </div>
 
           <div class="card-content">
-            <span class="category">{{ (event.categoryTagKey || '') | translate }}</span>
-            <h3 class="card-title">{{ event.titleKey ? (event.titleKey | translate) : event.title }}</h3>
-            <p class="card-desc">{{ event.descriptionKey ? (event.descriptionKey | translate) : event.description }}</p>
+            <span class="category">{{ 'PROFILE.TAGLINE_CATEGORY.' + item.event.category | translate }}</span>
+            <h3 class="card-title">{{ item.event.details.title }}</h3>
+            <p class="card-desc">{{ item.event.details.description }}</p>
 
             <div class="card-meta">
-              <span class="meta-item">
-                <mat-icon>location_on</mat-icon>
-                <span>{{ event.locationKey ? (event.locationKey | translate) : event.location }}</span>
-              </span>
+              @if (item.event.details.location) {
+                <span class="meta-item">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ item.event.details.location }}</span>
+                </span>
+              }
               <span class="meta-item">
                 <mat-icon>event</mat-icon>
-                <span>{{ event.startDateTime | date: 'mediumDate' }}</span>
+                <span>{{ item.event.details.startTime | date: 'mediumDate' }}</span>
               </span>
             </div>
 
@@ -52,7 +66,7 @@
   }
 
   <!-- Event Details Modal Dialog -->
-  @if (selectedEvent(); as modalEvent) {
+  @if (selectedEvent(); as selected) {
     <div class="event-modal-backdrop" (click)="closeModal()">
       <div class="event-modal-dialog" (click)="$event.stopPropagation()">
         <button
@@ -67,11 +81,11 @@
 
         <div class="modal-header-image">
           <img
-            [src]="modalEvent.imageUrl"
-            [alt]="modalEvent.titleKey ? (modalEvent.titleKey | translate) : modalEvent.title"
+            [src]="getCoverImageUrl(selected.event)"
+            [alt]="selected.event.details.title"
           />
           <span class="category-badge">
-            {{ (modalEvent.categoryTagKey || '') | translate }}
+            {{ 'PROFILE.TAGLINE_CATEGORY.' + selected.event.category | translate }}
           </span>
         </div>
 
@@ -81,11 +95,8 @@
             <span>{{ 'MY_PROJECTS_PAGE.ENROLLED_BANNER' | translate }}</span>
           </div>
 
-          @if (modalEvent.organization) {
-            <span class="modal-org-label">{{ modalEvent.organization }}</span>
-          }
           <h2 class="modal-event-title">
-            {{ modalEvent.titleKey ? (modalEvent.titleKey | translate) : modalEvent.title }}
+            {{ selected.event.details.title }}
           </h2>
 
           <div class="modal-meta-grid">
@@ -94,58 +105,62 @@
               <div>
                 <span class="meta-label">{{ 'HOME_AUTH.MODAL.DATE_TIME' | translate }}</span>
                 <span class="meta-val">
-                  @if (modalEvent.startDateTime) {
-                    {{ modalEvent.startDateTime | date: 'mediumDate' }} ({{ modalEvent.startDateTime | date: 'shortTime' }})
+                  @if (selected.event.details.startTime) {
+                    {{ selected.event.details.startTime | date: 'mediumDate' }} ({{ selected.event.details.startTime | date: 'shortTime' }})
                   }
                 </span>
               </div>
             </div>
 
-            <div class="modal-meta-box">
-              <mat-icon>location_on</mat-icon>
-              <div>
-                <span class="meta-label">{{ 'HOME_AUTH.MODAL.LOCATION' | translate }}</span>
-                <span class="meta-val">
-                  {{ modalEvent.locationKey ? (modalEvent.locationKey | translate) : modalEvent.location }}
-                </span>
+            @if (selected.event.details.location) {
+              <div class="modal-meta-box">
+                <mat-icon>location_on</mat-icon>
+                <div>
+                  <span class="meta-label">{{ 'HOME_AUTH.MODAL.LOCATION' | translate }}</span>
+                  <span class="meta-val">
+                    {{ selected.event.details.location }}
+                  </span>
+                </div>
               </div>
-            </div>
+            }
 
             <div class="modal-meta-box">
               <mat-icon>people_outline</mat-icon>
               <div>
                 <span class="meta-label">{{ 'HOME_AUTH.MODAL.SPOTS_STATUS' | translate }}</span>
                 <span class="meta-val">
-                  {{ modalEvent.spotsOccupied }}
+                  {{ selected.event.details.nrVolunteers }} locuri disponibile
                 </span>
               </div>
             </div>
 
-            @if (modalEvent.dressCode) {
+            @if (selected.event.details.dressCode) {
               <div class="modal-meta-box">
                 <mat-icon>checkroom</mat-icon>
                 <div>
                   <span class="meta-label">{{ 'ADD_EVENT.DRESS_CODE_LABEL' | translate }}</span>
-                  <span class="meta-val">{{ modalEvent.dressCode | translate }}</span>
+                  <span class="meta-val">{{ 'ADD_EVENT.DRESS_CODES.' + selected.event.details.dressCode | translate }}</span>
                 </div>
               </div>
             }
           </div>
 
-          <div class="modal-desc-section">
-            <h4>{{ 'HOME_AUTH.MODAL.ABOUT_EVENT' | translate }}</h4>
-            <p>{{ modalEvent.descriptionKey ? (modalEvent.descriptionKey | translate) : modalEvent.description }}</p>
-          </div>
+          @if (selected.event.details.description) {
+            <div class="modal-desc-section">
+              <h4>{{ 'HOME_AUTH.MODAL.ABOUT_EVENT' | translate }}</h4>
+              <p>{{ selected.event.details.description }}</p>
+            </div>
+          }
 
-          @if (modalEvent.email || modalEvent.phone) {
+          @if (selected.event.details.contactEmail || selected.event.details.contactPhone) {
             <div class="modal-contact-row">
               <span class="contact-lbl">{{ 'HOME_AUTH.MODAL.CONTACT' | translate }}</span>
               <div class="contact-badges">
-                @if (modalEvent.email) {
-                  <span class="contact-pill"><mat-icon>email</mat-icon> {{ modalEvent.email }}</span>
+                @if (selected.event.details.contactEmail) {
+                  <span class="contact-pill"><mat-icon>email</mat-icon> {{ selected.event.details.contactEmail }}</span>
                 }
-                @if (modalEvent.phone) {
-                  <span class="contact-pill"><mat-icon>phone</mat-icon> {{ modalEvent.phone }}</span>
+                @if (selected.event.details.contactPhone) {
+                  <span class="contact-pill"><mat-icon>phone</mat-icon> {{ selected.event.details.contactPhone }}</span>
                 }
               </div>
             </div>
@@ -159,7 +174,7 @@
               type="button"
               class="modal-unenroll-btn"
               [disabled]="isUnenrolling()"
-              (click)="unenroll(modalEvent.id)"
+              (click)="unenroll(selected.event.id)"
             >
               <mat-icon [class.spin]="isUnenrolling()">
                 {{ isUnenrolling() ? 'sync' : 'event_busy' }}

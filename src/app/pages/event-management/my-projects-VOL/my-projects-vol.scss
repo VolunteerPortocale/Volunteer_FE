@@ -20,6 +20,21 @@
   }
 }
 
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  gap: 1rem;
+
+  .loading-text {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+}
+
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -61,15 +76,20 @@
       position: absolute;
       top: 14px;
       right: 14px;
-      background: #1b8755;
-      color: #fff;
+      background: var(--color-primary);
+      color: var(--color-white);
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 5px 12px;
-      border-radius: 30px;
+      padding: 4px 12px;
+      border-radius: 50px;
       font-size: 0.75rem;
       font-weight: 700;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+      &.confirmed {
+        background: var(--color-success);
+      }
 
       mat-icon {
         font-size: 15px;
@@ -140,14 +160,19 @@
       .btn-view-details {
         width: 100%;
         padding: 10px 14px;
-        border-radius: 12px;
+        border-radius: 50px;
         border: none;
-        background: rgba(43, 76, 63, 0.08);
+        background: var(--color-primary-soft);
         color: var(--color-primary);
         font-weight: 600;
         font-size: 0.88rem;
         cursor: pointer;
-        transition: background 0.2s ease, color 0.2s ease;
+        transition: background var(--transition-fast, 0.2s ease), color var(--transition-fast, 0.2s ease);
+
+        &:hover {
+          background: var(--color-primary);
+          color: var(--color-white);
+        }
       }
     }
   }
@@ -197,16 +222,19 @@
   .btn-explore {
     display: inline-flex;
     align-items: center;
-    padding: 12px 28px;
-    border-radius: 30px;
+    justify-content: center;
+    height: var(--btn-height);
+    padding: var(--btn-padding);
+    border-radius: var(--btn-border-radius, 50px);
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-white);
     text-decoration: none;
     font-weight: 600;
-    transition: opacity 0.2s ease;
+    transition: background var(--transition-fast, 0.2s ease), transform var(--transition-fast, 0.2s ease);
 
     &:hover {
-      opacity: 0.9;
+      background: var(--color-primary-hover);
+      transform: translateY(-1px);
     }
   }
 }
@@ -442,16 +470,17 @@
       border-top: 1px solid rgba(0, 0, 0, 0.08);
 
       .modal-cancel-btn {
-        padding: 10px 20px;
-        border-radius: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.15);
-        background: transparent;
+        padding: 10px 24px;
+        border-radius: 50px;
+        border: 1.5px solid var(--color-dark-grey);
+        background: var(--color-white);
+        color: var(--color-dark-grey);
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.2s ease;
+        transition: background var(--transition-fast, 0.2s ease);
 
         &:hover {
-          background: #f1f5f9;
+          background: var(--color-light-grey);
         }
       }
 
@@ -459,14 +488,14 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 20px;
-        border-radius: 10px;
+        padding: 10px 24px;
+        border-radius: 50px;
         border: 1px solid var(--color-danger-border);
         background-color: var(--color-danger-soft);
         color: var(--color-danger);
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all var(--transition-fast, 0.2s ease);
 
         mat-icon {
           font-size: 18px;

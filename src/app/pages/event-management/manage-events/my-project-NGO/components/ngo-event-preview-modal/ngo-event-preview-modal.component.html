@@ -1,0 +1,108 @@
+@if (event(); as selected) {
+  <div class="modal-backdrop" (click)="onClose()">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <div class="modal-header-info">
+          <span class="modal-category">
+            {{ 'PROFILE.TAGLINE_CATEGORY.' + selected.category | translate }}
+          </span>
+          <h2 class="modal-title">
+            {{ selected.details.title }}
+          </h2>
+        </div>
+        <button class="modal-close-btn" (click)="onClose()" aria-label="Închide">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <div class="modal-hero-image" [style.background-image]="'url(' + imageUrl() + ')'"></div>
+
+        <div class="modal-details-grid">
+          <div class="modal-detail-item">
+            <mat-icon class="detail-icon">calendar_today</mat-icon>
+            <div>
+              <strong>Data de început:</strong>
+              <p>{{ selected.details.startTime | date: 'dd MMMM yyyy, HH:mm' }}</p>
+            </div>
+          </div>
+
+          @if (selected.details.endTime) {
+            <div class="modal-detail-item">
+              <mat-icon class="detail-icon">alarm_on</mat-icon>
+              <div>
+                <strong>Data de finalizare:</strong>
+                <p>{{ selected.details.endTime | date: 'dd MMMM yyyy, HH:mm' }}</p>
+              </div>
+            </div>
+          }
+
+          @if (selected.details.location) {
+            <div class="modal-detail-item">
+              <mat-icon class="detail-icon">location_on</mat-icon>
+              <div>
+                <strong>Locație:</strong>
+                <p>{{ selected.details.location }}</p>
+              </div>
+            </div>
+          }
+
+          <div class="modal-detail-item">
+            <mat-icon class="detail-icon">group</mat-icon>
+            <div>
+              <strong>Capacitate voluntari:</strong>
+              <p>{{ selected.details.nrVolunteers }} voluntari solicitați</p>
+            </div>
+          </div>
+
+          @if (selected.details.contactEmail) {
+            <div class="modal-detail-item">
+              <mat-icon class="detail-icon">email</mat-icon>
+              <div>
+                <strong>Email coordonator:</strong>
+                <p>{{ selected.details.contactEmail }}</p>
+              </div>
+            </div>
+          }
+
+          @if (selected.details.contactPhone) {
+            <div class="modal-detail-item">
+              <mat-icon class="detail-icon">phone</mat-icon>
+              <div>
+                <strong>Telefon:</strong>
+                <p>{{ selected.details.contactPhone }}</p>
+              </div>
+            </div>
+          }
+
+          @if (selected.details.dressCode) {
+            <div class="modal-detail-item">
+              <mat-icon class="detail-icon">checkroom</mat-icon>
+              <div>
+                <strong>Dress code:</strong>
+                <p>{{ 'ADD_EVENT.DRESS_CODES.' + selected.details.dressCode | translate }}</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (selected.details.description) {
+          <div class="modal-section">
+            <h3>Descriere Proiect</h3>
+            <p class="modal-desc-text">
+              {{ selected.details.description }}
+            </p>
+          </div>
+        }
+      </div>
+
+      <footer class="modal-footer">
+        <button type="button" class="btn-outline" (click)="onClose()">Închide</button>
+        <button type="button" class="btn-primary" (click)="onEdit()">
+          <mat-icon>edit</mat-icon>
+          <span>Editează Eveniment</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}

@@ -4,4 +4,8 @@ type Query {
     getCurrentUser: User!
     getAllEvents: [Event!]!
     getEventById(id: String!): Event!
+    getCurrentUserEvents: [Event!]!
+    getEventsCreatedByCurrentUser: [Event!]!
+    getCurrentUserEnrollments: [Enrollment!]!
+    getEventEnrollmentById(id: String!): Enrollment
 }
