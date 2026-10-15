@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
-import { of, switchMap, map, Observable, forkJoin } from 'rxjs';
+import { of, switchMap, Observable, forkJoin } from 'rxjs';
 import { CreateEventGQL } from '../../../core/graphql/services.private';
 import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../../core/graphql/types';
 import { HttpClient } from '@angular/common/http';

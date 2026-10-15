@@ -199,6 +199,10 @@ export enum Language {
   Ru = 'RU'
 }
 
+export type UnenrollInput = {
+  eventId: Scalars['String']['input'];
+};
+
 export type UpdateEventDetailsInput = {
   contactEmail?: InputMaybe<Scalars['String']['input']>;
   contactPhone?: InputMaybe<Scalars['String']['input']>;

@@ -125,6 +125,7 @@ export class HomeAuthComponent implements OnInit {
   readonly selectedProjectModal = signal<AuthProject | null>(null);
   readonly enrollmentErrorKey = signal<string | null>(null);
   readonly isEnrolling = this.enrollmentService.isEnrolling;
+  readonly isUnenrolling = this.enrollmentService.isUnenrolling;
   readonly isVolunteer = computed(() => this.enrollmentService.isVolunteer());
 
   readonly currentUser = this.authService.currentUser;
@@ -234,18 +235,25 @@ export class HomeAuthComponent implements OnInit {
   }
 
   async applyToEvent(projectId: string): Promise<void> {
-    this.enrollmentErrorKey.set(null);
-
-    try {
-      await this.enrollmentService.enrollToEvent(projectId);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'HOME_AUTH.MODAL.ERRORS.GENERIC';
-      this.enrollmentErrorKey.set(message);
-    }
+    await this.handleEnrollmentAction(() => this.enrollmentService.enrollToEvent(projectId));
   }
 
   isApplied(projectId: string): boolean {
     return this.enrollmentService.isEnrolled(projectId);
+  }
+
+  async unenrollFromEvent(projectId: string): Promise<void> {
+    await this.handleEnrollmentAction(() => this.enrollmentService.unenrollFromEvent(projectId));
+  }
+
+  private async handleEnrollmentAction(action: () => Promise<unknown>): Promise<void> {
+    this.enrollmentErrorKey.set(null);
+    try {
+      await action();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'HOME_AUTH.MODAL.ERRORS.GENERIC';
+      this.enrollmentErrorKey.set(message);
+    }
   }
 
   editProject(projectId: string, event?: Event): void {

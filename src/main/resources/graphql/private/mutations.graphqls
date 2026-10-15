@@ -7,6 +7,7 @@ type Mutation {
     updateEvent(id: String!, input: UpdateEventInput!): Event!
     enroll(input: CreateEnrollmentInput!): Enrollment!
     confirmEnrollment(input: ConfirmEnrollmentInput!): GenericPayload!
+    unenroll(input: UnenrollInput!): GenericPayload!
     initiateTwoFactor: Boolean!
     confirmTwoFactor(otp: String!): Boolean!
 }

@@ -119,6 +119,12 @@ mutation Enroll($input: CreateEnrollmentInput!) {
   }
 }
 
+mutation Unenroll($input: UnenrollInput!) {
+  unenroll(input: $input) {
+    status
+  }
+}
+
 query GetAllEvents {
   getAllEvents {
     id
