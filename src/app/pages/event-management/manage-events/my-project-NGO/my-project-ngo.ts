@@ -169,6 +169,3 @@ export class MyProjectNgoComponent implements OnInit {
     this.previewModalEvent.set(null);
   }
 }
-
-export { MyProjectNgoComponent as MyProjectNGOComponent };
-export { MyProjectNgoComponent as ManageEventsComponent };

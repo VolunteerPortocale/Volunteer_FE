@@ -162,6 +162,3 @@ export class MyProjectsVolComponent implements OnInit {
     }
   }
 }
-
-export { MyProjectsVolComponent as MyProjectsComponent };
-export { MyProjectsVolComponent as MyProjectsVOLComponent };
