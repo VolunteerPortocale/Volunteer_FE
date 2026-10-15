@@ -70,7 +70,7 @@
                 class="card-image"
                 loading="lazy"
               />
-              
+
               <!-- Category Badge (Top-Left) -->
               <span class="category-badge">
                 {{ project.categoryTagKey | translate }}
@@ -267,6 +267,14 @@
             </div>
           }
 
+          <!-- Error Alert Banner -->
+          @if (enrollmentErrorKey()) {
+            <div class="error-banner">
+              <mat-icon>error_outline</mat-icon>
+              <span>{{ enrollmentErrorKey()! | translate }}</span>
+            </div>
+          }
+
           <!-- Applied Success Alert Banner -->
           @if (isApplied(modalProject.id)) {
             <div class="applied-banner">
@@ -280,17 +288,33 @@
             <button type="button" class="btn-outline modal-cancel-btn" (click)="closeModal()">
               {{ 'HOME_AUTH.MODAL.CLOSE_BTN' | translate }}
             </button>
-            <button
-              type="button"
-              class="btn-primary modal-apply-btn"
-              [disabled]="isApplied(modalProject.id)"
-              (click)="applyToEvent(modalProject.id)"
-            >
-              <mat-icon>{{ isApplied(modalProject.id) ? 'check' : 'volunteer_activism' }}</mat-icon>
-              <span>
-                {{ isApplied(modalProject.id) ? ('HOME_AUTH.MODAL.ALREADY_APPLIED' | translate) : ('HOME_AUTH.MODAL.APPLY_BTN' | translate) }}
-              </span>
-            </button>
+
+            @if (isVolunteer()) {
+              <button
+                type="button"
+                class="btn-primary modal-apply-btn"
+                [disabled]="isApplied(modalProject.id) || isEnrolling()"
+                (click)="applyToEvent(modalProject.id)"
+              >
+                <mat-icon [class.spin]="isEnrolling()">
+                  {{ isApplied(modalProject.id) ? 'check' : isEnrolling() ? 'sync' : 'volunteer_activism' }}
+                </mat-icon>
+                <span>
+                  {{
+                    isApplied(modalProject.id)
+                      ? ('HOME_AUTH.MODAL.ALREADY_APPLIED' | translate)
+                      : isEnrolling()
+                        ? ('HOME_AUTH.MODAL.ENROLLING' | translate)
+                        : ('HOME_AUTH.MODAL.APPLY_BTN' | translate)
+                  }}
+                </span>
+              </button>
+            } @else {
+              <div class="non-volunteer-hint">
+                <mat-icon>info</mat-icon>
+                <span>{{ 'HOME_AUTH.MODAL.VOLUNTEER_ONLY_HINT' | translate }}</span>
+              </div>
+            }
           </div>
         </div>
       </div>

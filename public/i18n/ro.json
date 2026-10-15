@@ -12,6 +12,14 @@
     "SETTINGS": "Setări",
     "LOGOUT": "Deconectare"
   },
+  "MY_PROJECTS_PAGE": {
+    "TITLE": "Proiectele mele",
+    "ENROLLED_BADGE": "Înscris",
+    "ENROLLED_BANNER": "Ești înscris la acest eveniment",
+    "EMPTY_TITLE": "Nu ești înscris la niciun eveniment",
+    "EMPTY_DESC": "Explorează inițiativele disponibile pe platformă și implică-te!",
+    "EXPLORE_BTN": "Explorează Evenimente"
+  },
   "HOME_AUTH": {
     "GREETING": "Bine ai revenit",
     "TITLE": "Unde vrei să faci o schimbare?",
@@ -47,7 +55,15 @@
       "APPLY_BTN": "Înscrie-te ca Voluntar",
       "ALREADY_APPLIED": "Ești înscris",
       "CLOSE_BTN": "Închide",
-      "APPLIED_SUCCESS": "Felicitări! Te-ai înscris cu succes la această acțiune civică."
+      "APPLIED_SUCCESS": "Felicitări! Te-ai înscris cu succes la această acțiune civică.",
+      "ENROLLING": "Se înscrie...",
+      "VOLUNTEER_ONLY_HINT": "Doar utilizatorii autentificați ca voluntari se pot înscrie la evenimente.",
+      "ERRORS": {
+        "AUTH_REQUIRED": "Trebuie să fii autentificat pentru a te înscrie.",
+        "VOLUNTEER_ONLY": "Doar voluntarii se pot înscrie la evenimente.",
+        "ALREADY_ENROLLED": "Ești deja înscris la acest eveniment.",
+        "GENERIC": "A apărut o eroare la înscrierea la eveniment."
+      }
     }
   },
   "HOME": {

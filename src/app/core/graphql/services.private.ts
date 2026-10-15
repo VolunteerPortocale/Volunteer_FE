@@ -73,6 +73,13 @@ export type UpdateEventMutationVariables = Exact<{
 
 export type UpdateEventMutation = { updateEvent: { id: string, category: Types.EventCategory, status: Types.EventStatus, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } } };
 
+export type EnrollMutationVariables = Exact<{
+  input: Types.CreateEnrollmentInput;
+}>;
+
+
+export type EnrollMutation = { enroll: { id: string, eventId: string, userId: string, status: Types.EnrollmentStatus } };
+
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -312,6 +319,27 @@ export const UpdateEventDocument = gql`
   })
   export class UpdateEventGQL extends Apollo.Mutation<UpdateEventMutation, UpdateEventMutationVariables> {
     override document = UpdateEventDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const EnrollDocument = gql`
+    mutation Enroll($input: CreateEnrollmentInput!) {
+  enroll(input: $input) {
+    id
+    eventId
+    userId
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class EnrollGQL extends Apollo.Mutation<EnrollMutation, EnrollMutationVariables> {
+    override document = EnrollDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
