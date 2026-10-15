@@ -229,6 +229,10 @@ input ConfirmEnrollmentInput {
     enrollmentId: String!
 }
 
+input UnenrollInput {
+    eventId: String!
+}
+
 type EventFile {
     id: String!
     eventId: String!

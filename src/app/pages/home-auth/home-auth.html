@@ -290,25 +290,43 @@
             </button>
 
             @if (isVolunteer()) {
-              <button
-                type="button"
-                class="btn-primary modal-apply-btn"
-                [disabled]="isApplied(modalProject.id) || isEnrolling()"
-                (click)="applyToEvent(modalProject.id)"
-              >
-                <mat-icon [class.spin]="isEnrolling()">
-                  {{ isApplied(modalProject.id) ? 'check' : isEnrolling() ? 'sync' : 'volunteer_activism' }}
-                </mat-icon>
-                <span>
-                  {{
-                    isApplied(modalProject.id)
-                      ? ('HOME_AUTH.MODAL.ALREADY_APPLIED' | translate)
-                      : isEnrolling()
+              @if (isApplied(modalProject.id)) {
+                <button
+                  type="button"
+                  class="modal-unenroll-btn"
+                  [disabled]="isUnenrolling()"
+                  (click)="unenrollFromEvent(modalProject.id)"
+                >
+                  <mat-icon [class.spin]="isUnenrolling()">
+                    {{ isUnenrolling() ? 'sync' : 'event_busy' }}
+                  </mat-icon>
+                  <span>
+                    {{
+                      isUnenrolling()
+                        ? ('HOME_AUTH.MODAL.UNENROLLING' | translate)
+                        : ('HOME_AUTH.MODAL.UNENROLL_BTN' | translate)
+                    }}
+                  </span>
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="btn-primary modal-apply-btn"
+                  [disabled]="isEnrolling()"
+                  (click)="applyToEvent(modalProject.id)"
+                >
+                  <mat-icon [class.spin]="isEnrolling()">
+                    {{ isEnrolling() ? 'sync' : 'volunteer_activism' }}
+                  </mat-icon>
+                  <span>
+                    {{
+                      isEnrolling()
                         ? ('HOME_AUTH.MODAL.ENROLLING' | translate)
                         : ('HOME_AUTH.MODAL.APPLY_BTN' | translate)
-                  }}
-                </span>
-              </button>
+                    }}
+                  </span>
+                </button>
+              }
             } @else {
               <div class="non-volunteer-hint">
                 <mat-icon>info</mat-icon>

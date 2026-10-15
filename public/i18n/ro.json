@@ -18,7 +18,9 @@
     "ENROLLED_BANNER": "Ești înscris la acest eveniment",
     "EMPTY_TITLE": "Nu ești înscris la niciun eveniment",
     "EMPTY_DESC": "Explorează inițiativele disponibile pe platformă și implică-te!",
-    "EXPLORE_BTN": "Explorează Evenimente"
+    "EXPLORE_BTN": "Explorează Evenimente",
+    "UNENROLL_BTN": "Renunță la înscriere",
+    "UNENROLLING": "Se anulează..."
   },
   "HOME_AUTH": {
     "GREETING": "Bine ai revenit",
@@ -53,10 +55,11 @@
       "ABOUT_EVENT": "Despre acest eveniment",
       "CONTACT": "Contact coordonator:",
       "APPLY_BTN": "Înscrie-te ca Voluntar",
-      "ALREADY_APPLIED": "Ești înscris",
       "CLOSE_BTN": "Închide",
       "APPLIED_SUCCESS": "Felicitări! Te-ai înscris cu succes la această acțiune civică.",
       "ENROLLING": "Se înscrie...",
+      "UNENROLL_BTN": "Renunță la înscriere",
+      "UNENROLLING": "Se anulează...",
       "VOLUNTEER_ONLY_HINT": "Doar utilizatorii autentificați ca voluntari se pot înscrie la evenimente.",
       "ERRORS": {
         "AUTH_REQUIRED": "Trebuie să fii autentificat pentru a te înscrie.",

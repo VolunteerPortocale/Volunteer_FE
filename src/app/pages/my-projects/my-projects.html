@@ -155,6 +155,23 @@
             <button type="button" class="btn-outline modal-cancel-btn" (click)="closeModal()">
               {{ 'HOME_AUTH.MODAL.CLOSE_BTN' | translate }}
             </button>
+            <button
+              type="button"
+              class="modal-unenroll-btn"
+              [disabled]="isUnenrolling()"
+              (click)="unenroll(modalEvent.id)"
+            >
+              <mat-icon [class.spin]="isUnenrolling()">
+                {{ isUnenrolling() ? 'sync' : 'event_busy' }}
+              </mat-icon>
+              <span>
+                {{
+                  isUnenrolling()
+                    ? ('MY_PROJECTS_PAGE.UNENROLLING' | translate)
+                    : ('MY_PROJECTS_PAGE.UNENROLL_BTN' | translate)
+                }}
+              </span>
+            </button>
           </div>
         </div>
       </div>

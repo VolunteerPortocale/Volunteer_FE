@@ -89,11 +89,22 @@ export class MyProjectsComponent implements OnInit {
       });
   }
 
+  readonly isUnenrolling = this.enrollmentService.isUnenrolling;
+
   viewEvent(event: EventItem): void {
     this.selectedEvent.set(event);
   }
 
   closeModal(): void {
     this.selectedEvent.set(null);
+  }
+
+  async unenroll(eventId: string): Promise<void> {
+    try {
+      await this.enrollmentService.unenrollFromEvent(eventId);
+      this.closeModal();
+    } catch (err: unknown) {
+      console.error('Failed to unenroll from event', err);
+    }
   }
 }
