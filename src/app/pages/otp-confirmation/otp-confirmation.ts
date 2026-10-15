@@ -10,6 +10,8 @@ import {
   ValidateRegistrationOtpGQL,
 } from '../../core/graphql/services.public';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { AuthService } from '../../service/auth.service';
+import { CurrentUserLoaderService } from '../../service/current-user-loader.service';
 
 
 @Component({
@@ -30,6 +32,9 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly validateRegistrationOtpGQL = inject(ValidateRegistrationOtpGQL);
   private readonly resendRegistrationOtpGQL = inject(ResendRegistrationOtpGQL);
+  private readonly authService = inject(AuthService);
+  private readonly currentUserLoader = inject(CurrentUserLoaderService);
+  private password = '';
 
   readonly routes = APP_ROUTES;
 
@@ -47,6 +52,11 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const emailParam = this.route.snapshot.queryParamMap.get('email') || '';
     this.email.set(emailParam);
+
+    const state = history.state as { password?: string } | undefined;
+    if (state?.password) {
+      this.password = state.password;
+    }
 
     if (!emailParam) {
       this.errorMessage.set('Adresa de email lipsește. Vă rugăm să reluați înregistrarea.');
@@ -86,16 +96,33 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
         },
       })
       .subscribe({
-        next: (result) => {
-          this.isLoading.set(false);
+        next: async (result) => {
           if (result.data?.validateRegistrationOtp) {
-            this.successMessage.set(
-              'Email verificat cu succes! Te redirecționăm la autentificare...',
-            );
-            setTimeout(() => {
-              this.router.navigate(['/' + this.routes.LOGIN]);
-            }, 1500);
+            this.successMessage.set('Email verificat cu succes! Te conectăm...');
+            if (this.password) {
+              const loggedIn = await this.authService.loginWithCredentials(
+                this.email().trim(),
+                this.password
+              );
+              if (loggedIn) {
+                const subject = this.authService.getSubject();
+                if (subject) {
+                  try {
+                    await this.currentUserLoader.load(subject);
+                  } catch (err) {
+                    console.error('Failed to load user profile:', err);
+                  }
+                }
+                this.isLoading.set(false);
+                this.router.navigate(['/']);
+                return;
+              }
+            }
+            // Fallback în cazul în care parola nu a fost în memorie sau direct grant a eșuat
+            this.isLoading.set(false);
+            this.authService.login(`${window.location.origin}/`);
           } else if (result.error) {
+            this.isLoading.set(false);
             this.errorMessage.set(result.error.message);
           }
         },

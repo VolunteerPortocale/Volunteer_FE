@@ -66,18 +66,33 @@ export class AuthService {
     };
 
     try {
+      const token = isPlatformBrowser(this.platformId)
+        ? localStorage.getItem('access_token') || undefined
+        : undefined;
+      const refreshToken = isPlatformBrowser(this.platformId)
+        ? localStorage.getItem('refresh_token') || undefined
+        : undefined;
+      const idToken = isPlatformBrowser(this.platformId)
+        ? localStorage.getItem('id_token') || undefined
+        : undefined;
       const authenticated = await this.keycloak.init({
         onLoad: 'check-sso',
         pkceMethod: 'S256',
         checkLoginIframe: false,
+        token,
+        refreshToken,
+        idToken,
       });
 
       const hasToken = !!this.keycloak.token;
       const ready = authenticated && hasToken;
 
       this.isAuthenticated.set(ready);
-
-      if (!ready) {
+      if (ready) {
+        if (this.keycloak.token) localStorage.setItem('access_token', this.keycloak.token);
+        if (this.keycloak.refreshToken) localStorage.setItem('refresh_token', this.keycloak.refreshToken);
+        if (this.keycloak.idToken) localStorage.setItem('id_token', this.keycloak.idToken);
+      } else {
         this.clearSession();
       }
 
@@ -132,7 +147,12 @@ export class AuthService {
     }
 
     try {
-      await this.keycloak.updateToken(30);
+      const refreshed = await this.keycloak.updateToken(30);
+      if (refreshed) {
+        if (this.keycloak.token) localStorage.setItem('access_token', this.keycloak.token);
+        if (this.keycloak.refreshToken) localStorage.setItem('refresh_token', this.keycloak.refreshToken);
+        if (this.keycloak.idToken) localStorage.setItem('id_token', this.keycloak.idToken);
+      }
 
       return this.keycloak.token ?? null;
     } catch (error) {
@@ -177,6 +197,78 @@ export class AuthService {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       localStorage.removeItem('id_token');
+    }
+  }
+
+  async loginWithCredentials(username: string, password: string): Promise<boolean> {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    try {
+      const body = new URLSearchParams();
+      body.set('grant_type', 'password');
+      body.set('client_id', environment.keycloak.clientId);
+      body.set('username', username);
+      body.set('password', password);
+      body.set('scope', 'openid');
+
+      const response = await fetch(
+        `${environment.keycloak.url}/realms/${environment.keycloak.realm}/protocol/openid-connect/token`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: body.toString(),
+        }
+      );
+
+      if (!response.ok) {
+        console.error('Direct Grant login failed with status:', response.status);
+        return false;
+      }
+
+      const tokens = await response.json();
+
+      localStorage.setItem('access_token', tokens.access_token);
+      if (tokens.refresh_token) {
+        localStorage.setItem('refresh_token', tokens.refresh_token);
+      }
+      if (tokens.id_token) {
+        localStorage.setItem('id_token', tokens.id_token);
+      }
+
+      this.keycloak = new Keycloak({
+        url: environment.keycloak.url,
+        realm: environment.keycloak.realm,
+        clientId: environment.keycloak.clientId,
+      });
+
+      this.keycloak.onAuthLogout = () => {
+        this.clearSession();
+      };
+
+      this.keycloak.onAuthRefreshError = () => {
+        this.clearSession();
+      };
+
+      const authenticated = await this.keycloak.init({
+        token: tokens.access_token,
+        refreshToken: tokens.refresh_token,
+        idToken: tokens.id_token,
+        checkLoginIframe: false,
+      });
+
+      const ready = authenticated && !!this.keycloak.token;
+      this.isAuthenticated.set(ready);
+      this.initPromise = Promise.resolve(ready);
+
+      return ready;
+    } catch (error) {
+      console.error('Failed to login with credentials:', error);
+      this.clearSession();
+      return false;
     }
   }
 }

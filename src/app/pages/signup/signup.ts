@@ -185,6 +185,7 @@ export class SignupComponent {
           this.isSubmitted.set(true);
           this.router.navigate(['/' + this.routes.OTP], {
             queryParams: { email: input.email },
+            state: { password: input.password },
           });
         } else if (result.error) {
           this.errorMessage.set(result.error.message);
