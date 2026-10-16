@@ -4,11 +4,11 @@
     <div class="ngo-hero-content">
       <div class="ngo-badge">
         <mat-icon class="badge-icon">business</mat-icon>
-        <span>{{ 'NAV.ORGANIZATIONS' | translate }} &bull; Modul Administrare ONG</span>
+        <span>{{ 'NAV.ORGANIZATIONS' | translate }} &bull; {{ 'MY_PROJECTS_NGO.BADGE_MODULE' | translate }}</span>
       </div>
-      <h1 class="ngo-page-title">Proiectele Mele (ONG)</h1>
+      <h1 class="ngo-page-title">{{ 'MY_PROJECTS_NGO.PAGE_TITLE' | translate }}</h1>
       <p class="ngo-page-subtitle">
-        Coordonează inițiativele civice, gestionează evenimentele publicate și monitorizează impactul comunitar în timp real.
+        {{ 'MY_PROJECTS_NGO.PAGE_SUBTITLE' | translate }}
       </p>
     </div>
   </header>
@@ -16,7 +16,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <mat-spinner diameter="44"></mat-spinner>
-      <p class="loading-text">Se încarcă proiectele din baza de date...</p>
+      <p class="loading-text">{{ 'MY_PROJECTS_NGO.LOADING' | translate }}</p>
     </div>
   } @else {
     <!-- Metric Statistics Cards Component -->
@@ -55,12 +55,12 @@
         <div class="empty-icon-wrap">
           <mat-icon>event_busy</mat-icon>
         </div>
-        <h3 class="empty-title">Nu a fost găsit niciun proiect</h3>
+        <h3 class="empty-title">{{ 'MY_PROJECTS_NGO.EMPTY.TITLE' | translate }}</h3>
         <p class="empty-desc">
           @if (searchQuery() || selectedCategory() !== 'all' || selectedStatus() !== 'all') {
-            Niciun eveniment nu corespunde filtrelor selectate. Încearcă să resetezi căutarea.
+            {{ 'MY_PROJECTS_NGO.EMPTY.DESC_FILTERED' | translate }}
           } @else {
-            Nu ai publicat încă niciun eveniment de voluntariat. Mobilizează comunitatea creând primul tău proiect!
+            {{ 'MY_PROJECTS_NGO.EMPTY.DESC_NO_EVENTS' | translate }}
           }
         </p>
 
@@ -71,7 +71,7 @@
               class="btn-outline"
               (click)="searchQuery.set(''); selectedCategory.set('all'); selectedStatus.set('all')"
             >
-              Resetează filtrele
+              {{ 'MY_PROJECTS_NGO.EMPTY.RESET_BTN' | translate }}
             </button>
           </div>
         }

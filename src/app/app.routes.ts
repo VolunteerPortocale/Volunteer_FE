@@ -46,19 +46,19 @@ export const routes: Routes = [
     path: APP_ROUTES.ADMIN_EVENT,
     canActivate: [authGuard, roleGuard],
     data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR] },
-    loadComponent: () => import('./pages/event-management/manage-events/my-project-NGO/my-project-ngo').then(m => m.MyProjectNgoComponent)
+    loadComponent: () => import('./pages/event-management/manage-events/my-projects-NGO/my-project-ngo').then(m => m.MyProjectNgoComponent)
   },
   {
     path: APP_ROUTES.ADMIN_EVENT_DEFAULT,
     canActivate: [authGuard, roleGuard],
     data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR] },
-    loadComponent: () => import('./pages/event-management/manage-events/my-project-NGO/my-project-ngo').then(m => m.MyProjectNgoComponent)
+    loadComponent: () => import('./pages/event-management/manage-events/my-projects-NGO/my-project-ngo').then(m => m.MyProjectNgoComponent)
   },
   {
     path: APP_ROUTES.MANAGE_EVENTS,
     canActivate: [authGuard, roleGuard],
     data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR] },
-    loadComponent: () => import('./pages/event-management/manage-events/my-project-NGO/my-project-ngo').then(m => m.MyProjectNgoComponent)
+    loadComponent: () => import('./pages/event-management/manage-events/my-projects-NGO/my-project-ngo').then(m => m.MyProjectNgoComponent)
   },
   {
     path: 'manage-events',
@@ -82,7 +82,7 @@ export const routes: Routes = [
   {
     path: APP_ROUTES.PROJECTS,
     canActivate: [authGuard],
-    loadComponent: () => import('./pages/event-management/my-projects-VOL/my-projects-vol').then(m => m.MyProjectsVolComponent)
+    loadComponent: () => import('./pages/event-management/manage-events/my-projects-VOL/my-projects-vol').then(m => m.MyProjectsVolComponent)
   },
   {
     path: APP_ROUTES.PROFILE,

@@ -9,7 +9,7 @@
       class="search-input"
     />
     @if (searchQuery()) {
-      <button class="clear-btn" (click)="clearSearch()" aria-label="Clear search">
+      <button class="clear-btn" (click)="clearSearch()" [attr.aria-label]="'MY_PROJECTS_NGO.FILTERS.CLEAR_SEARCH' | translate">
         <mat-icon>close</mat-icon>
       </button>
     }
@@ -23,7 +23,7 @@
         [class.active]="selectedStatus() === 'all'"
         (click)="setStatus('all')"
       >
-        Toate
+        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_ALL' | translate }}
       </button>
       <button
         type="button"
@@ -31,7 +31,7 @@
         [class.active]="selectedStatus() === 'active'"
         (click)="setStatus('active')"
       >
-        Active
+        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_ACTIVE' | translate }}
       </button>
       <button
         type="button"
@@ -39,7 +39,7 @@
         [class.active]="selectedStatus() === 'completed'"
         (click)="setStatus('completed')"
       >
-        Finalizate
+        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_COMPLETED' | translate }}
       </button>
     </div>
 
@@ -51,7 +51,7 @@
           (change)="onCategorySelect($event)"
           class="category-select"
         >
-          <option value="all">Toate domeniile</option>
+          <option value="all">{{ 'MY_PROJECTS_NGO.FILTERS.ALL_CATEGORIES' | translate }}</option>
           @for (cat of categories(); track cat) {
             <option [value]="cat.toLowerCase()">
               {{ 'PROFILE.TAGLINE_CATEGORY.' + cat | translate }}

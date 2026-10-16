@@ -6,7 +6,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <mat-spinner diameter="44"></mat-spinner>
-      <p class="loading-text">Se încarcă proiectele tale...</p>
+      <p class="loading-text">{{ 'MY_PROJECTS_PAGE.LOADING' | translate }}</p>
     </div>
   } @else if (enrolledEvents().length > 0) {
     <div class="projects-grid">
@@ -17,7 +17,7 @@
             @if (item.enrollmentStatus === 'CONFIRMED') {
               <span class="enrolled-badge confirmed">
                 <mat-icon>verified</mat-icon>
-                <span>Confirmat</span>
+                <span>{{ 'MY_PROJECTS_PAGE.STATUS_CONFIRMED' | translate }}</span>
               </span>
             } @else {
               <span class="enrolled-badge">
@@ -74,7 +74,7 @@
           class="modal-close-btn"
           (click)="closeModal()"
           [title]="'HOME_AUTH.MODAL.CLOSE_BTN' | translate"
-          aria-label="Close modal"
+          [attr.aria-label]="'HOME_AUTH.MODAL.CLOSE_BTN' | translate"
         >
           <mat-icon>close</mat-icon>
         </button>
@@ -129,7 +129,7 @@
               <div>
                 <span class="meta-label">{{ 'HOME_AUTH.MODAL.SPOTS_STATUS' | translate }}</span>
                 <span class="meta-val">
-                  {{ selected.event.details.nrVolunteers }} locuri disponibile
+                  {{ 'MY_PROJECTS_PAGE.SPOTS_AVAILABLE' | translate: { count: selected.event.details.nrVolunteers } }}
                 </span>
               </div>
             </div>

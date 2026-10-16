@@ -6,16 +6,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 
-import { EnrollmentService } from '../../../service/enrollment.service';
-import { TranslatePipe } from '../../../common/pipes/translate-pipe';
-import { FooterComponent } from '../../../common/components/footer/footer';
+import { EnrollmentService } from '../../../../service/enrollment.service';
+import { TranslatePipe } from '../../../../common/pipes/translate-pipe';
+import { FooterComponent } from '../../../../common/components/footer/footer';
 import {
   GetAllEventsGQL,
   GetAllEventsQuery,
   GetEventByIdGQL,
-} from '../../../core/graphql/services.private';
-import { EventFileType, EnrollmentStatus, Enrollment } from '../../../core/graphql/types';
-import { environment } from '../../../../environments/environment';
+} from '../../../../core/graphql/services.private';
+import { EventFileType, EnrollmentStatus, Enrollment } from '../../../../core/graphql/types';
+import { environment } from '../../../../../environments/environment';
 
 type VolEvent = GetAllEventsQuery['getAllEvents'][number];
 

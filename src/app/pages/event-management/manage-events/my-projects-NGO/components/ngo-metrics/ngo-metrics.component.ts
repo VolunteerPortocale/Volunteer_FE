@@ -1,11 +1,12 @@
 import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslatePipe } from '../../../../../../common/pipes/translate-pipe';
 
 @Component({
   selector: 'app-ngo-metrics',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, TranslatePipe],
   templateUrl: './ngo-metrics.component.html',
   styleUrl: './ngo-metrics.component.scss',
 })
