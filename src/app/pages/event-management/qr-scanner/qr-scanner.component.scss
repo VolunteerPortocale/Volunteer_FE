@@ -1,0 +1,66 @@
+.scanner-container {
+  max-width: 440px;
+  margin: 32px auto;
+  padding: 20px;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  h2 {
+    margin: 0 0 20px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-dark-grey, #222);
+  }
+
+  #qr-reader {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    border: none !important;
+
+    ::ng-deep video {
+      border-radius: 12px;
+      object-fit: cover;
+    }
+  }
+
+  .result {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+
+    &.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    &.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    button {
+      margin-top: 8px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: var(--color-primary, #ff7900);
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  }
+}

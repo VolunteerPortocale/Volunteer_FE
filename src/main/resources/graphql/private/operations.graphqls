@@ -125,6 +125,12 @@ mutation Unenroll($input: UnenrollInput!) {
   }
 }
 
+mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
+  confirmEnrollment(input: $input) {
+    status
+  }
+}
+
 query GetAllEvents {
   getAllEvents {
     id

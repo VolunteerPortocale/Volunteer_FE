@@ -66,6 +66,12 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: APP_ROUTES.SCAN_QR,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: [USER_ROLES.NGO, USER_ROLES.MODERATOR, USER_ROLES.ADMIN] },
+    loadComponent: () => import('./pages/event-management/qr-scanner/qr-scanner.component').then(m => m.QrScannerComponent)
+  },
+  {
     path: APP_ROUTES.SIGNUP,
     canActivate: [guestGuard],
     loadComponent: () => import('./pages/signup/signup').then(m => m.SignupComponent)
