@@ -32,8 +32,13 @@ export type CreateEventDetailsInput = {
 export type CreateEventInput = {
   category: EventCategory;
   details: CreateEventDetailsInput;
-  status: EventStatus;
+  status: CreateEventStatus;
 };
+
+export enum CreateEventStatus {
+  Draft = 'DRAFT',
+  PendingApproval = 'PENDING_APPROVAL'
+}
 
 export type CreateUserInput = {
   biography?: InputMaybe<Scalars['String']['input']>;
@@ -164,6 +169,13 @@ export enum EventFileType {
   Gallery = 'GALLERY'
 }
 
+export type EventFilterInput = {
+  categories?: InputMaybe<Array<InputMaybe<EventCategory>>>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<EventStatus>>>;
+};
+
 export enum EventStatus {
   ApplicationsClosed = 'APPLICATIONS_CLOSED',
   Cancelled = 'CANCELLED',
@@ -199,6 +211,14 @@ export enum Language {
   Ru = 'RU'
 }
 
+export type PagedEventData = {
+  __typename?: 'PagedEventData';
+  events: Array<Event>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
+
 export type UnenrollInput = {
   eventId: Scalars['String']['input'];
 };
@@ -218,8 +238,13 @@ export type UpdateEventDetailsInput = {
 export type UpdateEventInput = {
   category: EventCategory;
   details: UpdateEventDetailsInput;
-  status: EventStatus;
+  status: UpdateEventStatus;
 };
+
+export enum UpdateEventStatus {
+  Draft = 'DRAFT',
+  PendingApproval = 'PENDING_APPROVAL'
+}
 
 export type UpdateUserInput = {
   biography?: InputMaybe<Scalars['String']['input']>;

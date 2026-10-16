@@ -13,6 +13,18 @@
     "SETTINGS": "Settings",
     "LOGOUT": "Log out"
   },
+  "EVENT_STATUS": {
+    "APPLICATIONS_CLOSED": "Applications Closed",
+    "CANCELLED": "Cancelled",
+    "COMPLETED": "Completed",
+    "DRAFT": "Draft",
+    "FULL": "Full",
+    "IN_PROGRESS": "In Progress",
+    "PENDING_APPROVAL": "Pending Approval",
+    "POSTPONED": "Postponed",
+    "PUBLISHED": "Published",
+    "REJECTED": "Rejected"
+  },
   "MY_PROJECTS_PAGE": {
     "TITLE": "My projects",
     "LOADING": "Loading your projects...",
@@ -82,10 +94,14 @@
     "RECOMMENDED_TITLE": "Recommended projects",
     "RECOMMENDED_SUBTITLE": "Selected for your interests and area.",
     "FILTERS": {
-      "ALL": "All",
-      "ECOLOGY": "Ecology",
-      "EDUCATION": "Education",
-      "ANIMALS": "Animals"
+      "FILTER_BTN": "Filter",
+      "TITLE": "Filter Events",
+      "CATEGORY_LABEL": "Category",
+      "STATUS_LABEL": "Status",
+      "ALL_CATEGORIES": "All Categories",
+      "ALL_STATUSES": "All Statuses",
+      "RESET_BTN": "Reset",
+      "APPLY_BTN": "Close"
     },
     "VIEW_PROJECT": "View project",
     "EDIT_PROJECT": "Edit event",
@@ -94,9 +110,12 @@
     "SPOTS_OCCUPIED": "spots occupied",
     "SPOTS_FILLED": "{occupied} of {total} spots filled",
     "SPOTS_AVAILABLE": "{total} spots available",
-    "BOOKMARK_SAVED": "Project saved",
     "NO_PROJECTS_FOUND": "No projects found matching your filters.",
     "RESET_SEARCH": "Reset search",
+    "LOADING": "Loading projects from database...",
+    "PREV_PAGE": "Previous page",
+    "NEXT_PAGE": "Next page",
+    "PAGE_INDICATOR": "Page {current} of {total}",
     "MODAL": {
       "DETAILS_TITLE": "Volunteer Event Details",
       "ORGANIZER": "Host organization:",

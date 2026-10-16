@@ -137,29 +137,7 @@
   }
 }
 
-/* ── Common Buttons ── */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: var(--btn-height);
-  padding: var(--btn-padding);
-  background-color: var(--color-primary);
-  color: var(--color-white);
-  font-weight: 600;
-  font-size: var(--font-size-body);
-  border-radius: var(--btn-border-radius);
-  border: none;
-  cursor: pointer;
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
-
-  &:hover {
-    background-color: var(--color-primary-hover);
-    transform: translateY(-1px);
-  }
-}
-
+/* ── Buttons ── */
 .btn-outline {
   display: inline-flex;
   align-items: center;

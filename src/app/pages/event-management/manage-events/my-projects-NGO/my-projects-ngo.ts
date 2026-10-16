@@ -8,6 +8,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { TranslatePipe } from '../../../../common/pipes/translate-pipe';
 import { FooterComponent } from '../../../../common/components/footer/footer';
+import { EventCategory, EventStatus } from '../../../../core/graphql/types';
 import {
   GetEventsCreatedByCurrentUserGQL,
   GetEventsCreatedByCurrentUserQuery,
@@ -22,7 +23,7 @@ import { NgoEventPreviewModalComponent } from './components/ngo-event-preview-mo
 type NgoEvent = GetEventsCreatedByCurrentUserQuery['getEventsCreatedByCurrentUser'][number];
 
 @Component({
-  selector: 'app-my-project-ngo',
+  selector: 'app-my-projects-ngo',
   standalone: true,
   imports: [
     CommonModule,
@@ -35,10 +36,10 @@ type NgoEvent = GetEventsCreatedByCurrentUserQuery['getEventsCreatedByCurrentUse
     NgoEventCardComponent,
     NgoEventPreviewModalComponent,
   ],
-  templateUrl: './my-project-ngo.html',
-  styleUrl: './my-project-ngo.scss',
+  templateUrl: './my-projects-ngo.html',
+  styleUrl: './my-projects-ngo.scss',
 })
-export class MyProjectNgoComponent implements OnInit {
+export class MyProjectsNgoComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly getEventsCreatedByCurrentUserGQL = inject(GetEventsCreatedByCurrentUserGQL);
   private readonly getEventByIdGQL = inject(GetEventByIdGQL);
@@ -47,41 +48,25 @@ export class MyProjectNgoComponent implements OnInit {
   readonly isLoading = signal(true);
   readonly ngoEvents = signal<NgoEvent[]>([]);
   readonly searchQuery = signal('');
-  readonly selectedStatus = signal<'all' | 'active' | 'completed'>('all');
-  readonly selectedCategory = signal('all');
+  readonly selectedStatus = signal<EventStatus | 'ALL'>('ALL');
+  readonly selectedCategory = signal<EventCategory | 'ALL'>('ALL');
   readonly previewModalEvent = signal<NgoEvent | null>(null);
-
-  // Extract unique category names from backend events
-  readonly categoriesList = computed(() => {
-    const set = new Set<string>();
-    for (const event of this.ngoEvents()) {
-      if (event.category) {
-        set.add(event.category);
-      }
-    }
-    return Array.from(set);
-  });
 
   // Filtered events based on search, category and status
   readonly filteredEvents = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     const category = this.selectedCategory();
     const status = this.selectedStatus();
-    const now = new Date();
 
     return this.ngoEvents().filter((event) => {
       // Category match
-      if (category !== 'all') {
-        const cat = event.category ? event.category.toLowerCase() : '';
-        if (cat !== category.toLowerCase()) return false;
+      if (category !== 'ALL') {
+        if (event.category !== category) return false;
       }
 
       // Status match
-      if (status !== 'all') {
-        const end = event.details.endTime ? new Date(event.details.endTime) : null;
-        const isCompleted = end && end < now;
-        if (status === 'completed' && !isCompleted) return false;
-        if (status === 'active' && isCompleted) return false;
+      if (status !== 'ALL') {
+        if (event.status !== status) return false;
       }
 
       // Search query
@@ -97,6 +82,16 @@ export class MyProjectNgoComponent implements OnInit {
       return true;
     });
   });
+
+  clearFilters(): void {
+    this.selectedCategory.set('ALL');
+    this.selectedStatus.set('ALL');
+  }
+
+  clearAllSearchAndFilters(): void {
+    this.searchQuery.set('');
+    this.clearFilters();
+  }
 
   // Real backend metrics
   readonly totalProjectsCount = computed(() => this.ngoEvents().length);

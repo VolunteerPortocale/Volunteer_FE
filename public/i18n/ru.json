@@ -13,6 +13,18 @@
     "SETTINGS": "Настройки",
     "LOGOUT": "Выйти"
   },
+  "EVENT_STATUS": {
+    "APPLICATIONS_CLOSED": "Приём заявок закрыт",
+    "CANCELLED": "Отменено",
+    "COMPLETED": "Завершено",
+    "DRAFT": "Черновик",
+    "FULL": "Мест нет",
+    "IN_PROGRESS": "В процессе",
+    "PENDING_APPROVAL": "Ожидает одобрения",
+    "POSTPONED": "Отложено",
+    "PUBLISHED": "Опубликовано",
+    "REJECTED": "Отклонено"
+  },
   "MY_PROJECTS_PAGE": {
     "TITLE": "Мои проекты",
     "LOADING": "Загрузка ваших проектов...",
@@ -82,6 +94,14 @@
     "RECOMMENDED_TITLE": "Рекомендованные проекты",
     "RECOMMENDED_SUBTITLE": "Подобрано для ваших интересов и региона.",
     "FILTERS": {
+      "FILTER_BTN": "Фильтр",
+      "TITLE": "Фильтрация событий",
+      "CATEGORY_LABEL": "Категория",
+      "STATUS_LABEL": "Статус",
+      "ALL_CATEGORIES": "Все категории",
+      "ALL_STATUSES": "Все статусы",
+      "RESET_BTN": "Сбросить",
+      "APPLY_BTN": "Закрыть",
       "ALL": "Все",
       "ECOLOGY": "Экология",
       "EDUCATION": "Образование",
@@ -97,6 +117,10 @@
     "BOOKMARK_SAVED": "Проект сохранен",
     "NO_PROJECTS_FOUND": "Проекты по заданным фильтрам не найдены.",
     "RESET_SEARCH": "Сбросить поиск",
+    "LOADING": "Загрузка проектов из базы данных...",
+    "PREV_PAGE": "Предыдущая страница",
+    "NEXT_PAGE": "Следующая страница",
+    "PAGE_INDICATOR": "Страница {current} из {total}",
     "MODAL": {
       "DETAILS_TITLE": "Детали волонтёрского события",
       "ORGANIZER": "Организатор:",

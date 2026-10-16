@@ -32,10 +32,10 @@
       [searchQuery]="searchQuery()"
       [selectedStatus]="selectedStatus()"
       [selectedCategory]="selectedCategory()"
-      [categories]="categoriesList()"
       (searchChange)="searchQuery.set($event)"
       (statusChange)="selectedStatus.set($event)"
       (categoryChange)="selectedCategory.set($event)"
+      (clearFilters)="clearFilters()"
     />
 
     <!-- Projects Grid -->
@@ -57,19 +57,19 @@
         </div>
         <h3 class="empty-title">{{ 'MY_PROJECTS_NGO.EMPTY.TITLE' | translate }}</h3>
         <p class="empty-desc">
-          @if (searchQuery() || selectedCategory() !== 'all' || selectedStatus() !== 'all') {
+          @if (searchQuery() || selectedCategory() !== 'ALL' || selectedStatus() !== 'ALL') {
             {{ 'MY_PROJECTS_NGO.EMPTY.DESC_FILTERED' | translate }}
           } @else {
             {{ 'MY_PROJECTS_NGO.EMPTY.DESC_NO_EVENTS' | translate }}
           }
         </p>
 
-        @if (searchQuery() || selectedCategory() !== 'all' || selectedStatus() !== 'all') {
+        @if (searchQuery() || selectedCategory() !== 'ALL' || selectedStatus() !== 'ALL') {
           <div class="empty-actions">
             <button
               type="button"
               class="btn-outline"
-              (click)="searchQuery.set(''); selectedCategory.set('all'); selectedStatus.set('all')"
+              (click)="clearAllSearchAndFilters()"
             >
               {{ 'MY_PROJECTS_NGO.EMPTY.RESET_BTN' | translate }}
             </button>

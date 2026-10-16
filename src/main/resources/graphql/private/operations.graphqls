@@ -207,14 +207,18 @@ query GetCurrentUserEvents {
       contactEmail
       dressCode
     }
-    files {
-      id
-      type
-    }
     category
     status
     createdAt
     createdBy
+    files {
+            id
+            eventId
+            type
+            originalName
+            contentType
+            size
+        }
   }
 }
 
@@ -243,4 +247,61 @@ query GetEventsCreatedByCurrentUser {
   }
 }
 
+query GetFilteredEvents($input: EventFilterInput) {
+  getFilteredEvents(input: $input) {
+    page
+    size
+    total
+    events {
+      id
+      category
+      storageFolderId
+      status
+      createdAt
+      createdBy
+      lastModifiedAt
+      lastModifiedBy
+      details {
+        title
+        description
+        startTime
+        endTime
+        location
+        nrVolunteers
+        contactPhone
+        contactEmail
+        dressCode
+      }
+      files {
+        id
+        eventId
+        type
+        originalName
+        contentType
+        size
+        index
+        createdAt
+      }
+    }
+  }
+}
+
+query GetUserById($id: String!) {
+  getUserById(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    role
+    status
+    createdAt
+  }
+}
+
+mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
+  confirmEnrollment(input: $input) {
+    status
+  }
+}
 

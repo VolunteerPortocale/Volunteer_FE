@@ -156,18 +156,6 @@ export class AuthService {
     return this.userName();
   }
 
-  getGivenName(): string {
-    return this.currentUser()?.firstName ?? '';
-  }
-
-  getFamilyName(): string {
-    return this.currentUser()?.lastName ?? '';
-  }
-
-  getUserRole(): string {
-    return this.userRole() ?? '';
-  }
-
   private clearSession(): void {
     this.isAuthenticated.set(false);
     this.userSession.clear();

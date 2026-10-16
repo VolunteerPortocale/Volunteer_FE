@@ -114,12 +114,33 @@ export type GetEventEnrollmentByIdQuery = { getEventEnrollmentById: { id: string
 export type GetCurrentUserEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserEventsQuery = { getCurrentUserEvents: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, type: Types.EventFileType }> | null }> };
+export type GetCurrentUserEventsQuery = { getCurrentUserEvents: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number }> | null }> };
 
 export type GetEventsCreatedByCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetEventsCreatedByCurrentUserQuery = { getEventsCreatedByCurrentUser: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, type: Types.EventFileType }> | null }> };
+
+export type GetFilteredEventsQueryVariables = Exact<{
+  input?: Types.EventFilterInput | null | undefined;
+}>;
+
+
+export type GetFilteredEventsQuery = { getFilteredEvents: { page: number, size: number, total: number, events: Array<{ id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, lastModifiedAt: string, lastModifiedBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number, index: number, createdAt: string }> | null }> } };
+
+export type GetUserByIdQueryVariables = Exact<{
+  id: string;
+}>;
+
+
+export type GetUserByIdQuery = { getUserById: { id: string, firstName: string, lastName: string, email: string, phoneNumber: string, role: Types.UserRole, status: Types.UserStatus, createdAt: string } };
+
+export type ConfirmEnrollmentMutationVariables = Exact<{
+  input: Types.ConfirmEnrollmentInput;
+}>;
+
+
+export type ConfirmEnrollmentMutation = { confirmEnrollment: { status: Types.GenericStatus | null } };
 
 export const GetAllUsersDocument = gql`
     query GetAllUsers {
@@ -523,14 +544,18 @@ export const GetCurrentUserEventsDocument = gql`
       contactEmail
       dressCode
     }
-    files {
-      id
-      type
-    }
     category
     status
     createdAt
     createdBy
+    files {
+      id
+      eventId
+      type
+      originalName
+      contentType
+      size
+    }
   }
 }
     `;
@@ -577,6 +602,100 @@ export const GetEventsCreatedByCurrentUserDocument = gql`
   })
   export class GetEventsCreatedByCurrentUserGQL extends Apollo.Query<GetEventsCreatedByCurrentUserQuery, GetEventsCreatedByCurrentUserQueryVariables> {
     override document = GetEventsCreatedByCurrentUserDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetFilteredEventsDocument = gql`
+    query GetFilteredEvents($input: EventFilterInput) {
+  getFilteredEvents(input: $input) {
+    page
+    size
+    total
+    events {
+      id
+      category
+      storageFolderId
+      status
+      createdAt
+      createdBy
+      lastModifiedAt
+      lastModifiedBy
+      details {
+        title
+        description
+        startTime
+        endTime
+        location
+        nrVolunteers
+        contactPhone
+        contactEmail
+        dressCode
+      }
+      files {
+        id
+        eventId
+        type
+        originalName
+        contentType
+        size
+        index
+        createdAt
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetFilteredEventsGQL extends Apollo.Query<GetFilteredEventsQuery, GetFilteredEventsQueryVariables> {
+    override document = GetFilteredEventsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetUserByIdDocument = gql`
+    query GetUserById($id: String!) {
+  getUserById(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    role
+    status
+    createdAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetUserByIdGQL extends Apollo.Query<GetUserByIdQuery, GetUserByIdQueryVariables> {
+    override document = GetUserByIdDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ConfirmEnrollmentDocument = gql`
+    mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
+  confirmEnrollment(input: $input) {
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ConfirmEnrollmentGQL extends Apollo.Mutation<ConfirmEnrollmentMutation, ConfirmEnrollmentMutationVariables> {
+    override document = ConfirmEnrollmentDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

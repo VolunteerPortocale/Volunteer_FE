@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { APP_ROUTES } from '../../config/routes.config';
@@ -11,7 +11,6 @@ import {
 } from '../../core/graphql/services.public';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '../../service/auth.service';
-
 
 @Component({
   selector: 'app-otp-confirmation',
@@ -28,7 +27,6 @@ import { AuthService } from '../../service/auth.service';
 })
 export class OtpConfirmationComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly validateRegistrationOtpGQL = inject(ValidateRegistrationOtpGQL);
   private readonly resendRegistrationOtpGQL = inject(ResendRegistrationOtpGQL);
   private readonly authService = inject(AuthService);

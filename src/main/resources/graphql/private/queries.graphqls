@@ -1,11 +1,14 @@
 type Query {
+    getCurrentUser: User!
     getAllUsers: [User!]!
     getUserById(id: String!): User!
-    getCurrentUser: User!
-    getAllEvents: [Event!]!
+
     getEventById(id: String!): Event!
     getCurrentUserEvents: [Event!]!
     getEventsCreatedByCurrentUser: [Event!]!
+    getAllEvents: [Event!]!
+    getFilteredEvents(input: EventFilterInput): PagedEventData!
+
     getCurrentUserEnrollments: [Enrollment!]!
     getEventEnrollmentById(id: String!): Enrollment
 }

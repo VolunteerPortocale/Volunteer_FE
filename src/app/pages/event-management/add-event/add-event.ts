@@ -10,7 +10,7 @@ import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
 import { of, switchMap, Observable, forkJoin } from 'rxjs';
 import { CreateEventGQL } from '../../../core/graphql/services.private';
-import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../../core/graphql/types';
+import { CreateEventInput, CreateEventStatus, EventCategory, EventDressCode } from '../../../core/graphql/types';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
@@ -123,7 +123,7 @@ export class AddEvent {
     // payload matching CreateEventInput
     const input: CreateEventInput = {
       category: this.eventForm.value.category as EventCategory,
-      status: EventStatus.Published,
+      status: CreateEventStatus.PendingApproval,
       details: {
         title: { ro: titleStrRo, en: titleStrEn, ru: titleStrRu },
         description: { ro: descStrRo, en: descStrEn, ru: descStrRu },
