@@ -87,6 +87,13 @@ export type UnenrollMutationVariables = Exact<{
 
 export type UnenrollMutation = { unenroll: { status: Types.GenericStatus | null } };
 
+export type ConfirmEnrollmentMutationVariables = Exact<{
+  input: Types.ConfirmEnrollmentInput;
+}>;
+
+
+export type ConfirmEnrollmentMutation = { confirmEnrollment: { status: Types.GenericStatus | null } };
+
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -387,6 +394,24 @@ export const UnenrollDocument = gql`
   })
   export class UnenrollGQL extends Apollo.Mutation<UnenrollMutation, UnenrollMutationVariables> {
     override document = UnenrollDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ConfirmEnrollmentDocument = gql`
+    mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
+  confirmEnrollment(input: $input) {
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ConfirmEnrollmentGQL extends Apollo.Mutation<ConfirmEnrollmentMutation, ConfirmEnrollmentMutationVariables> {
+    override document = ConfirmEnrollmentDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

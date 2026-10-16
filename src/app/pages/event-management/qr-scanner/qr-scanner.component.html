@@ -1,0 +1,13 @@
+<div class="scanner-container">
+  <h2>Scanare Prezență</h2>
+
+  <div id="qr-reader"></div>
+
+  @if (status() !== 'scanning') {
+    <div class="result" [class.success]="status() === 'success'" [class.error]="status() === 'error'">
+      <mat-icon>{{ status() === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+      <span>{{ message() }}</span>
+      <button type="button" (click)="scanNext()">Scanează următorul</button>
+    </div>
+  }
+</div>
