@@ -10,6 +10,7 @@ import {
   ValidateRegistrationOtpGQL,
 } from '../../core/graphql/services.public';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { AuthService } from '../../service/auth.service';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly validateRegistrationOtpGQL = inject(ValidateRegistrationOtpGQL);
   private readonly resendRegistrationOtpGQL = inject(ResendRegistrationOtpGQL);
+  private readonly authService = inject(AuthService);
 
   readonly routes = APP_ROUTES;
 
@@ -93,7 +95,7 @@ export class OtpConfirmationComponent implements OnInit, OnDestroy {
               'Email verificat cu succes! Te redirecționăm la autentificare...',
             );
             setTimeout(() => {
-              this.router.navigate(['/' + this.routes.LOGIN]);
+              this.authService.login(`${window.location.origin}/`);
             }, 1500);
           } else if (result.error) {
             this.errorMessage.set(result.error.message);
