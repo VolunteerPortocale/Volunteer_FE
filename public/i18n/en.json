@@ -9,18 +9,70 @@
     "NOTIFICATIONS": "Notifications",
     "MY_PROFILE": "My profile",
     "MY_PROJECTS": "My projects",
+    "MANAGE_PROJECTS_NGO": "My Projects (NGO)",
     "SETTINGS": "Settings",
     "LOGOUT": "Log out"
   },
   "MY_PROJECTS_PAGE": {
     "TITLE": "My projects",
+    "LOADING": "Loading your projects...",
+    "STATUS_CONFIRMED": "Confirmed",
     "ENROLLED_BADGE": "Enrolled",
     "ENROLLED_BANNER": "You are enrolled in this event",
     "EMPTY_TITLE": "You are not enrolled in any events yet",
     "EMPTY_DESC": "Explore available initiatives on the platform and get involved!",
     "EXPLORE_BTN": "Explore Events",
+    "SPOTS_AVAILABLE": "{count} spots available",
     "UNENROLL_BTN": "Cancel Enrollment",
     "UNENROLLING": "Cancelling..."
+  },
+  "MY_PROJECTS_NGO": {
+    "BADGE_MODULE": "NGO Administration Module",
+    "PAGE_TITLE": "My Projects (NGO)",
+    "PAGE_SUBTITLE": "Coordinate civic initiatives, manage published events, and monitor community impact in real-time.",
+    "LOADING": "Loading projects from database...",
+    "METRICS": {
+      "TOTAL_EVENTS": "Created Events",
+      "ACTIVE_EVENTS": "Active Events",
+      "COMPLETED_EVENTS": "Completed Events",
+      "TOTAL_CAPACITY": "Volunteer Capacity"
+    },
+    "FILTERS": {
+      "STATUS_ALL": "All",
+      "STATUS_ACTIVE": "Active",
+      "STATUS_COMPLETED": "Completed",
+      "ALL_CATEGORIES": "All Categories",
+      "CLEAR_SEARCH": "Clear search"
+    },
+    "CARD": {
+      "STATUS_ACTIVE": "Active",
+      "STATUS_COMPLETED": "Completed",
+      "VOLUNTEERS_NEEDED": "{count} volunteers requested",
+      "EDIT_BTN": "Edit",
+      "EDIT_TITLE": "Edit project details",
+      "PREVIEW_BTN": "View Details",
+      "PREVIEW_TITLE": "View project details"
+    },
+    "EMPTY": {
+      "TITLE": "No projects found",
+      "DESC_FILTERED": "No events match the selected filters. Try resetting the search.",
+      "DESC_NO_EVENTS": "You haven't published any volunteering events yet. Mobilize the community by creating your first project!",
+      "RESET_BTN": "Reset filters"
+    },
+    "PREVIEW_MODAL": {
+      "CLOSE_ARIA": "Close",
+      "CLOSE_BTN": "Close",
+      "EDIT_BTN": "Edit Event",
+      "START_DATE": "Start Date:",
+      "END_DATE": "End Date:",
+      "LOCATION": "Location:",
+      "CAPACITY": "Volunteer Capacity:",
+      "VOLUNTEERS_COUNT": "{count} volunteers requested",
+      "COORDINATOR_EMAIL": "Coordinator Email:",
+      "PHONE": "Phone:",
+      "DRESS_CODE": "Dress Code:",
+      "DESCRIPTION_TITLE": "Project Description"
+    }
   },
   "HOME_AUTH": {
     "GREETING": "Welcome back",

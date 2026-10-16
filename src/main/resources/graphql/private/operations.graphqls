@@ -139,9 +139,14 @@ query GetAllEvents {
       contactEmail
       dressCode
     }
+    files {
+      id
+      type
+    }
     category
     status
     createdAt
+    createdBy
   }
 }
 
@@ -159,8 +164,83 @@ query GetEventById($id: String!) {
       contactEmail
       dressCode
     }
+    files {
+      id
+      type
+    }
     category
     status
     createdAt
+    createdBy
   }
 }
+
+query GetCurrentUserEnrollments {
+  getCurrentUserEnrollments {
+    id
+    eventId
+    userId
+    status
+  }
+}
+
+query GetEventEnrollmentById($id: String!) {
+  getEventEnrollmentById(id: $id) {
+    id
+    eventId
+    userId
+    status
+  }
+}
+
+query GetCurrentUserEvents {
+  getCurrentUserEvents {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    files {
+      id
+      type
+    }
+    category
+    status
+    createdAt
+    createdBy
+  }
+}
+
+query GetEventsCreatedByCurrentUser {
+  getEventsCreatedByCurrentUser {
+    id
+    details {
+      title
+      description
+      startTime
+      endTime
+      location
+      nrVolunteers
+      contactPhone
+      contactEmail
+      dressCode
+    }
+    files {
+      id
+      type
+    }
+    category
+    status
+    createdAt
+    createdBy
+  }
+}
+
+

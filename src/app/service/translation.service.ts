@@ -49,9 +49,9 @@ export class TranslationService {
   }
 
   /**
-   * Resolves nested keys like "NAV.PROJECTS" from the active dictionary
+   * Resolves nested keys like "NAV.PROJECTS" from the active dictionary, with optional parameter interpolation
    */
-  translate(key: string): string {
+  translate(key: string, params?: Record<string, string | number>): string {
     const dict = this.translations();
     const result = key.split('.').reduce<unknown>((obj, k) => {
       if (obj && typeof obj === 'object') {
@@ -59,7 +59,13 @@ export class TranslationService {
       }
       return undefined;
     }, dict);
-    return typeof result === 'string' ? result : key;
+    let str = typeof result === 'string' ? result : key;
+    if (params) {
+      for (const [pKey, pVal] of Object.entries(params)) {
+        str = str.replace(new RegExp(`\\{${pKey}\\}`, 'g'), String(pVal));
+      }
+    }
+    return str;
   }
 
   /**

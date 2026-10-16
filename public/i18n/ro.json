@@ -9,18 +9,70 @@
     "NOTIFICATIONS": "Notificări",
     "MY_PROFILE": "Profilul meu",
     "MY_PROJECTS": "Proiectele mele",
+    "MANAGE_PROJECTS_NGO": "Proiectele mele (ONG)",
     "SETTINGS": "Setări",
     "LOGOUT": "Deconectare"
   },
   "MY_PROJECTS_PAGE": {
     "TITLE": "Proiectele mele",
+    "LOADING": "Se încarcă proiectele tale...",
+    "STATUS_CONFIRMED": "Confirmat",
     "ENROLLED_BADGE": "Înscris",
     "ENROLLED_BANNER": "Ești înscris la acest eveniment",
     "EMPTY_TITLE": "Nu ești înscris la niciun eveniment",
     "EMPTY_DESC": "Explorează inițiativele disponibile pe platformă și implică-te!",
     "EXPLORE_BTN": "Explorează Evenimente",
+    "SPOTS_AVAILABLE": "{count} locuri disponibile",
     "UNENROLL_BTN": "Renunță la înscriere",
     "UNENROLLING": "Se anulează..."
+  },
+  "MY_PROJECTS_NGO": {
+    "BADGE_MODULE": "Modul Administrare ONG",
+    "PAGE_TITLE": "Proiectele Mele (ONG)",
+    "PAGE_SUBTITLE": "Coordonează inițiativele civice, gestionează evenimentele publicate și monitorizează impactul comunitar în timp real.",
+    "LOADING": "Se încarcă proiectele din baza de date...",
+    "METRICS": {
+      "TOTAL_EVENTS": "Evenimente Create",
+      "ACTIVE_EVENTS": "Evenimente Active",
+      "COMPLETED_EVENTS": "Evenimente Finalizate",
+      "TOTAL_CAPACITY": "Capacitate Voluntari"
+    },
+    "FILTERS": {
+      "STATUS_ALL": "Toate",
+      "STATUS_ACTIVE": "Active",
+      "STATUS_COMPLETED": "Finalizate",
+      "ALL_CATEGORIES": "Toate domeniile",
+      "CLEAR_SEARCH": "Șterge căutarea"
+    },
+    "CARD": {
+      "STATUS_ACTIVE": "Activ",
+      "STATUS_COMPLETED": "Finalizat",
+      "VOLUNTEERS_NEEDED": "{count} voluntari solicitați",
+      "EDIT_BTN": "Editează",
+      "EDIT_TITLE": "Editează datele proiectului",
+      "PREVIEW_BTN": "Vizualizează",
+      "PREVIEW_TITLE": "Vizualizează detalii"
+    },
+    "EMPTY": {
+      "TITLE": "Nu a fost găsit niciun proiect",
+      "DESC_FILTERED": "Niciun eveniment nu corespunde filtrelor selectate. Încearcă să resetezi căutarea.",
+      "DESC_NO_EVENTS": "Nu ai publicat încă niciun eveniment de voluntariat. Mobilizează comunitatea creând primul tău proiect!",
+      "RESET_BTN": "Resetează filtrele"
+    },
+    "PREVIEW_MODAL": {
+      "CLOSE_ARIA": "Închide",
+      "CLOSE_BTN": "Închide",
+      "EDIT_BTN": "Editează Eveniment",
+      "START_DATE": "Data de început:",
+      "END_DATE": "Data de finalizare:",
+      "LOCATION": "Locație:",
+      "CAPACITY": "Capacitate voluntari:",
+      "VOLUNTEERS_COUNT": "{count} voluntari solicitați",
+      "COORDINATOR_EMAIL": "Email coordonator:",
+      "PHONE": "Telefon:",
+      "DRESS_CODE": "Dress code:",
+      "DESCRIPTION_TITLE": "Descriere Proiect"
+    }
   },
   "HOME_AUTH": {
     "GREETING": "Bine ai revenit",

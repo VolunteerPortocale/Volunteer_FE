@@ -1,0 +1,64 @@
+<section class="ngo-filter-toolbar">
+  <div class="search-input-wrapper">
+    <mat-icon class="search-icon">search</mat-icon>
+    <input
+      type="text"
+      [placeholder]="'HOME_AUTH.SEARCH_PLACEHOLDER' | translate"
+      [value]="searchQuery()"
+      (input)="onSearchInput($event)"
+      class="search-input"
+    />
+    @if (searchQuery()) {
+      <button class="clear-btn" (click)="clearSearch()" [attr.aria-label]="'MY_PROJECTS_NGO.FILTERS.CLEAR_SEARCH' | translate">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </div>
+
+  <div class="filter-group">
+    <div class="status-chips">
+      <button
+        type="button"
+        class="status-chip"
+        [class.active]="selectedStatus() === 'all'"
+        (click)="setStatus('all')"
+      >
+        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_ALL' | translate }}
+      </button>
+      <button
+        type="button"
+        class="status-chip"
+        [class.active]="selectedStatus() === 'active'"
+        (click)="setStatus('active')"
+      >
+        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_ACTIVE' | translate }}
+      </button>
+      <button
+        type="button"
+        class="status-chip"
+        [class.active]="selectedStatus() === 'completed'"
+        (click)="setStatus('completed')"
+      >
+        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_COMPLETED' | translate }}
+      </button>
+    </div>
+
+    @if (categories().length > 0) {
+      <div class="category-select-wrapper">
+        <mat-icon class="select-icon">category</mat-icon>
+        <select
+          [value]="selectedCategory()"
+          (change)="onCategorySelect($event)"
+          class="category-select"
+        >
+          <option value="all">{{ 'MY_PROJECTS_NGO.FILTERS.ALL_CATEGORIES' | translate }}</option>
+          @for (cat of categories(); track cat) {
+            <option [value]="cat.toLowerCase()">
+              {{ 'PROFILE.TAGLINE_CATEGORY.' + cat | translate }}
+            </option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+</section>

@@ -1,0 +1,41 @@
+<section class="ngo-metrics-grid">
+  <div class="metric-card">
+    <div class="metric-icon-box green">
+      <mat-icon>event_note</mat-icon>
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">{{ 'MY_PROJECTS_NGO.METRICS.TOTAL_EVENTS' | translate }}</span>
+      <span class="metric-value">{{ totalEvents() }}</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-icon-box blue">
+      <mat-icon>play_circle_outline</mat-icon>
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">{{ 'MY_PROJECTS_NGO.METRICS.ACTIVE_EVENTS' | translate }}</span>
+      <span class="metric-value">{{ activeEvents() }}</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-icon-box purple">
+      <mat-icon>task_alt</mat-icon>
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">{{ 'MY_PROJECTS_NGO.METRICS.COMPLETED_EVENTS' | translate }}</span>
+      <span class="metric-value">{{ completedEvents() }}</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-icon-box orange">
+      <mat-icon>group</mat-icon>
+    </div>
+    <div class="metric-info">
+      <span class="metric-label">{{ 'MY_PROJECTS_NGO.METRICS.TOTAL_CAPACITY' | translate }}</span>
+      <span class="metric-value">{{ totalCapacity() }}</span>
+    </div>
+  </div>
+</section>

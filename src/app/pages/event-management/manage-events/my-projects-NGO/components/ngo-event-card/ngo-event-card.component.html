@@ -1,0 +1,56 @@
+<article class="ngo-card">
+  <div class="ngo-card-media" [style.background-image]="'url(' + imageUrl() + ')'">
+    <div class="card-overlay"></div>
+
+    <div class="card-top-badges">
+      <span class="category-badge">
+        {{ 'PROFILE.TAGLINE_CATEGORY.' + event().category | translate }}
+      </span>
+
+      @if (isCompleted()) {
+        <span class="status-badge completed">{{ 'MY_PROJECTS_NGO.CARD.STATUS_COMPLETED' | translate }}</span>
+      } @else {
+        <span class="status-badge active">{{ 'MY_PROJECTS_NGO.CARD.STATUS_ACTIVE' | translate }}</span>
+      }
+    </div>
+  </div>
+
+  <div class="ngo-card-body">
+    <h2 class="card-title" (click)="onPreview()">
+      {{ event().details.title }}
+    </h2>
+
+    <p class="card-desc">
+      {{ event().details.description }}
+    </p>
+
+    <div class="card-meta">
+      <div class="meta-row">
+        <mat-icon class="meta-icon">calendar_today</mat-icon>
+        <span>{{ event().details.startTime | date: 'dd MMM yyyy, HH:mm' }}</span>
+      </div>
+      @if (event().details.location) {
+        <div class="meta-row">
+          <mat-icon class="meta-icon">location_on</mat-icon>
+          <span>{{ event().details.location }}</span>
+        </div>
+      }
+      <div class="meta-row">
+        <mat-icon class="meta-icon">group</mat-icon>
+        <span>{{ 'MY_PROJECTS_NGO.CARD.VOLUNTEERS_NEEDED' | translate: { count: event().details.nrVolunteers } }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ngo-card-footer">
+    <button type="button" class="footer-btn edit-btn" (click)="onEdit($event)" [title]="'MY_PROJECTS_NGO.CARD.EDIT_TITLE' | translate">
+      <mat-icon>edit</mat-icon>
+      <span>{{ 'MY_PROJECTS_NGO.CARD.EDIT_BTN' | translate }}</span>
+    </button>
+
+    <button type="button" class="footer-btn preview-btn" (click)="onPreview()" [title]="'MY_PROJECTS_NGO.CARD.PREVIEW_TITLE' | translate">
+      <mat-icon>visibility</mat-icon>
+      <span>{{ 'MY_PROJECTS_NGO.CARD.PREVIEW_BTN' | translate }}</span>
+    </button>
+  </div>
+</article>

@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
-import { EventService } from '../../service/event.service';
 import { TranslationService } from '../../service/translation.service';
 import { EnrollmentService } from '../../service/enrollment.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -53,7 +52,6 @@ export class HomeAuthComponent implements OnInit {
   readonly authService = inject(AuthService);
   readonly translationService = inject(TranslationService);
   private readonly router = inject(Router);
-  private readonly eventService = inject(EventService);
   private readonly enrollmentService = inject(EnrollmentService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly getLastThreeActiveEventsGQL = inject(GetLastThreeActiveEventsGQL);

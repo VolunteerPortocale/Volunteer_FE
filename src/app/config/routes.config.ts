@@ -10,6 +10,7 @@ export const APP_ROUTES = {
   EDIT_EVENT: 'editeaza-eveniment/:id',
   ADMIN_EVENT: 'administrare-eveniment/:id',
   ADMIN_EVENT_DEFAULT: 'administrare-eveniment',
+  MANAGE_EVENTS: 'gestioneaza-evenimente',
   MODERATION: 'moderare',
   OTP: 'confirmare-otp',
   PROFILE: 'profil',
@@ -45,4 +46,5 @@ export const ROUTE_HELPERS = {
   editEvent: (id: string | number) => `/${APP_ROUTES.EDIT_EVENT.replace(':id', String(id))}`,
   adminEvent: (id?: string | number) =>
     id ? `/${APP_ROUTES.ADMIN_EVENT.replace(':id', String(id))}` : `/${APP_ROUTES.ADMIN_EVENT_DEFAULT}`,
+  manageEvents: () => `/${APP_ROUTES.MANAGE_EVENTS}`,
 } as const;

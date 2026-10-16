@@ -1,7 +1,12 @@
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
-import { EnrollGQL, UnenrollGQL } from '../core/graphql/services.private';
+import {
+  EnrollGQL,
+  UnenrollGQL,
+  GetCurrentUserEnrollmentsGQL,
+  GetEventEnrollmentByIdGQL,
+} from '../core/graphql/services.private';
 import { Enrollment, GenericStatus } from '../core/graphql/types';
 import { AuthService } from './auth.service';
 import { USER_ROLES } from '../config/roles.config';
@@ -10,13 +15,17 @@ import { USER_ROLES } from '../config/roles.config';
 export class EnrollmentService {
   private readonly enrollGQL = inject(EnrollGQL);
   private readonly unenrollGQL = inject(UnenrollGQL);
+  private readonly getCurrentUserEnrollmentsGQL = inject(GetCurrentUserEnrollmentsGQL);
+  private readonly getEventEnrollmentByIdGQL = inject(GetEventEnrollmentByIdGQL);
   private readonly authService = inject(AuthService);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly storageKey = 'volunteerio_enrolled_events';
 
   readonly enrolledEventIds = signal<Set<string>>(this.loadInitial());
+  readonly userEnrollments = signal<Enrollment[]>([]);
   readonly isEnrolling = signal<boolean>(false);
   readonly isUnenrolling = signal<boolean>(false);
+  readonly isLoadingEnrollments = signal<boolean>(false);
 
   isVolunteer(): boolean {
     return this.authService.hasRole(USER_ROLES.VOLUNTEER);
@@ -24,6 +33,63 @@ export class EnrollmentService {
 
   isEnrolled(eventId: string): boolean {
     return this.enrolledEventIds().has(eventId);
+  }
+
+  async fetchCurrentUserEnrollments(): Promise<Enrollment[]> {
+    if (!this.authService.isAuthenticated() || !this.isVolunteer()) {
+      return [];
+    }
+
+    this.isLoadingEnrollments.set(true);
+    try {
+      const res = await firstValueFrom(
+        this.getCurrentUserEnrollmentsGQL.fetch({
+          fetchPolicy: 'network-only',
+        })
+      );
+      const items = res.data?.getCurrentUserEnrollments ?? [];
+      const mapped: Enrollment[] = items.map((e) => ({
+        id: e.id,
+        eventId: e.eventId,
+        userId: e.userId,
+        status: e.status,
+      }));
+      this.userEnrollments.set(mapped);
+
+      const idSet = new Set(mapped.map((m) => m.eventId));
+      this.enrolledEventIds.set(idSet);
+      if (this.isBrowser) {
+        localStorage.setItem(this.storageKey, JSON.stringify([...idSet]));
+      }
+      return mapped;
+    } catch (err: unknown) {
+      console.warn('Failed to fetch user enrollments from backend:', err);
+      return [];
+    } finally {
+      this.isLoadingEnrollments.set(false);
+    }
+  }
+
+  async getEnrollmentById(id: string): Promise<Enrollment | null> {
+    try {
+      const res = await firstValueFrom(
+        this.getEventEnrollmentByIdGQL.fetch({
+          variables: { id },
+          fetchPolicy: 'network-only',
+        })
+      );
+      const enrollment = res.data?.getEventEnrollmentById;
+      if (!enrollment) return null;
+      return {
+        id: enrollment.id,
+        eventId: enrollment.eventId,
+        userId: enrollment.userId,
+        status: enrollment.status,
+      };
+    } catch (err: unknown) {
+      console.warn(`Failed to fetch enrollment by id ${id}:`, err);
+      return null;
+    }
   }
 
   async enrollToEvent(eventId: string): Promise<Enrollment> {
@@ -39,6 +105,7 @@ export class EnrollmentService {
       if (!enrollment) throw new Error('HOME_AUTH.MODAL.ERRORS.GENERIC');
 
       this.markEnrolled(eventId);
+      await this.fetchCurrentUserEnrollments().catch(() => {});
       return enrollment;
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -65,10 +132,12 @@ export class EnrollmentService {
         throw new Error('HOME_AUTH.MODAL.ERRORS.GENERIC');
       }
       this.unmarkEnrolled(eventId);
+      await this.fetchCurrentUserEnrollments().catch(() => {});
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes('E404_005') || /not found/i.test(msg)) {
         this.unmarkEnrolled(eventId);
+        await this.fetchCurrentUserEnrollments().catch(() => {});
       }
       throw err;
     } finally {

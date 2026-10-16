@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,10 +38,9 @@ export interface AttachedFile {
   styleUrl: './add-event.scss',
 })
 export class AddEvent {
-  
+
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   readonly translationService = inject(TranslationService);
   private readonly http = inject(HttpClient);
   private readonly createEventGQL = inject(CreateEventGQL);
@@ -147,40 +146,40 @@ export class AddEvent {
       .pipe(
         switchMap((result) => {
           // Inside switchMap((result) => { ... })
-            const eventId = result.data?.createEvent?.id;
-            if (!eventId) {
-              throw new Error('Nu s-a putut obține identificatorul evenimentului.');
-            }
+          const eventId = result.data?.createEvent?.id;
+          if (!eventId) {
+            throw new Error('Nu s-a putut obține identificatorul evenimentului.');
+          }
 
-            const coverFiles = this.attachedFiles()
-              .filter((f) => f.type === EventFileType.COVER)
-              .map((f) => f.rawFile)
-              .filter((f): f is File => !!f);
+          const coverFiles = this.attachedFiles()
+            .filter((f) => f.type === EventFileType.COVER)
+            .map((f) => f.rawFile)
+            .filter((f): f is File => !!f);
 
-            const galleryFiles = this.attachedFiles()
-              .filter((f) => f.type === EventFileType.GALLERY)
-              .map((f) => f.rawFile)
-              .filter((f): f is File => !!f);
+          const galleryFiles = this.attachedFiles()
+            .filter((f) => f.type === EventFileType.GALLERY)
+            .map((f) => f.rawFile)
+            .filter((f): f is File => !!f);
 
-            const attachmentFiles = this.attachedFiles()
-              .filter((f) => f.type === EventFileType.ATTACHMENT)
-              .map((f) => f.rawFile)
-              .filter((f): f is File => !!f);
+          const attachmentFiles = this.attachedFiles()
+            .filter((f) => f.type === EventFileType.ATTACHMENT)
+            .map((f) => f.rawFile)
+            .filter((f): f is File => !!f);
 
-            const uploads: Observable<unknown>[] = [];
+          const uploads: Observable<unknown>[] = [];
 
-            if (coverFiles.length > 0) {
-              uploads.push(this.uploadEventFiles(eventId, coverFiles, EventFileType.COVER));
-            }
-            if (galleryFiles.length > 0) {
-              uploads.push(this.uploadEventFiles(eventId, galleryFiles, EventFileType.GALLERY));
-            }
-            if (attachmentFiles.length > 0) {
-              uploads.push(this.uploadEventFiles(eventId, attachmentFiles, EventFileType.ATTACHMENT));
-            }
+          if (coverFiles.length > 0) {
+            uploads.push(this.uploadEventFiles(eventId, coverFiles, EventFileType.COVER));
+          }
+          if (galleryFiles.length > 0) {
+            uploads.push(this.uploadEventFiles(eventId, galleryFiles, EventFileType.GALLERY));
+          }
+          if (attachmentFiles.length > 0) {
+            uploads.push(this.uploadEventFiles(eventId, attachmentFiles, EventFileType.ATTACHMENT));
+          }
 
-            return uploads.length > 0 ? forkJoin(uploads) : of(null);
-})
+          return uploads.length > 0 ? forkJoin(uploads) : of(null);
+        })
       )
       .subscribe({
         next: () => {
@@ -222,27 +221,27 @@ export class AddEvent {
   }
 
   onDragOver(event: DragEvent): void {
-      event.preventDefault();
-      event.stopPropagation();
-      this.isDragging.set(true);
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(true);
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(false);
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging.set(false);
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      this.addFiles(Array.from(event.dataTransfer.files));
     }
-  
-    onDragLeave(event: DragEvent): void {
-      event.preventDefault();
-      event.stopPropagation();
-      this.isDragging.set(false);
-    }
-  
-    onDrop(event: DragEvent): void {
-      event.preventDefault();
-      event.stopPropagation();
-      this.isDragging.set(false);
-      if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
-        this.addFiles(Array.from(event.dataTransfer.files));
-      }
-    }
-  
-    private addFiles(files: File[]): void {
+  }
+
+  private addFiles(files: File[]): void {
     const activeType = this.activeFileType();
     const limit = this.fileLimits[activeType];
     const existingCount = this.currentTabFiles().length;
@@ -263,53 +262,53 @@ export class AddEvent {
     }));
     this.attachedFiles.set([...this.attachedFiles(), ...newFiles]);
   }
-  
-    removeFile(fileId: string): void {
-      this.attachedFiles.set(this.attachedFiles().filter((f) => f.id !== fileId));
-    }
-  
-    formatFileSize(bytes: number): string {
-      if (bytes === 0) return '0 B';
-      const k = 1024;
-      const sizes = ['B', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
-    }
-  
-    getFileIcon(name: string): string {
-      const ext = name.split('.').pop()?.toLowerCase();
-      switch (ext) {
-        case 'pdf':
-          return 'picture_as_pdf';
-        case 'png':
-        case 'jpg':
-        case 'jpeg':
-        case 'svg':
-        case 'webp':
-        case 'gif':
-          return 'image';
-        case 'doc':
-        case 'docx':
-          return 'description';
-        case 'xls':
-        case 'xlsx':
-        case 'csv':
-          return 'table_chart';
-        default:
-          return 'insert_drive_file';
-      }
-    }
-    
-    onFileSelected(event: Event): void {
-      const input = event.target as HTMLInputElement;
-      if (input.files) {
-        this.addFiles(Array.from(input.files));
-      input.value = '';
-      }
-    }
 
-    // Uploads all attached files in a single batch to the backend
-    private uploadEventFiles(eventId: string, files: File[], type: EventFileType) {
+  removeFile(fileId: string): void {
+    this.attachedFiles.set(this.attachedFiles().filter((f) => f.id !== fileId));
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  }
+
+  getFileIcon(name: string): string {
+    const ext = name.split('.').pop()?.toLowerCase();
+    switch (ext) {
+      case 'pdf':
+        return 'picture_as_pdf';
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+      case 'svg':
+      case 'webp':
+      case 'gif':
+        return 'image';
+      case 'doc':
+      case 'docx':
+        return 'description';
+      case 'xls':
+      case 'xlsx':
+      case 'csv':
+        return 'table_chart';
+      default:
+        return 'insert_drive_file';
+    }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.addFiles(Array.from(input.files));
+      input.value = '';
+    }
+  }
+
+  // Uploads all attached files in a single batch to the backend
+  private uploadEventFiles(eventId: string, files: File[], type: EventFileType) {
     if (!files || files.length === 0) {
       return of(null); // No files to upload, proceed immediately
     }
@@ -323,7 +322,7 @@ export class AddEvent {
       formData
     );
   }
-  
+
 }
 
 export enum EventFileType {
