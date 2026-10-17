@@ -10,7 +10,7 @@ import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
 import { of, switchMap, Observable, forkJoin } from 'rxjs';
 import { CreateEventGQL } from '../../../core/graphql/services.private';
-import { CreateEventInput, EventCategory, EventDressCode, CreateEventStatus } from '../../../core/graphql/types';
+import { CreateEventInput, CreateEventStatus, EventCategory, EventDressCode } from '../../../core/graphql/types';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
@@ -108,12 +108,12 @@ export class AddEvent {
       return;
     }
 
-    const titleStrEn = this.eventForm.value.titleEn?.trim() || '';
+    const titleStrEn = this.eventForm.value.titleEn?.trim() || null;
     const titleStrRo = this.eventForm.value.titleRo?.trim() || '';
-    const titleStrRu = this.eventForm.value.titleRu?.trim() || '';
-    const descStrEn = this.eventForm.value.descriptionEn?.trim() || '';
+    const titleStrRu = this.eventForm.value.titleRu?.trim() || null;
+    const descStrEn = this.eventForm.value.descriptionEn?.trim() || null;
     const descStrRo = this.eventForm.value.descriptionRo?.trim() || '';
-    const descStrRu = this.eventForm.value.descriptionRu?.trim() || '';
+    const descStrRu = this.eventForm.value.descriptionRu?.trim() || null;
     const startTimeIso = this.toIsoString(this.eventForm.value.startDateTime);
 
     if (!startTimeIso) {

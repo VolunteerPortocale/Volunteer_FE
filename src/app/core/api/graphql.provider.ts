@@ -7,8 +7,13 @@ import { ErrorLink } from '@apollo/client/link/error';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../service/auth.service';
+import { TranslationService } from '../../service/translation.service';
 
-export function createApollo(httpLink: HttpLink, authService: AuthService): ApolloClient.Options {
+export function createApollo(
+  httpLink: HttpLink,
+  authService: AuthService,
+  translationService: TranslationService
+): ApolloClient.Options {
   const errorLink = new ErrorLink(({ error }) => {
     if (CombinedGraphQLErrors.is(error)) {
       for (const err of error.errors) {
@@ -49,23 +54,26 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
     }
   });
 
-  const authLink = new SetContextLink(async (prevContext) => {
+  const authAndLanguageLink = new SetContextLink(async (prevContext) => {
     const accessToken = await authService.getToken();
+    const currentLang = translationService.currentLang() || 'ro';
 
-    return accessToken
-      ? {
-        headers: {
-          ...prevContext.headers,
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-      : {};
+    const headers: Record<string, string> = {
+      ...prevContext.headers,
+      'Accept-Language': currentLang,
+    };
+
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    return { headers };
   });
 
   return {
     link: ApolloLink.from([
       errorLink,
-      authLink,
+      authAndLanguageLink,
       httpLink.create({
         uri: environment.graphqlUrl,
       }),
@@ -74,11 +82,27 @@ export function createApollo(httpLink: HttpLink, authService: AuthService): Apol
   };
 }
 
-export function createPublicApollo(httpLink: HttpLink): ApolloClient.Options {
+export function createPublicApollo(
+  httpLink: HttpLink,
+  translationService: TranslationService
+): ApolloClient.Options {
+  const languageLink = new SetContextLink((prevContext) => {
+    const currentLang = translationService.currentLang() || 'ro';
+    return {
+      headers: {
+        ...prevContext.headers,
+        'Accept-Language': currentLang,
+      },
+    };
+  });
+
   return {
-    link: httpLink.create({
-      uri: environment.graphqlPublicUrl,
-    }),
+    link: ApolloLink.from([
+      languageLink,
+      httpLink.create({
+        uri: environment.graphqlPublicUrl,
+      }),
+    ]),
     cache: new InMemoryCache(),
   };
 }
@@ -87,10 +111,11 @@ export const graphqlProvider: ApplicationConfig['providers'] = [
   provideNamedApollo(() => {
     const httpLink = inject(HttpLink);
     const authService = inject(AuthService);
+    const translationService = inject(TranslationService);
 
     return {
-      default: createApollo(httpLink, authService),
-      public: createPublicApollo(httpLink),
+      default: createApollo(httpLink, authService, translationService),
+      public: createPublicApollo(httpLink, translationService),
     };
   }),
 ];

@@ -1,64 +1,139 @@
-<section class="ngo-filter-toolbar">
-  <div class="search-input-wrapper">
-    <mat-icon class="search-icon">search</mat-icon>
-    <input
-      type="text"
-      [placeholder]="'HOME_AUTH.SEARCH_PLACEHOLDER' | translate"
-      [value]="searchQuery()"
-      (input)="onSearchInput($event)"
-      class="search-input"
-    />
-    @if (searchQuery()) {
-      <button class="clear-btn" (click)="clearSearch()" [attr.aria-label]="'MY_PROJECTS_NGO.FILTERS.CLEAR_SEARCH' | translate">
-        <mat-icon>close</mat-icon>
-      </button>
-    }
-  </div>
-
-  <div class="filter-group">
-    <div class="status-chips">
-      <button
-        type="button"
-        class="status-chip"
-        [class.active]="selectedStatus() === 'all'"
-        (click)="setStatus('all')"
-      >
-        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_ALL' | translate }}
-      </button>
-      <button
-        type="button"
-        class="status-chip"
-        [class.active]="selectedStatus() === 'active'"
-        (click)="setStatus('active')"
-      >
-        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_ACTIVE' | translate }}
-      </button>
-      <button
-        type="button"
-        class="status-chip"
-        [class.active]="selectedStatus() === 'completed'"
-        (click)="setStatus('completed')"
-      >
-        {{ 'MY_PROJECTS_NGO.FILTERS.STATUS_COMPLETED' | translate }}
-      </button>
+<section class="ngo-filter-toolbar-section">
+  <div class="ngo-filter-toolbar-main">
+    <div class="search-input-wrapper">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        [placeholder]="'HOME_AUTH.SEARCH_PLACEHOLDER' | translate"
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)"
+        class="search-input"
+      />
+      @if (searchQuery()) {
+        <button type="button" class="clear-btn" (click)="clearSearch()" [attr.aria-label]="'MY_PROJECTS_NGO.FILTERS.CLEAR_SEARCH' | translate">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </div>
 
-    @if (categories().length > 0) {
-      <div class="category-select-wrapper">
-        <mat-icon class="select-icon">category</mat-icon>
-        <select
-          [value]="selectedCategory()"
-          (change)="onCategorySelect($event)"
-          class="category-select"
-        >
-          <option value="all">{{ 'MY_PROJECTS_NGO.FILTERS.ALL_CATEGORIES' | translate }}</option>
-          @for (cat of categories(); track cat) {
-            <option [value]="cat.toLowerCase()">
-              {{ 'PROFILE.TAGLINE_CATEGORY.' + cat | translate }}
-            </option>
-          }
-        </select>
-      </div>
-    }
+    <!-- Filter Dropdown Button & Menu -->
+    <div class="filter-dropdown-container">
+      <button
+        type="button"
+        class="filter-dropdown-btn"
+        [class.active]="activeFilterCount() > 0"
+        [class.open]="isFilterOpen()"
+        (click)="toggleFilterDropdown()"
+        aria-haspopup="true"
+        [attr.aria-expanded]="isFilterOpen()"
+      >
+        <mat-icon class="filter-icon">tune</mat-icon>
+        <span class="filter-btn-text">{{ 'HOME_AUTH.FILTERS.FILTER_BTN' | translate }}</span>
+        @if (activeFilterCount() > 0) {
+          <span class="filter-badge">{{ activeFilterCount() }}</span>
+        }
+        <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
+      </button>
+
+      @if (isFilterOpen()) {
+        <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            <span class="dropdown-title">{{ 'HOME_AUTH.FILTERS.TITLE' | translate }}</span>
+            @if (activeFilterCount() > 0) {
+              <button type="button" class="dropdown-reset-btn" (click)="onClearFilters()">
+                {{ 'HOME_AUTH.FILTERS.RESET_BTN' | translate }}
+              </button>
+            }
+          </div>
+
+          <div class="dropdown-body">
+            <!-- Category Filter Field -->
+            <div class="filter-field-group">
+              <label for="ngo-category-filter-select" class="filter-field-label">
+                <mat-icon>category</mat-icon>
+                <span>{{ 'HOME_AUTH.FILTERS.CATEGORY_LABEL' | translate }}</span>
+              </label>
+              <div class="custom-select-wrapper">
+                <select
+                  id="ngo-category-filter-select"
+                  class="filter-select"
+                  [value]="selectedCategory()"
+                  (change)="onCategorySelect($event)"
+                >
+                  <option value="ALL">{{ 'HOME_AUTH.FILTERS.ALL_CATEGORIES' | translate }}</option>
+                  @for (cat of availableCategories; track cat) {
+                    <option [value]="cat">
+                      {{ 'PROFILE.TAGLINE_CATEGORY.' + cat | translate }}
+                    </option>
+                  }
+                </select>
+                <mat-icon class="select-chevron">expand_more</mat-icon>
+              </div>
+            </div>
+
+            <!-- Status Filter Field -->
+            <div class="filter-field-group">
+              <label for="ngo-status-filter-select" class="filter-field-label">
+                <mat-icon>flag</mat-icon>
+                <span>{{ 'HOME_AUTH.FILTERS.STATUS_LABEL' | translate }}</span>
+              </label>
+              <div class="custom-select-wrapper">
+                <select
+                  id="ngo-status-filter-select"
+                  class="filter-select"
+                  [value]="selectedStatus()"
+                  (change)="onStatusSelect($event)"
+                >
+                  <option value="ALL">{{ 'HOME_AUTH.FILTERS.ALL_STATUSES' | translate }}</option>
+                  @for (st of availableStatuses; track st) {
+                    <option [value]="st">
+                      {{ 'EVENT_STATUS.' + st | translate }}
+                    </option>
+                  }
+                </select>
+                <mat-icon class="select-chevron">expand_more</mat-icon>
+              </div>
+            </div>
+          </div>
+
+          <div class="dropdown-footer">
+            <button
+              type="button"
+              class="btn-primary dropdown-apply-btn"
+              (click)="toggleFilterDropdown()"
+            >
+              {{ 'HOME_AUTH.FILTERS.APPLY_BTN' | translate }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
   </div>
+
+  <!-- Active Filter Chips -->
+  @if (activeFilterCount() > 0) {
+    <div class="active-filter-chips">
+      @if (selectedCategory() !== 'ALL') {
+        <span class="filter-chip">
+          <mat-icon class="chip-icon">category</mat-icon>
+          <span>{{ 'PROFILE.TAGLINE_CATEGORY.' + selectedCategory() | translate }}</span>
+          <button type="button" class="chip-remove-btn" (click)="categoryChange.emit('ALL')" aria-label="Remove category filter">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      }
+      @if (selectedStatus() !== 'ALL') {
+        <span class="filter-chip">
+          <mat-icon class="chip-icon">flag</mat-icon>
+          <span>{{ 'EVENT_STATUS.' + selectedStatus() | translate }}</span>
+          <button type="button" class="chip-remove-btn" (click)="statusChange.emit('ALL')" aria-label="Remove status filter">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      }
+      <button type="button" class="clear-all-filters-btn" (click)="onClearFilters()">
+        {{ 'HOME_AUTH.FILTERS.RESET_BTN' | translate }}
+      </button>
+    </div>
+  }
 </section>

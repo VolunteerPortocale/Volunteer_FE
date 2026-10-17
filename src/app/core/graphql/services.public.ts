@@ -32,7 +32,21 @@ export type ResendRegistrationOtpMutation = { resendRegistrationOtp: boolean };
 export type GetLastThreeActiveEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLastThreeActiveEventsQuery = { getLastThreeActiveEvents: Array<{ id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, lastModifiedAt: string, lastModifiedBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number }> | null }> | null };
+export type GetLastThreeActiveEventsQuery = { getLastThreeActiveEvents: Array<{ id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, lastModifiedAt: string, lastModifiedBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string }> | null }> | null };
+
+export type GetEventFilesQueryVariables = Exact<{
+  eventId: string;
+}>;
+
+
+export type GetEventFilesQuery = { getEventFiles: Array<{ id: string, eventId: string, type: Types.EventFileType, storageFileId: string, originalName: string, contentType: string, size: number, index: number, createdAt: string }> };
+
+export type IsEmailRegisteredQueryVariables = Exact<{
+  email: string;
+}>;
+
+
+export type IsEmailRegisteredQuery = { isEmailRegistered: boolean };
 
 export const CreateUserDocument = gql`
     mutation CreateUser($input: CreateUserInput!) {
@@ -123,7 +137,6 @@ export const GetLastThreeActiveEventsDocument = gql`
       type
       originalName
       contentType
-      size
     }
   }
 }
@@ -134,6 +147,48 @@ export const GetLastThreeActiveEventsDocument = gql`
   })
   export class GetLastThreeActiveEventsGQL extends Apollo.Query<GetLastThreeActiveEventsQuery, GetLastThreeActiveEventsQueryVariables> {
     override document = GetLastThreeActiveEventsDocument;
+    override client = 'public';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetEventFilesDocument = gql`
+    query GetEventFiles($eventId: String!) {
+  getEventFiles(eventId: $eventId) {
+    id
+    eventId
+    type
+    storageFileId
+    originalName
+    contentType
+    size
+    index
+    createdAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetEventFilesGQL extends Apollo.Query<GetEventFilesQuery, GetEventFilesQueryVariables> {
+    override document = GetEventFilesDocument;
+    override client = 'public';
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const IsEmailRegisteredDocument = gql`
+    query IsEmailRegistered($email: String!) {
+  isEmailRegistered(email: $email)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class IsEmailRegisteredGQL extends Apollo.Query<IsEmailRegisteredQuery, IsEmailRegisteredQueryVariables> {
+    override document = IsEmailRegisteredDocument;
     override client = 'public';
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

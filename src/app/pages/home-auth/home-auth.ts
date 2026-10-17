@@ -1,33 +1,37 @@
-import { Component, computed, inject, OnInit, signal, DestroyRef } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, DestroyRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
 import { TranslationService } from '../../service/translation.service';
 import { EnrollmentService } from '../../service/enrollment.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { GetLastThreeActiveEventsGQL, GetLastThreeActiveEventsQuery } from '../../core/graphql/services.public';
-import { EventFileType } from '../../core/graphql/types';
+import {
+  GetFilteredEventsGQL,
+  GetFilteredEventsQuery,
+  GetFilteredEventsQueryVariables,
+} from '../../core/graphql/services.private';
+import { EventCategory, EventFileType, EventFilterInput, EventStatus } from '../../core/graphql/types';
 import { environment } from '../../../environments/environment';
+import { QueryRef } from 'apollo-angular';
 
-export type CategoryFilter = 'all' | 'ecology' | 'education' | 'animals';
-export type DbEvent = NonNullable<NonNullable<GetLastThreeActiveEventsQuery['getLastThreeActiveEvents']>[number]>;
+export const PAGE_SIZE = 6;
+export type DbEvent = GetFilteredEventsQuery['getFilteredEvents']['events'][number];
 
 export interface AuthProject {
   id: string;
   categoryTagKey: string;
-  categoryFilter: CategoryFilter;
+  category: EventCategory;
+  status: EventStatus;
+  statusKey: string;
   organization: string;
-  titleKey: string;
-  fallbackTitle: string;
-  descriptionKey: string;
-  fallbackDescription: string;
+  title: string;
+  description: string;
   location: string;
-  locationKey?: string;
   date: string;
   spotsOccupied: string;
   imageUrl: string;
@@ -41,7 +45,7 @@ export interface AuthProject {
     CommonModule,
     FormsModule,
     MatIconModule,
-    MatButtonModule,
+    MatProgressSpinnerModule,
     TranslatePipe,
     FooterComponent,
   ],
@@ -54,9 +58,41 @@ export class HomeAuthComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly enrollmentService = inject(EnrollmentService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly getLastThreeActiveEventsGQL = inject(GetLastThreeActiveEventsGQL);
+  private readonly getFilteredEventsGQL = inject(GetFilteredEventsGQL);
+  private queryRef?: QueryRef<GetFilteredEventsQuery, GetFilteredEventsQueryVariables>;
+  readonly availableCategories = Object.values(EventCategory);
+  readonly availableStatuses: EventStatus[] = [
+    EventStatus.Published,
+    EventStatus.Postponed,
+    EventStatus.InProgress,
+    EventStatus.Full,
+    EventStatus.ApplicationsClosed,
+    EventStatus.Completed,
+  ];
+
+  readonly selectedCategory = signal<EventCategory | 'ALL'>('ALL');
+  readonly selectedStatus = signal<EventStatus | 'ALL'>('ALL');
+  readonly isFilterOpen = signal<boolean>(false);
+
+  readonly activeFilterCount = computed<number>(
+    () => (this.selectedCategory() !== 'ALL' ? 1 : 0) + (this.selectedStatus() !== 'ALL' ? 1 : 0)
+  );
 
   private readonly rawEvents = signal<DbEvent[]>([]);
+  readonly currentPage = signal<number>(0);
+  readonly totalEventsCount = signal<number>(0);
+  readonly isLoading = signal<boolean>(false);
+
+  readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.totalEventsCount() / PAGE_SIZE))
+  );
+
+  readonly visiblePages = computed<number[]>(() => {
+    const total = this.totalPages();
+    const start = Math.max(1, Math.min(this.currentPage() - 1, total - 4));
+    const end = Math.min(total, start + 4);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  });
 
   readonly allProjects = computed<AuthProject[]>(() => {
     const locale = this.translationService.currentLocale();
@@ -93,19 +129,12 @@ export class HomeAuthComponent implements OnInit {
 
       return {
         id: e.id ?? '',
-        titleKey: '',
-        fallbackTitle: details?.title ?? '',
-        descriptionKey: '',
-        fallbackDescription: details?.description ?? '',
+        title: details?.title ?? '',
+        description: details?.description ?? '',
         categoryTagKey: `PROFILE.TAGLINE_CATEGORY.${e.category}`,
-        categoryFilter:
-          e.category === 'ENVIRONMENT'
-            ? 'ecology'
-            : e.category === 'EDUCATION'
-              ? 'education'
-              : e.category === 'ANIMAL_CARE'
-                ? 'animals'
-                : 'all',
+        category: e.category,
+        status: e.status,
+        statusKey: `EVENT_STATUS.${e.status}`,
         organization: 'Organizație Comunitară',
         location: details?.location || 'Moldova',
         date,
@@ -117,9 +146,7 @@ export class HomeAuthComponent implements OnInit {
     });
   });
 
-  readonly selectedCategory = signal<CategoryFilter>('all');
   readonly searchQuery = signal<string>('');
-  readonly bookmarkedIds = signal<Set<string>>(new Set());
   readonly selectedProjectModal = signal<AuthProject | null>(null);
   readonly enrollmentErrorKey = signal<string | null>(null);
   readonly isEnrolling = this.enrollmentService.isEnrolling;
@@ -140,38 +167,14 @@ export class HomeAuthComponent implements OnInit {
     return displayName.trim();
   });
 
-  readonly filterCategories: { id: CategoryFilter; labelKey: string }[] = [
-    { id: 'all', labelKey: 'HOME_AUTH.FILTERS.ALL' },
-    { id: 'ecology', labelKey: 'HOME_AUTH.FILTERS.ECOLOGY' },
-    { id: 'education', labelKey: 'HOME_AUTH.FILTERS.EDUCATION' },
-    { id: 'animals', labelKey: 'HOME_AUTH.FILTERS.ANIMALS' },
-  ];
-
   readonly filteredProjects = computed(() => {
-    const category = this.selectedCategory();
     const query = this.searchQuery().trim().toLowerCase();
     const projects = this.allProjects();
+    if (!query) return projects;
 
-    return projects.filter((project) => {
-      const matchesCategory = category === 'all' || project.categoryFilter === category;
-      if (!matchesCategory) return false;
-
-      if (!query) return true;
-
-      const title = project.titleKey
-        ? this.translationService.translate(project.titleKey)
-        : project.fallbackTitle;
-      const desc = project.descriptionKey
-        ? this.translationService.translate(project.descriptionKey)
-        : project.fallbackDescription;
-      const loc = project.locationKey
-        ? this.translationService.translate(project.locationKey)
-        : project.location;
-
-      const searchableText =
-        `${title} ${desc} ${loc} ${project.fallbackTitle} ${project.organization} ${project.location}`.toLowerCase();
-      return searchableText.includes(query);
-    });
+    return projects.filter((p) =>
+      `${p.title} ${p.description} ${p.location} ${p.organization}`.toLowerCase().includes(query)
+    );
   });
 
   ngOnInit(): void {
@@ -180,21 +183,122 @@ export class HomeAuthComponent implements OnInit {
       return;
     }
 
-    this.getLastThreeActiveEventsGQL
-      .watch({ fetchPolicy: 'cache-first' })
-      .valueChanges
+    this.initEventsQuery();
+  }
+
+  private handleEventsResponse(pagedData?: {
+    total?: number | null;
+    events?: unknown[] | null;
+  } | null): void {
+    if (pagedData) {
+      this.totalEventsCount.set(pagedData.total ?? 0);
+      const validEvents = (pagedData.events ?? []).filter(
+        (e): e is NonNullable<typeof e> => !!e && !!(e as DbEvent).details
+      );
+      this.rawEvents.set(validEvents as unknown as DbEvent[]);
+    }
+  }
+
+  private initEventsQuery(): void {
+    this.isLoading.set(true);
+    const ref = this.getFilteredEventsGQL.watch({
+      variables: {
+        input: this.buildFilterInput(),
+      },
+      fetchPolicy: 'network-only',
+    });
+    this.queryRef = ref;
+
+    ref.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((result) => {
-        const rawEvents = result.data?.getLastThreeActiveEvents ?? [];
-        const validEvents = rawEvents.filter(
-          (e): e is NonNullable<typeof e> => !!e && !!e.details
-        );
-        this.rawEvents.set(validEvents as unknown as DbEvent[]);
+      .subscribe({
+        next: (result) => {
+          this.isLoading.set(result.loading);
+          this.handleEventsResponse(result.data?.getFilteredEvents);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          console.warn('Could not load events from database:', err);
+        },
       });
   }
 
-  setCategory(category: CategoryFilter): void {
+  private refetchEvents(): void {
+    this.isLoading.set(true);
+    if (!this.queryRef) {
+      this.initEventsQuery();
+      return;
+    }
+
+    this.queryRef.refetch({
+      input: this.buildFilterInput(),
+    }).then(
+      (result) => {
+        this.isLoading.set(false);
+        this.handleEventsResponse(result.data?.getFilteredEvents);
+      },
+      (err) => {
+        this.isLoading.set(false);
+        console.warn('Could not refetch events:', err);
+      }
+    );
+  }
+
+  toggleFilterDropdown(): void {
+    this.isFilterOpen.update((open) => !open);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.filter-dropdown-container')) {
+      this.isFilterOpen.set(false);
+    }
+  }
+
+  private buildFilterInput(): EventFilterInput {
+    const cat = this.selectedCategory();
+    const st = this.selectedStatus();
+
+    const categories: EventCategory[] | undefined =
+      cat !== 'ALL' ? [cat] : undefined;
+
+    const statuses: EventStatus[] | undefined =
+      st !== 'ALL' ? [st] : this.availableStatuses;
+
+    return {
+      page: this.currentPage(),
+      size: PAGE_SIZE,
+      categories,
+      statuses,
+    };
+  }
+
+  setCategory(category: EventCategory | 'ALL'): void {
+    if (this.selectedCategory() === category) return;
     this.selectedCategory.set(category);
+    this.currentPage.set(0);
+    this.refetchEvents();
+  }
+
+  setStatus(status: EventStatus | 'ALL'): void {
+    if (this.selectedStatus() === status) return;
+    this.selectedStatus.set(status);
+    this.currentPage.set(0);
+    this.refetchEvents();
+  }
+
+  clearFilters(): void {
+    if (this.selectedCategory() === 'ALL' && this.selectedStatus() === 'ALL') return;
+    this.selectedCategory.set('ALL');
+    this.selectedStatus.set('ALL');
+    this.currentPage.set(0);
+    this.refetchEvents();
+  }
+
+  clearAllSearchAndFilters(): void {
+    this.searchQuery.set('');
+    this.clearFilters();
   }
 
   onSearchChange(val: string): void {
@@ -203,24 +307,28 @@ export class HomeAuthComponent implements OnInit {
 
   clearSearch(): void {
     this.searchQuery.set('');
-    this.selectedCategory.set('all');
   }
 
-  toggleBookmark(projectId: string, event?: Event): void {
-    if (event) {
-      event.stopPropagation();
-    }
-    const current = new Set(this.bookmarkedIds());
-    if (current.has(projectId)) {
-      current.delete(projectId);
-    } else {
-      current.add(projectId);
-    }
-    this.bookmarkedIds.set(current);
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages() || page === this.currentPage()) return;
+    this.currentPage.set(page);
+    this.refetchEvents();
+    this.scrollToEvents();
   }
 
-  isBookmarked(projectId: string): boolean {
-    return this.bookmarkedIds().has(projectId);
+  prevPage(): void {
+    this.goToPage(this.currentPage() - 1);
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  private scrollToEvents(): void {
+    const el = document.querySelector('.recommended-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   viewProject(project: AuthProject): void {
@@ -252,13 +360,6 @@ export class HomeAuthComponent implements OnInit {
       const message = err instanceof Error ? err.message : 'HOME_AUTH.MODAL.ERRORS.GENERIC';
       this.enrollmentErrorKey.set(message);
     }
-  }
-
-  editProject(projectId: string, event?: Event): void {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.router.navigate(['/editeaza-eveniment', projectId]);
   }
 
   administerProject(projectId: string, event?: Event): void {

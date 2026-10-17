@@ -35,38 +35,149 @@
 
   <!-- 2. Recommended Projects Section -->
   <section class="recommended-section">
-    <!-- Header with Title & Category Filter Tabs -->
+    <!-- Header with Title & Filter Dropdown -->
     <div class="section-header-row">
       <div class="section-titles">
         <h2 class="section-heading">{{ 'HOME_AUTH.RECOMMENDED_TITLE' | translate }}</h2>
         <p class="section-subheading">{{ 'HOME_AUTH.RECOMMENDED_SUBTITLE' | translate }}</p>
       </div>
 
-      <!-- Filter Tabs / Pills -->
-      <div class="category-filters-pills">
-        @for (cat of filterCategories; track cat.id) {
-          <button
-            type="button"
-            class="filter-pill-btn"
-            [class.active]="selectedCategory() === cat.id"
-            (click)="setCategory(cat.id)"
-          >
-            {{ cat.labelKey | translate }}
-          </button>
+      <!-- Filter Dropdown Button & Menu -->
+      <div class="filter-dropdown-container">
+        <button
+          type="button"
+          class="filter-dropdown-btn"
+          [class.active]="activeFilterCount() > 0"
+          [class.open]="isFilterOpen()"
+          (click)="toggleFilterDropdown()"
+          aria-haspopup="true"
+          [attr.aria-expanded]="isFilterOpen()"
+        >
+          <mat-icon class="filter-icon">tune</mat-icon>
+          <span class="filter-btn-text">{{ 'HOME_AUTH.FILTERS.FILTER_BTN' | translate }}</span>
+          @if (activeFilterCount() > 0) {
+            <span class="filter-badge">{{ activeFilterCount() }}</span>
+          }
+          <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
+        </button>
+
+        @if (isFilterOpen()) {
+          <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+            <div class="dropdown-header">
+              <span class="dropdown-title">{{ 'HOME_AUTH.FILTERS.TITLE' | translate }}</span>
+              @if (activeFilterCount() > 0) {
+                <button type="button" class="dropdown-reset-btn" (click)="clearFilters()">
+                  {{ 'HOME_AUTH.FILTERS.RESET_BTN' | translate }}
+                </button>
+              }
+            </div>
+
+            <div class="dropdown-body">
+              <!-- Category Filter Field -->
+              <div class="filter-field-group">
+                <label for="category-filter-select" class="filter-field-label">
+                  <mat-icon>category</mat-icon>
+                  <span>{{ 'HOME_AUTH.FILTERS.CATEGORY_LABEL' | translate }}</span>
+                </label>
+                <div class="custom-select-wrapper">
+                  <select
+                    id="category-filter-select"
+                    class="filter-select"
+                    [ngModel]="selectedCategory()"
+                    (ngModelChange)="setCategory($event)"
+                  >
+                    <option value="ALL">{{ 'HOME_AUTH.FILTERS.ALL_CATEGORIES' | translate }}</option>
+                    @for (cat of availableCategories; track cat) {
+                      <option [value]="cat">
+                        {{ 'PROFILE.TAGLINE_CATEGORY.' + cat | translate }}
+                      </option>
+                    }
+                  </select>
+                  <mat-icon class="select-chevron">expand_more</mat-icon>
+                </div>
+              </div>
+
+              <!-- Status Filter Field -->
+              <div class="filter-field-group">
+                <label for="status-filter-select" class="filter-field-label">
+                  <mat-icon>flag</mat-icon>
+                  <span>{{ 'HOME_AUTH.FILTERS.STATUS_LABEL' | translate }}</span>
+                </label>
+                <div class="custom-select-wrapper">
+                  <select
+                    id="status-filter-select"
+                    class="filter-select"
+                    [ngModel]="selectedStatus()"
+                    (ngModelChange)="setStatus($event)"
+                  >
+                    <option value="ALL">{{ 'HOME_AUTH.FILTERS.ALL_STATUSES' | translate }}</option>
+                    @for (st of availableStatuses; track st) {
+                      <option [value]="st">
+                        {{ 'EVENT_STATUS.' + st | translate }}
+                      </option>
+                    }
+                  </select>
+                  <mat-icon class="select-chevron">expand_more</mat-icon>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-footer">
+              <button
+                type="button"
+                class="btn-primary dropdown-apply-btn"
+                (click)="toggleFilterDropdown()"
+              >
+                {{ 'HOME_AUTH.FILTERS.APPLY_BTN' | translate }}
+              </button>
+            </div>
+          </div>
         }
       </div>
     </div>
 
-    <!-- 3. Projects Cards Grid -->
-    @if (filteredProjects().length > 0) {
-      <div class="projects-grid">
+    <!-- Active Filter Chips -->
+    @if (activeFilterCount() > 0) {
+      <div class="active-filter-chips">
+        @if (selectedCategory() !== 'ALL') {
+          <span class="filter-chip">
+            <mat-icon class="chip-icon">category</mat-icon>
+            <span>{{ 'PROFILE.TAGLINE_CATEGORY.' + selectedCategory() | translate }}</span>
+            <button type="button" class="chip-remove-btn" (click)="setCategory('ALL')" aria-label="Remove category filter">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        }
+        @if (selectedStatus() !== 'ALL') {
+          <span class="filter-chip">
+            <mat-icon class="chip-icon">flag</mat-icon>
+            <span>{{ 'EVENT_STATUS.' + selectedStatus() | translate }}</span>
+            <button type="button" class="chip-remove-btn" (click)="setStatus('ALL')" aria-label="Remove status filter">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        }
+        <button type="button" class="clear-all-filters-btn" (click)="clearFilters()">
+          {{ 'HOME_AUTH.FILTERS.RESET_BTN' | translate }}
+        </button>
+      </div>
+    }
+
+    <!-- 3. Projects Cards Grid & Pagination -->
+    @if (isLoading() && allProjects().length === 0) {
+      <div class="loading-state-box">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p class="loading-text">{{ 'HOME_AUTH.LOADING' | translate }}</p>
+      </div>
+    } @else if (filteredProjects().length > 0) {
+      <div class="projects-grid" [class.loading-fade]="isLoading()">
         @for (project of filteredProjects(); track project.id) {
           <article class="project-auth-card">
             <!-- Card Image with Overlays -->
             <div class="card-media">
               <img
                 [src]="project.imageUrl"
-                [alt]="project.titleKey ? (project.titleKey | translate) : project.fallbackTitle"
+                [alt]="project.title"
                 class="card-image"
                 loading="lazy"
               />
@@ -75,46 +186,16 @@
               <span class="category-badge">
                 {{ project.categoryTagKey | translate }}
               </span>
-
-              <!-- Action Buttons (Top-Right) -->
-              <div class="card-top-actions">
-                <!-- Edit Button (Pencil Icon) -->
-                @if (authService.canManageEvents()) {
-                  <button
-                    type="button"
-                    class="card-icon-btn edit-btn"
-                    (click)="editProject(project.id, $event)"
-                    [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
-                    aria-label="Edit project"
-                  >
-                    <mat-icon class="action-icon">edit</mat-icon>
-                  </button>
-                }
-
-                <!-- Bookmark Button -->
-                <button
-                  type="button"
-                  class="card-icon-btn bookmark-btn"
-                  [class.bookmarked]="isBookmarked(project.id)"
-                  (click)="toggleBookmark(project.id, $event)"
-                  [title]="'HOME_AUTH.BOOKMARK_SAVED' | translate"
-                  aria-label="Bookmark project"
-                >
-                  <mat-icon class="action-icon">
-                    {{ isBookmarked(project.id) ? 'bookmark' : 'bookmark_border' }}
-                  </mat-icon>
-                </button>
-              </div>
             </div>
 
             <!-- Card Body Content -->
             <div class="card-body">
               <span class="card-org">{{ project.organization }}</span>
               <h3 class="card-title">
-                {{ project.titleKey ? (project.titleKey | translate) : project.fallbackTitle }}
+                {{ project.title }}
               </h3>
               <p class="card-description">
-                {{ project.descriptionKey ? (project.descriptionKey | translate) : project.fallbackDescription }}
+                {{ project.description }}
               </p>
 
               <!-- Meta Info Rows (Points Regarding Event Details) -->
@@ -122,7 +203,7 @@
                 <div class="meta-item">
                   <mat-icon class="meta-icon">location_on</mat-icon>
                   <span class="meta-text">
-                    {{ project.locationKey ? (project.locationKey | translate) : project.location }}
+                    {{ project.location }}
                   </span>
                 </div>
                 <div class="meta-item">
@@ -154,27 +235,65 @@
                   >
                     <mat-icon>manage_accounts</mat-icon>
                   </button>
-                  <button
-                    type="button"
-                    class="card-footer-edit-btn"
-                    (click)="editProject(project.id, $event)"
-                    [title]="'HOME_AUTH.EDIT_PROJECT' | translate"
-                    aria-label="Edit event"
-                  >
-                    <mat-icon>edit</mat-icon>
-                  </button>
                 }
               </div>
             </div>
           </article>
         }
       </div>
+
+      <!-- Pagination Controls with Arrow Buttons -->
+      @if (totalPages() > 1) {
+        <nav class="pagination-container" aria-label="Events pagination">
+          <div class="pagination-controls">
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() === 0 || isLoading()"
+              (click)="prevPage()"
+              [attr.aria-label]="'HOME_AUTH.PREV_PAGE' | translate"
+              [title]="'HOME_AUTH.PREV_PAGE' | translate"
+            >
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="pagination-pages">
+              @for (page of visiblePages(); track page) {
+                <button
+                  type="button"
+                  class="pagination-page-btn"
+                  [class.active]="currentPage() === page - 1"
+                  [disabled]="isLoading()"
+                  (click)="goToPage(page - 1)"
+                >
+                  {{ page }}
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() >= totalPages() - 1 || isLoading()"
+              (click)="nextPage()"
+              [attr.aria-label]="'HOME_AUTH.NEXT_PAGE' | translate"
+              [title]="'HOME_AUTH.NEXT_PAGE' | translate"
+            >
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <span class="pagination-indicator">
+            {{ 'HOME_AUTH.PAGE_INDICATOR' | translate: { current: currentPage() + 1, total: totalPages() } }}
+          </span>
+        </nav>
+      }
     } @else {
       <!-- Empty State -->
       <div class="empty-state-box">
         <mat-icon class="empty-icon">search_off</mat-icon>
         <p class="empty-text">{{ 'HOME_AUTH.NO_PROJECTS_FOUND' | translate }}</p>
-        <button type="button" class="btn-primary" (click)="clearSearch()">
+        <button type="button" class="btn-primary" (click)="clearAllSearchAndFilters()">
           {{ 'HOME_AUTH.RESET_SEARCH' | translate }}
         </button>
       </div>
@@ -198,7 +317,7 @@
         <div class="modal-header-image">
           <img
             [src]="modalProject.imageUrl"
-            [alt]="modalProject.titleKey ? (modalProject.titleKey | translate) : modalProject.fallbackTitle"
+            [alt]="modalProject.title"
           />
           <span class="category-badge">{{ modalProject.categoryTagKey | translate }}</span>
         </div>
@@ -206,7 +325,7 @@
         <div class="modal-content-body">
           <span class="modal-org-label">{{ modalProject.organization }}</span>
           <h2 class="modal-event-title">
-            {{ modalProject.titleKey ? (modalProject.titleKey | translate) : modalProject.fallbackTitle }}
+            {{ modalProject.title }}
           </h2>
 
           <!-- Meta Grid for Event Details -->
@@ -224,7 +343,7 @@
               <div>
                 <span class="meta-label">{{ 'HOME_AUTH.MODAL.LOCATION' | translate }}</span>
                 <span class="meta-val">
-                  {{ modalProject.locationKey ? (modalProject.locationKey | translate) : modalProject.location }}
+                  {{ modalProject.location }}
                 </span>
               </div>
             </div>
@@ -249,7 +368,7 @@
           <!-- Description Section -->
           <div class="modal-desc-section">
             <h4>{{ 'HOME_AUTH.MODAL.ABOUT_EVENT' | translate }}</h4>
-            <p>{{ modalProject.descriptionKey ? (modalProject.descriptionKey | translate) : modalProject.fallbackDescription }}</p>
+            <p>{{ modalProject.description }}</p>
           </div>
 
           <!-- Contact Row if available -->
