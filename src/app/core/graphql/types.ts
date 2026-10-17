@@ -170,10 +170,10 @@ export enum EventFileType {
 }
 
 export type EventFilterInput = {
-  categories?: InputMaybe<Array<InputMaybe<EventCategory>>>;
+  categories?: InputMaybe<Array<EventCategory>>;
   page?: InputMaybe<Scalars['Int']['input']>;
   size?: InputMaybe<Scalars['Int']['input']>;
-  statuses?: InputMaybe<Array<InputMaybe<EventStatus>>>;
+  statuses?: InputMaybe<Array<EventStatus>>;
 };
 
 export enum EventStatus {
