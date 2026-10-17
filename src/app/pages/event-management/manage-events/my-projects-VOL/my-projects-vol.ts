@@ -14,7 +14,7 @@ import {
   GetAllEventsQuery,
   GetEventByIdGQL,
 } from '../../../../core/graphql/services.private';
-import { EventFileType, EnrollmentStatus, Enrollment, EventCategory } from '../../../../core/graphql/types';
+import { EventFileType, EnrollmentStatus, EventCategory } from '../../../../core/graphql/types';
 import { environment } from '../../../../../environments/environment';
 
 export const PAGE_SIZE = 6;
@@ -64,31 +64,22 @@ export class MyProjectsVolComponent implements OnInit {
     EnrollmentStatus.Enrolled,
   ];
 
-  readonly activeFilterCount = computed<number>(() => {
-    let count = 0;
-    if (this.selectedCategory() !== 'ALL') count++;
-    if (this.selectedStatus() !== 'ALL') count++;
-    return count;
-  });
+  readonly activeFilterCount = computed<number>(
+    () => (this.selectedCategory() !== 'ALL' ? 1 : 0) + (this.selectedStatus() !== 'ALL' ? 1 : 0)
+  );
 
   readonly currentPage = signal<number>(0);
 
   readonly enrolledEvents = computed<EnrolledEventItem[]>(() => {
     const enrolledIds = this.enrollmentService.enrolledEventIds();
-    const userEnrollments = this.enrollmentService.userEnrollments();
-    const enrollmentMap = new Map<string, Enrollment>();
-    for (const enr of userEnrollments) {
-      enrollmentMap.set(enr.eventId, enr);
-    }
-
-    const all = this.backendEvents();
+    const enrollmentMap = new Map(
+      this.enrollmentService.userEnrollments().map((enr) => [enr.eventId, enr])
+    );
     const seen = new Set<string>();
     const result: EnrolledEventItem[] = [];
 
-    for (const event of all) {
-      if (!event.id || seen.has(event.id) || !enrolledIds.has(event.id)) {
-        continue;
-      }
+    for (const event of this.backendEvents()) {
+      if (!event.id || seen.has(event.id) || !enrolledIds.has(event.id)) continue;
       seen.add(event.id);
 
       const enr = enrollmentMap.get(event.id);
@@ -103,52 +94,31 @@ export class MyProjectsVolComponent implements OnInit {
   });
 
   readonly filteredEnrolledEvents = computed<EnrolledEventItem[]>(() => {
-    const list = this.enrolledEvents();
     const query = this.searchQuery().trim().toLowerCase();
     const category = this.selectedCategory();
     const status = this.selectedStatus();
 
-    return list.filter((item) => {
-      // Category match
-      if (category !== 'ALL') {
-        if (item.event.category !== category) return false;
-      }
-
-      // Status match (filtering by enrollmentStatus)
-      if (status !== 'ALL') {
-        if (item.enrollmentStatus !== status) return false;
-      }
-
-      // Search match
+    return this.enrolledEvents().filter((item) => {
+      if (category !== 'ALL' && item.event.category !== category) return false;
+      if (status !== 'ALL' && item.enrollmentStatus !== status) return false;
       if (query) {
-        const title = (item.event.details.title || '').toLowerCase();
-        const desc = (item.event.details.description || '').toLowerCase();
-        const loc = (item.event.details.location || '').toLowerCase();
-        if (!title.includes(query) && !desc.includes(query) && !loc.includes(query)) {
-          return false;
-        }
+        const d = item.event.details;
+        const text = `${d.title || ''} ${d.description || ''} ${d.location || ''}`.toLowerCase();
+        if (!text.includes(query)) return false;
       }
-
       return true;
     });
   });
 
-  readonly totalPages = computed(() => {
-    const total = this.filteredEnrolledEvents().length;
-    return Math.max(1, Math.ceil(total / PAGE_SIZE));
-  });
+  readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.filteredEnrolledEvents().length / PAGE_SIZE))
+  );
 
   readonly visiblePages = computed<number[]>(() => {
     const total = this.totalPages();
-    const current = this.currentPage() + 1;
-    const pages: number[] = [];
-    const start = Math.max(1, current - 2);
+    const start = Math.max(1, Math.min(this.currentPage() - 1, total - 4));
     const end = Math.min(total, start + 4);
-    const adjustedStart = Math.max(1, end - 4);
-    for (let i = adjustedStart; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   });
 
   readonly paginatedEnrolledEvents = computed<EnrolledEventItem[]>(() => {
@@ -206,21 +176,18 @@ export class MyProjectsVolComponent implements OnInit {
   }
 
   goToPage(page: number): void {
-    if (page < 0 || page >= this.totalPages() || page === this.currentPage()) return;
-    this.currentPage.set(page);
-    this.scrollToEvents();
+    if (page >= 0 && page < this.totalPages() && page !== this.currentPage()) {
+      this.currentPage.set(page);
+      this.scrollToEvents();
+    }
   }
 
   prevPage(): void {
-    if (this.currentPage() > 0) {
-      this.goToPage(this.currentPage() - 1);
-    }
+    this.goToPage(this.currentPage() - 1);
   }
 
   nextPage(): void {
-    if (this.currentPage() < this.totalPages() - 1) {
-      this.goToPage(this.currentPage() + 1);
-    }
+    this.goToPage(this.currentPage() + 1);
   }
 
   private scrollToEvents(): void {

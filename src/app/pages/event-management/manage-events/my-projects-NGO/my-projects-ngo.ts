@@ -63,46 +63,26 @@ export class MyProjectsNgoComponent implements OnInit {
     const status = this.selectedStatus();
 
     return this.ngoEvents().filter((event) => {
-      // Category match
-      if (category !== 'ALL') {
-        if (event.category !== category) return false;
-      }
-
-      // Status match
-      if (status !== 'ALL') {
-        if (event.status !== status) return false;
-      }
-
-      // Search query
+      if (category !== 'ALL' && event.category !== category) return false;
+      if (status !== 'ALL' && event.status !== status) return false;
       if (query) {
-        const title = (event.details.title || '').toLowerCase();
-        const desc = (event.details.description || '').toLowerCase();
-        const loc = (event.details.location || '').toLowerCase();
-        if (!title.includes(query) && !desc.includes(query) && !loc.includes(query)) {
-          return false;
-        }
+        const d = event.details;
+        const text = `${d.title || ''} ${d.description || ''} ${d.location || ''}`.toLowerCase();
+        if (!text.includes(query)) return false;
       }
-
       return true;
     });
   });
 
-  readonly totalPages = computed(() => {
-    const total = this.filteredEvents().length;
-    return Math.max(1, Math.ceil(total / PAGE_SIZE));
-  });
+  readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.filteredEvents().length / PAGE_SIZE))
+  );
 
   readonly visiblePages = computed<number[]>(() => {
     const total = this.totalPages();
-    const current = this.currentPage() + 1;
-    const pages: number[] = [];
-    const start = Math.max(1, current - 2);
+    const start = Math.max(1, Math.min(this.currentPage() - 1, total - 4));
     const end = Math.min(total, start + 4);
-    const adjustedStart = Math.max(1, end - 4);
-    for (let i = adjustedStart; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   });
 
   readonly paginatedEvents = computed<NgoEvent[]>(() => {
@@ -142,21 +122,18 @@ export class MyProjectsNgoComponent implements OnInit {
   }
 
   goToPage(page: number): void {
-    if (page < 0 || page >= this.totalPages() || page === this.currentPage()) return;
-    this.currentPage.set(page);
-    this.scrollToEvents();
+    if (page >= 0 && page < this.totalPages() && page !== this.currentPage()) {
+      this.currentPage.set(page);
+      this.scrollToEvents();
+    }
   }
 
   prevPage(): void {
-    if (this.currentPage() > 0) {
-      this.goToPage(this.currentPage() - 1);
-    }
+    this.goToPage(this.currentPage() - 1);
   }
 
   nextPage(): void {
-    if (this.currentPage() < this.totalPages() - 1) {
-      this.goToPage(this.currentPage() + 1);
-    }
+    this.goToPage(this.currentPage() + 1);
   }
 
   private scrollToEvents(): void {
@@ -179,9 +156,9 @@ export class MyProjectsNgoComponent implements OnInit {
     return this.ngoEvents().filter((e) => !!e.details.endTime && new Date(e.details.endTime) < now).length;
   });
 
-  readonly totalCapacityNeeded = computed(() => {
-    return this.ngoEvents().reduce((acc, curr) => acc + (curr.details.nrVolunteers || 0), 0);
-  });
+  readonly totalCapacityNeeded = computed(() =>
+    this.ngoEvents().reduce((acc, curr) => acc + (curr.details.nrVolunteers || 0), 0)
+  );
 
   ngOnInit(): void {
     this.fetchBackendEvents();
@@ -222,9 +199,8 @@ export class MyProjectsNgoComponent implements OnInit {
         })
       )
         .then((res) => {
-          const fresh = res.data?.getEventById;
-          if (fresh) {
-            this.previewModalEvent.set(fresh);
+          if (res.data?.getEventById) {
+            this.previewModalEvent.set(res.data.getEventById);
           }
         })
         .catch((err: unknown) => {

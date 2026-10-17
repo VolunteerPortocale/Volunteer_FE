@@ -74,34 +74,24 @@ export class HomeAuthComponent implements OnInit {
   readonly selectedStatus = signal<EventStatus | 'ALL'>('ALL');
   readonly isFilterOpen = signal<boolean>(false);
 
-  readonly activeFilterCount = computed<number>(() => {
-    let count = 0;
-    if (this.selectedCategory() !== 'ALL') count++;
-    if (this.selectedStatus() !== 'ALL') count++;
-    return count;
-  });
+  readonly activeFilterCount = computed<number>(
+    () => (this.selectedCategory() !== 'ALL' ? 1 : 0) + (this.selectedStatus() !== 'ALL' ? 1 : 0)
+  );
 
   private readonly rawEvents = signal<DbEvent[]>([]);
   readonly currentPage = signal<number>(0);
   readonly totalEventsCount = signal<number>(0);
   readonly isLoading = signal<boolean>(false);
 
-  readonly totalPages = computed(() => {
-    const total = this.totalEventsCount();
-    return Math.max(1, Math.ceil(total / PAGE_SIZE));
-  });
+  readonly totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.totalEventsCount() / PAGE_SIZE))
+  );
 
   readonly visiblePages = computed<number[]>(() => {
     const total = this.totalPages();
-    const current = this.currentPage() + 1;
-    const pages: number[] = [];
-    const start = Math.max(1, current - 2);
+    const start = Math.max(1, Math.min(this.currentPage() - 1, total - 4));
     const end = Math.min(total, start + 4);
-    const adjustedStart = Math.max(1, end - 4);
-    for (let i = adjustedStart; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   });
 
   readonly allProjects = computed<AuthProject[]>(() => {
@@ -180,13 +170,11 @@ export class HomeAuthComponent implements OnInit {
   readonly filteredProjects = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
     const projects = this.allProjects();
-
     if (!query) return projects;
 
-    return projects.filter((project) => {
-      const searchableText = `${project.title} ${project.description} ${project.location} ${project.organization}`.toLowerCase();
-      return searchableText.includes(query);
-    });
+    return projects.filter((p) =>
+      `${p.title} ${p.description} ${p.location} ${p.organization}`.toLowerCase().includes(query)
+    );
   });
 
   ngOnInit(): void {
@@ -196,6 +184,19 @@ export class HomeAuthComponent implements OnInit {
     }
 
     this.initEventsQuery();
+  }
+
+  private handleEventsResponse(pagedData?: {
+    total?: number | null;
+    events?: unknown[] | null;
+  } | null): void {
+    if (pagedData) {
+      this.totalEventsCount.set(pagedData.total ?? 0);
+      const validEvents = (pagedData.events ?? []).filter(
+        (e): e is NonNullable<typeof e> => !!e && !!(e as DbEvent).details
+      );
+      this.rawEvents.set(validEvents as unknown as DbEvent[]);
+    }
   }
 
   private initEventsQuery(): void {
@@ -213,14 +214,7 @@ export class HomeAuthComponent implements OnInit {
       .subscribe({
         next: (result) => {
           this.isLoading.set(result.loading);
-          const pagedData = result.data?.getFilteredEvents;
-          if (pagedData) {
-            this.totalEventsCount.set(pagedData.total ?? 0);
-            const validEvents = (pagedData.events ?? []).filter(
-              (e): e is NonNullable<typeof e> => !!e && !!e.details
-            );
-            this.rawEvents.set(validEvents as unknown as DbEvent[]);
-          }
+          this.handleEventsResponse(result.data?.getFilteredEvents);
         },
         error: (err) => {
           this.isLoading.set(false);
@@ -241,14 +235,7 @@ export class HomeAuthComponent implements OnInit {
     }).then(
       (result) => {
         this.isLoading.set(false);
-        const pagedData = result.data?.getFilteredEvents;
-        if (pagedData) {
-          this.totalEventsCount.set(pagedData.total ?? 0);
-          const validEvents = (pagedData.events ?? []).filter(
-            (e): e is NonNullable<typeof e> => !!e && !!e.details
-          );
-          this.rawEvents.set(validEvents as unknown as DbEvent[]);
-        }
+        this.handleEventsResponse(result.data?.getFilteredEvents);
       },
       (err) => {
         this.isLoading.set(false);
@@ -330,15 +317,11 @@ export class HomeAuthComponent implements OnInit {
   }
 
   prevPage(): void {
-    if (this.currentPage() > 0) {
-      this.goToPage(this.currentPage() - 1);
-    }
+    this.goToPage(this.currentPage() - 1);
   }
 
   nextPage(): void {
-    if (this.currentPage() < this.totalPages() - 1) {
-      this.goToPage(this.currentPage() + 1);
-    }
+    this.goToPage(this.currentPage() + 1);
   }
 
   private scrollToEvents(): void {

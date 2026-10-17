@@ -25,12 +25,9 @@ export class NgoFilterToolbarComponent {
   readonly availableStatuses = Object.values(EventStatus);
   readonly isFilterOpen = signal<boolean>(false);
 
-  readonly activeFilterCount = computed<number>(() => {
-    let count = 0;
-    if (this.selectedCategory() !== 'ALL') count++;
-    if (this.selectedStatus() !== 'ALL') count++;
-    return count;
-  });
+  readonly activeFilterCount = computed<number>(
+    () => (this.selectedCategory() !== 'ALL' ? 1 : 0) + (this.selectedStatus() !== 'ALL' ? 1 : 0)
+  );
 
   toggleFilterDropdown(): void {
     this.isFilterOpen.update((open) => !open);
