@@ -101,7 +101,9 @@ export class EnrollmentService {
       if (decoded && /^[\w-]+$/.test(decoded)) {
         enrollmentId = decoded;
       }
-    } catch {}
+    } catch {
+      // fallback to original code if not base64 encoded
+    }
 
     const res = await firstValueFrom(
       this.confirmEnrollmentGQL.mutate({ variables: { input: { enrollmentId } } })

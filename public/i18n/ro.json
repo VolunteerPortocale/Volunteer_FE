@@ -59,6 +59,23 @@
       "PAGE_INFO": "Pagina {current} din {total}"
     }
   },
+  "EVENT_STATUS": {
+    "APPLICATIONS_CLOSED": "Înscrieri închise",
+    "CANCELLED": "Anulat",
+    "COMPLETED": "Finalizat",
+    "DRAFT": "Ciornă",
+    "FULL": "Locuri epuizate",
+    "IN_PROGRESS": "În desfășurare",
+    "PENDING_APPROVAL": "În așteptare",
+    "POSTPONED": "Amânat",
+    "PUBLISHED": "Publicat",
+    "REJECTED": "Respins"
+  },
+  "ENROLLMENT_STATUS": {
+    "COMPLETED": "Finalizat",
+    "CONFIRMED": "Confirmat",
+    "ENROLLED": "Înscris"
+  },
   "MY_PROJECTS_PAGE": {
     "TITLE": "Proiectele mele",
     "LOADING": "Se încarcă proiectele tale...",
@@ -128,10 +145,14 @@
     "RECOMMENDED_TITLE": "Proiecte recomandate",
     "RECOMMENDED_SUBTITLE": "Selectate pentru interesele și zona ta.",
     "FILTERS": {
-      "ALL": "Toate",
-      "ECOLOGY": "Ecologie",
-      "EDUCATION": "Educație",
-      "ANIMALS": "Animale"
+      "FILTER_BTN": "Filtru",
+      "TITLE": "Filtrează Evenimentele",
+      "CATEGORY_LABEL": "Domeniu / Categorie",
+      "STATUS_LABEL": "Stare / Status",
+      "ALL_CATEGORIES": "Toate categoriile",
+      "ALL_STATUSES": "Toate statusurile",
+      "RESET_BTN": "Resetează",
+      "APPLY_BTN": "Închide"
     },
     "VIEW_PROJECT": "Vezi proiectul",
     "EDIT_PROJECT": "Editează evenimentul",
@@ -140,9 +161,12 @@
     "SPOTS_OCCUPIED": "locuri ocupate",
     "SPOTS_FILLED": "{occupied} din {total} locuri ocupate",
     "SPOTS_AVAILABLE": "{total} locuri disponibile",
-    "BOOKMARK_SAVED": "Proiect salvat",
     "NO_PROJECTS_FOUND": "Nu au fost găsite proiecte conform filtrelor tale.",
     "RESET_SEARCH": "Resetează căutarea",
+    "LOADING": "Se încarcă proiectele din baza de date...",
+    "PREV_PAGE": "Pagina anterioară",
+    "NEXT_PAGE": "Pagina următoare",
+    "PAGE_INDICATOR": "Pagina {current} din {total}",
     "MODAL": {
       "DETAILS_TITLE": "Detalii Eveniment de Voluntariat",
       "ORGANIZER": "Organizație gazdă:",

@@ -50,8 +50,25 @@ query GetLastThreeActiveEvents {
             type
             originalName
             contentType
-            size
         }
     }
+}
+
+query GetEventFiles($eventId: String!) {
+  getEventFiles(eventId: $eventId) {
+    id
+    eventId
+    type
+    storageFileId
+    originalName
+    contentType
+    size
+    index
+    createdAt
+  }
+}
+
+query IsEmailRegistered($email: String!) {
+  isEmailRegistered(email: $email)
 }
 

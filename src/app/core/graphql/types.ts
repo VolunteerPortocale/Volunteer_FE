@@ -32,8 +32,13 @@ export type CreateEventDetailsInput = {
 export type CreateEventInput = {
   category: EventCategory;
   details: CreateEventDetailsInput;
-  status: EventStatus;
+  status: CreateEventStatus;
 };
+
+export enum CreateEventStatus {
+  Draft = 'DRAFT',
+  PendingApproval = 'PENDING_APPROVAL'
+}
 
 export type CreateUserInput = {
   biography?: InputMaybe<Scalars['String']['input']>;
@@ -233,8 +238,15 @@ export type UpdateEventDetailsInput = {
 export type UpdateEventInput = {
   category: EventCategory;
   details: UpdateEventDetailsInput;
-  status: EventStatus;
+  status: UpdateEventStatus;
 };
+
+export enum UpdateEventStatus {
+  Draft = 'DRAFT',
+  PendingApproval = 'PENDING_APPROVAL',
+  Published = 'PUBLISHED',
+  Rejected = 'REJECTED'
+}
 
 export type UpdateUserInput = {
   biography?: InputMaybe<Scalars['String']['input']>;

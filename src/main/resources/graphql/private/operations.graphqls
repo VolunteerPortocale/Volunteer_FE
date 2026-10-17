@@ -227,14 +227,18 @@ query GetCurrentUserEvents {
       contactEmail
       dressCode
     }
-    files {
-      id
-      type
-    }
     category
     status
     createdAt
     createdBy
+    files {
+            id
+            eventId
+            type
+            originalName
+            contentType
+            size
+        }
   }
 }
 
@@ -293,6 +297,19 @@ query GetFilteredEvents($input: EventFilterInput) {
         dressCode
       }
     }
+  }
+}
+
+query GetUserById($id: String!) {
+  getUserById(id: $id) {
+    id
+    firstName
+    lastName
+    email
+    phoneNumber
+    role
+    status
+    createdAt
   }
 }
 

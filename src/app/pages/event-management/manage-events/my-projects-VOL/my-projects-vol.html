@@ -9,51 +9,258 @@
       <p class="loading-text">{{ 'MY_PROJECTS_PAGE.LOADING' | translate }}</p>
     </div>
   } @else if (enrolledEvents().length > 0) {
-    <div class="projects-grid">
-      @for (item of enrolledEvents(); track item.event.id) {
-        <article class="project-card" (click)="viewEvent(item)">
-          <div class="card-media">
-            <img [src]="getCoverImageUrl(item.event)" [alt]="item.event.details.title" class="card-image" loading="lazy" />
-            @if (item.enrollmentStatus === 'CONFIRMED') {
-              <span class="enrolled-badge confirmed">
-                <mat-icon>verified</mat-icon>
-                <span>{{ 'MY_PROJECTS_PAGE.STATUS_CONFIRMED' | translate }}</span>
-              </span>
-            } @else {
-              <span class="enrolled-badge">
-                <mat-icon>check_circle</mat-icon>
-                <span>{{ 'MY_PROJECTS_PAGE.ENROLLED_BADGE' | translate }}</span>
-              </span>
+    <!-- Search and Filter Toolbar -->
+    <section class="vol-filter-toolbar-section">
+      <div class="vol-filter-toolbar-main">
+        <div class="search-input-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input
+            type="text"
+            [placeholder]="'HOME_AUTH.SEARCH_PLACEHOLDER' | translate"
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+            class="search-input"
+          />
+          @if (searchQuery()) {
+            <button type="button" class="clear-btn" (click)="clearSearch()" [attr.aria-label]="'MY_PROJECTS_NGO.FILTERS.CLEAR_SEARCH' | translate">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </div>
+
+        <!-- Filter Dropdown Button & Menu -->
+        <div class="filter-dropdown-container">
+          <button
+            type="button"
+            class="filter-dropdown-btn"
+            [class.active]="activeFilterCount() > 0"
+            [class.open]="isFilterOpen()"
+            (click)="toggleFilterDropdown()"
+            aria-haspopup="true"
+            [attr.aria-expanded]="isFilterOpen()"
+          >
+            <mat-icon class="filter-icon">tune</mat-icon>
+            <span class="filter-btn-text">{{ 'HOME_AUTH.FILTERS.FILTER_BTN' | translate }}</span>
+            @if (activeFilterCount() > 0) {
+              <span class="filter-badge">{{ activeFilterCount() }}</span>
             }
-          </div>
+            <mat-icon class="arrow-icon">keyboard_arrow_down</mat-icon>
+          </button>
 
-          <div class="card-content">
-            <span class="category">{{ 'PROFILE.TAGLINE_CATEGORY.' + item.event.category | translate }}</span>
-            <h3 class="card-title">{{ item.event.details.title }}</h3>
-            <p class="card-desc">{{ item.event.details.description }}</p>
+          @if (isFilterOpen()) {
+            <div class="filter-dropdown-menu" (click)="$event.stopPropagation()">
+              <div class="dropdown-header">
+                <span class="dropdown-title">{{ 'HOME_AUTH.FILTERS.TITLE' | translate }}</span>
+                @if (activeFilterCount() > 0) {
+                  <button type="button" class="dropdown-reset-btn" (click)="clearFilters()">
+                    {{ 'HOME_AUTH.FILTERS.RESET_BTN' | translate }}
+                  </button>
+                }
+              </div>
 
-            <div class="card-meta">
-              @if (item.event.details.location) {
-                <span class="meta-item">
-                  <mat-icon>location_on</mat-icon>
-                  <span>{{ item.event.details.location }}</span>
+              <div class="dropdown-body">
+                <!-- Category Filter Field -->
+                <div class="filter-field-group">
+                  <label for="vol-category-filter-select" class="filter-field-label">
+                    <mat-icon>category</mat-icon>
+                    <span>{{ 'HOME_AUTH.FILTERS.CATEGORY_LABEL' | translate }}</span>
+                  </label>
+                  <div class="custom-select-wrapper">
+                    <select
+                      id="vol-category-filter-select"
+                      class="filter-select"
+                      [value]="selectedCategory()"
+                      (change)="setCategory($any($event.target).value)"
+                    >
+                      <option value="ALL">{{ 'HOME_AUTH.FILTERS.ALL_CATEGORIES' | translate }}</option>
+                      @for (cat of availableCategories; track cat) {
+                        <option [value]="cat">
+                          {{ 'PROFILE.TAGLINE_CATEGORY.' + cat | translate }}
+                        </option>
+                      }
+                    </select>
+                    <mat-icon class="select-chevron">expand_more</mat-icon>
+                  </div>
+                </div>
+
+                <!-- Status Filter Field -->
+                <div class="filter-field-group">
+                  <label for="vol-status-filter-select" class="filter-field-label">
+                    <mat-icon>flag</mat-icon>
+                    <span>{{ 'HOME_AUTH.FILTERS.STATUS_LABEL' | translate }}</span>
+                  </label>
+                  <div class="custom-select-wrapper">
+                    <select
+                      id="vol-status-filter-select"
+                      class="filter-select"
+                      [value]="selectedStatus()"
+                      (change)="setStatus($any($event.target).value)"
+                    >
+                      <option value="ALL">{{ 'HOME_AUTH.FILTERS.ALL_STATUSES' | translate }}</option>
+                      @for (st of availableStatuses; track st) {
+                        <option [value]="st">
+                          {{ 'ENROLLMENT_STATUS.' + st | translate }}
+                        </option>
+                      }
+                    </select>
+                    <mat-icon class="select-chevron">expand_more</mat-icon>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dropdown-footer">
+                <button
+                  type="button"
+                  class="btn-primary dropdown-apply-btn"
+                  (click)="toggleFilterDropdown()"
+                >
+                  {{ 'HOME_AUTH.FILTERS.APPLY_BTN' | translate }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Active Filter Chips -->
+      @if (activeFilterCount() > 0) {
+        <div class="active-filter-chips">
+          @if (selectedCategory() !== 'ALL') {
+            <span class="filter-chip">
+              <mat-icon class="chip-icon">category</mat-icon>
+              <span>{{ 'PROFILE.TAGLINE_CATEGORY.' + selectedCategory() | translate }}</span>
+              <button type="button" class="chip-remove-btn" (click)="setCategory('ALL')" aria-label="Remove category filter">
+                <mat-icon>close</mat-icon>
+              </button>
+            </span>
+          }
+          @if (selectedStatus() !== 'ALL') {
+            <span class="filter-chip">
+              <mat-icon class="chip-icon">flag</mat-icon>
+              <span>{{ 'ENROLLMENT_STATUS.' + selectedStatus() | translate }}</span>
+              <button type="button" class="chip-remove-btn" (click)="setStatus('ALL')" aria-label="Remove status filter">
+                <mat-icon>close</mat-icon>
+              </button>
+            </span>
+          }
+          <button type="button" class="clear-all-filters-btn" (click)="clearFilters()">
+            {{ 'HOME_AUTH.FILTERS.RESET_BTN' | translate }}
+          </button>
+        </div>
+      }
+    </section>
+
+    @if (filteredEnrolledEvents().length > 0) {
+      <div class="projects-grid">
+        @for (item of paginatedEnrolledEvents(); track item.event.id) {
+          <article class="project-card" (click)="viewEvent(item)">
+            <div class="card-media">
+              <img [src]="getCoverImageUrl(item.event)" [alt]="item.event.details.title" class="card-image" loading="lazy" />
+              @if (item.enrollmentStatus === 'CONFIRMED') {
+                <span class="enrolled-badge confirmed">
+                  <mat-icon>verified</mat-icon>
+                  <span>{{ 'ENROLLMENT_STATUS.CONFIRMED' | translate }}</span>
+                </span>
+              } @else if (item.enrollmentStatus === 'COMPLETED') {
+                <span class="enrolled-badge completed">
+                  <mat-icon>task_alt</mat-icon>
+                  <span>{{ 'ENROLLMENT_STATUS.COMPLETED' | translate }}</span>
+                </span>
+              } @else {
+                <span class="enrolled-badge">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>{{ 'ENROLLMENT_STATUS.ENROLLED' | translate }}</span>
                 </span>
               }
-              <span class="meta-item">
-                <mat-icon>event</mat-icon>
-                <span>{{ item.event.details.startTime | date: 'mediumDate' }}</span>
-              </span>
             </div>
 
-            <div class="card-footer">
-              <button type="button" class="btn-view-details">
-                {{ 'HOME_AUTH.VIEW_PROJECT' | translate }}
-              </button>
+            <div class="card-content">
+              <span class="category">{{ 'PROFILE.TAGLINE_CATEGORY.' + item.event.category | translate }}</span>
+              <h3 class="card-title">{{ item.event.details.title }}</h3>
+              <p class="card-desc">{{ item.event.details.description }}</p>
+
+              <div class="card-meta">
+                @if (item.event.details.location) {
+                  <span class="meta-item">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{ item.event.details.location }}</span>
+                  </span>
+                }
+                <span class="meta-item">
+                  <mat-icon>event</mat-icon>
+                  <span>{{ item.event.details.startTime | date: 'mediumDate' }}</span>
+                </span>
+              </div>
+
+              <div class="card-footer">
+                <button type="button" class="btn-view-details">
+                  {{ 'HOME_AUTH.VIEW_PROJECT' | translate }}
+                </button>
+              </div>
             </div>
+          </article>
+        }
+      </div>
+
+      <!-- Pagination Controls with Arrow Buttons -->
+      @if (totalPages() > 1) {
+        <nav class="pagination-container" aria-label="Events pagination">
+          <div class="pagination-controls">
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() === 0 || isLoading()"
+              (click)="prevPage()"
+              [attr.aria-label]="'HOME_AUTH.PREV_PAGE' | translate"
+              [title]="'HOME_AUTH.PREV_PAGE' | translate"
+            >
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="pagination-pages">
+              @for (page of visiblePages(); track page) {
+                <button
+                  type="button"
+                  class="pagination-page-btn"
+                  [class.active]="currentPage() === page - 1"
+                  [disabled]="isLoading()"
+                  (click)="goToPage(page - 1)"
+                >
+                  {{ page }}
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() >= totalPages() - 1 || isLoading()"
+              (click)="nextPage()"
+              [attr.aria-label]="'HOME_AUTH.NEXT_PAGE' | translate"
+              [title]="'HOME_AUTH.NEXT_PAGE' | translate"
+            >
+              <mat-icon>chevron_right</mat-icon>
+            </button>
           </div>
-        </article>
+
+          <span class="pagination-indicator">
+            {{ 'HOME_AUTH.PAGE_INDICATOR' | translate: { current: currentPage() + 1, total: totalPages() } }}
+          </span>
+        </nav>
       }
-    </div>
+    } @else {
+      <!-- Filtered Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon-circle">
+          <mat-icon>event_busy</mat-icon>
+        </div>
+        <h2 class="empty-title">{{ 'MY_PROJECTS_NGO.EMPTY.TITLE' | translate }}</h2>
+        <p class="empty-desc">{{ 'MY_PROJECTS_NGO.EMPTY.DESC_FILTERED' | translate }}</p>
+        <button type="button" class="btn-explore" (click)="clearAllSearchAndFilters()">
+          {{ 'MY_PROJECTS_NGO.EMPTY.RESET_BTN' | translate }}
+        </button>
+      </div>
+    }
   } @else {
     <div class="empty-state">
       <div class="empty-icon-circle">

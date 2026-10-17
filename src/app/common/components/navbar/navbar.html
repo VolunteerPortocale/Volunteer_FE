@@ -45,33 +45,6 @@
             {{ 'NAV.BECOME_VOLUNTEER' | translate }}
           </button>
         } @else {
-          <!-- Notification Bell Icon Button with Red Dot Badge -->
-          <button mat-icon-button class="notif-btn" [matMenuTriggerFor]="notifMenu" aria-label="Notifications">
-            <mat-icon class="notif-icon">notifications_none</mat-icon>
-            <span class="notif-badge-dot"></span>
-          </button>
-
-          <mat-menu #notifMenu="matMenu" class="notif-dropdown-menu">
-            <div class="notif-menu-header">
-              <span class="notif-title">{{ 'NAV.NOTIFICATIONS' | translate }}</span>
-            </div>
-            <mat-divider></mat-divider>
-            <button mat-menu-item>
-              <mat-icon class="notif-item-icon">park</mat-icon>
-              <div class="notif-item-text">
-                <span class="notif-item-title">Proiect nou în Ecologie</span>
-                <span class="notif-item-time">acum 2 ore</span>
-              </div>
-            </button>
-            <button mat-menu-item>
-              <mat-icon class="notif-item-icon">check_circle</mat-icon>
-              <div class="notif-item-text">
-                <span class="notif-item-title">Înscriere confirmată</span>
-                <span class="notif-item-time">ieri</span>
-              </div>
-            </button>
-          </mat-menu>
-
           <!-- + Adaugă eveniment Button -->
           @if (authService.canManageEvents()) {
             <a mat-button routerLink="/adauga-eveniment" class="btn-primary add-event-pill"

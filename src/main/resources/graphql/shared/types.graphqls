@@ -164,7 +164,19 @@ input UpdateUserPreferencesInput {
 input CreateEventInput {
     details: CreateEventDetailsInput!
     category: EventCategory!
-    status: EventStatus!
+    status: CreateEventStatus!
+}
+
+enum CreateEventStatus {
+    PENDING_APPROVAL,
+    DRAFT
+}
+
+enum UpdateEventStatus {
+    PENDING_APPROVAL,
+    DRAFT,
+    PUBLISHED,
+    REJECTED
 }
 
 input CreateEventDetailsInput {
@@ -193,7 +205,7 @@ input EventDescriptionInput {
 input UpdateEventInput{
     details: UpdateEventDetailsInput!
     category: EventCategory!
-    status: EventStatus!
+    status: UpdateEventStatus!
 }
 
 input UpdateEventDetailsInput{
