@@ -73,6 +73,20 @@ export type UpdateEventMutationVariables = Exact<{
 
 export type UpdateEventMutation = { updateEvent: { id: string, category: Types.EventCategory, status: Types.EventStatus, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } } };
 
+export type ApproveEventMutationVariables = Exact<{
+  eventId: string;
+}>;
+
+
+export type ApproveEventMutation = { approveEvent: { id: string, status: Types.EventStatus } };
+
+export type RejectEventMutationVariables = Exact<{
+  eventId: string;
+}>;
+
+
+export type RejectEventMutation = { rejectEvent: { id: string, status: Types.EventStatus } };
+
 export type EnrollMutationVariables = Exact<{
   input: Types.CreateEnrollmentInput;
 }>;
@@ -86,6 +100,13 @@ export type UnenrollMutationVariables = Exact<{
 
 
 export type UnenrollMutation = { unenroll: { status: Types.GenericStatus | null } };
+
+export type ConfirmEnrollmentMutationVariables = Exact<{
+  input: Types.ConfirmEnrollmentInput;
+}>;
+
+
+export type ConfirmEnrollmentMutation = { confirmEnrollment: { status: Types.GenericStatus | null } };
 
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -120,6 +141,13 @@ export type GetEventsCreatedByCurrentUserQueryVariables = Exact<{ [key: string]:
 
 
 export type GetEventsCreatedByCurrentUserQuery = { getEventsCreatedByCurrentUser: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, type: Types.EventFileType }> | null }> };
+
+export type GetFilteredEventsQueryVariables = Exact<{
+  input?: Types.EventFilterInput | null | undefined;
+}>;
+
+
+export type GetFilteredEventsQuery = { getFilteredEvents: { page: number, size: number, total: number, events: Array<{ id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, lastModifiedAt: string, lastModifiedBy: string | null, files: Array<{ id: string, type: Types.EventFileType }> | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } }> } };
 
 export const GetAllUsersDocument = gql`
     query GetAllUsers {
@@ -353,6 +381,44 @@ export const UpdateEventDocument = gql`
       super(apollo);
     }
   }
+export const ApproveEventDocument = gql`
+    mutation ApproveEvent($eventId: String!) {
+  approveEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ApproveEventGQL extends Apollo.Mutation<ApproveEventMutation, ApproveEventMutationVariables> {
+    override document = ApproveEventDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RejectEventDocument = gql`
+    mutation RejectEvent($eventId: String!) {
+  rejectEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RejectEventGQL extends Apollo.Mutation<RejectEventMutation, RejectEventMutationVariables> {
+    override document = RejectEventDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const EnrollDocument = gql`
     mutation Enroll($input: CreateEnrollmentInput!) {
   enroll(input: $input) {
@@ -387,6 +453,24 @@ export const UnenrollDocument = gql`
   })
   export class UnenrollGQL extends Apollo.Mutation<UnenrollMutation, UnenrollMutationVariables> {
     override document = UnenrollDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ConfirmEnrollmentDocument = gql`
+    mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
+  confirmEnrollment(input: $input) {
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ConfirmEnrollmentGQL extends Apollo.Mutation<ConfirmEnrollmentMutation, ConfirmEnrollmentMutationVariables> {
+    override document = ConfirmEnrollmentDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
@@ -577,6 +661,51 @@ export const GetEventsCreatedByCurrentUserDocument = gql`
   })
   export class GetEventsCreatedByCurrentUserGQL extends Apollo.Query<GetEventsCreatedByCurrentUserQuery, GetEventsCreatedByCurrentUserQueryVariables> {
     override document = GetEventsCreatedByCurrentUserDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GetFilteredEventsDocument = gql`
+    query GetFilteredEvents($input: EventFilterInput) {
+  getFilteredEvents(input: $input) {
+    page
+    size
+    total
+    events {
+      id
+      category
+      storageFolderId
+      status
+      createdAt
+      createdBy
+      lastModifiedAt
+      lastModifiedBy
+      files {
+        id
+        type
+      }
+      details {
+        title
+        description
+        startTime
+        endTime
+        location
+        nrVolunteers
+        contactPhone
+        contactEmail
+        dressCode
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetFilteredEventsGQL extends Apollo.Query<GetFilteredEventsQuery, GetFilteredEventsQueryVariables> {
+    override document = GetFilteredEventsDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

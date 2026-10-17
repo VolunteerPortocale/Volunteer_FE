@@ -9,9 +9,55 @@
     "NOTIFICATIONS": "Notificări",
     "MY_PROFILE": "Profilul meu",
     "MY_PROJECTS": "Proiectele mele",
-    "MANAGE_PROJECTS_NGO": "Proiectele mele (ONG)",
+    "MANAGE_PROJECTS_NGO": "Proiectele mele",
+    "SCAN_PRESENCE": "Scanare prezență",
     "SETTINGS": "Setări",
-    "LOGOUT": "Deconectare"
+    "LOGOUT": "Deconectare",
+    "MODERATOR_DASHBOARD": "Panou Moderator"
+  },
+  "MODERATOR_DASHBOARD": {
+    "BADGE": "Panou Moderator",
+    "TITLE": "Moderare Evenimente & Verificare",
+    "SUBTITLE": "Aprobă sau respinge inițiativele aflate în așteptare pentru a fi publicate pe platformă și validează prezența voluntarilor prin scanarea codurilor QR.",
+    "TABS": {
+      "PENDING": "Evenimente în Așteptare",
+      "SCANNER": "Scanare Cod QR"
+    },
+    "REFRESH": "Reîmprospătează",
+    "LOADING": "Se încarcă evenimentele în așteptare...",
+    "EMPTY_TITLE": "Nu există evenimente în așteptare",
+    "EMPTY_DESC": "Toate evenimentele au fost moderate sau nu corespund filtrelor de căutare.",
+    "STATUS_PENDING": "În Așteptare",
+    "VOLUNTEERS_NEEDED": "{count} voluntari necesari",
+    "ACTIONS": {
+      "APPROVE": "Aprobă",
+      "REJECT": "Respinge",
+      "DETAILS": "Detalii",
+      "APPROVE_AND_PUBLISH": "Aprobă & Publică",
+      "REJECT_EVENT": "Respinge Evenimentul"
+    },
+    "MODAL": {
+      "START_DATE": "Data început",
+      "END_DATE": "Data sfârșit",
+      "LOCATION": "Locație",
+      "CAPACITY": "Locuri disponibile",
+      "EMAIL": "Email Contact",
+      "PHONE": "Telefon",
+      "DESCRIPTION_TITLE": "Descriere Inițiativă"
+    },
+    "ERRORS": {
+      "LOAD_FAILED": "Nu s-au putut încărca evenimentele.",
+      "UPDATE_FAILED": "A apărut o eroare la actualizarea statusului."
+    },
+    "NOTIFICATIONS": {
+      "APPROVED": "Evenimentul a fost aprobat și publicat cu succes!",
+      "REJECTED": "Evenimentul a fost respins."
+    },
+    "PAGINATION": {
+      "PREV": "Anterior",
+      "NEXT": "Următor",
+      "PAGE_INFO": "Pagina {current} din {total}"
+    }
   },
   "MY_PROJECTS_PAGE": {
     "TITLE": "Proiectele mele",
@@ -28,7 +74,7 @@
   },
   "MY_PROJECTS_NGO": {
     "BADGE_MODULE": "Modul Administrare ONG",
-    "PAGE_TITLE": "Proiectele Mele (ONG)",
+    "PAGE_TITLE": "Proiectele mele",
     "PAGE_SUBTITLE": "Coordonează inițiativele civice, gestionează evenimentele publicate și monitorizează impactul comunitar în timp real.",
     "LOADING": "Se încarcă proiectele din baza de date...",
     "METRICS": {

@@ -271,6 +271,7 @@ type PagedEventData {
 input EventFilterInput {
     page: Int
     size: Int
-    statuses: [EventStatus!]
-    categories: [EventCategory!]
+    statuses: [EventStatus]
+    categories: [EventCategory]
 }
+

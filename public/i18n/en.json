@@ -9,9 +9,55 @@
     "NOTIFICATIONS": "Notifications",
     "MY_PROFILE": "My profile",
     "MY_PROJECTS": "My projects",
-    "MANAGE_PROJECTS_NGO": "My Projects (NGO)",
+    "MANAGE_PROJECTS_NGO": "My Projects",
+    "SCAN_PRESENCE": "Scan Attendance",
     "SETTINGS": "Settings",
-    "LOGOUT": "Log out"
+    "LOGOUT": "Log out",
+    "MODERATOR_DASHBOARD": "Moderator Panel"
+  },
+  "MODERATOR_DASHBOARD": {
+    "BADGE": "Moderator Panel",
+    "TITLE": "Event Moderation & Verification",
+    "SUBTITLE": "Approve or reject pending initiatives to publish them on the platform and verify volunteer attendance via QR code scanning.",
+    "TABS": {
+      "PENDING": "Pending Events",
+      "SCANNER": "QR Code Scanner"
+    },
+    "REFRESH": "Refresh",
+    "LOADING": "Loading pending events...",
+    "EMPTY_TITLE": "No pending events",
+    "EMPTY_DESC": "All events have been reviewed or no matches found.",
+    "STATUS_PENDING": "Pending",
+    "VOLUNTEERS_NEEDED": "{count} volunteers needed",
+    "ACTIONS": {
+      "APPROVE": "Approve",
+      "REJECT": "Reject",
+      "DETAILS": "Details",
+      "APPROVE_AND_PUBLISH": "Approve & Publish",
+      "REJECT_EVENT": "Reject Event"
+    },
+    "MODAL": {
+      "START_DATE": "Start Date",
+      "END_DATE": "End Date",
+      "LOCATION": "Location",
+      "CAPACITY": "Available Spots",
+      "EMAIL": "Contact Email",
+      "PHONE": "Phone",
+      "DESCRIPTION_TITLE": "Initiative Description"
+    },
+    "ERRORS": {
+      "LOAD_FAILED": "Could not load events.",
+      "UPDATE_FAILED": "An error occurred while updating status."
+    },
+    "NOTIFICATIONS": {
+      "APPROVED": "Event has been successfully approved and published!",
+      "REJECTED": "Event has been rejected."
+    },
+    "PAGINATION": {
+      "PREV": "Previous",
+      "NEXT": "Next",
+      "PAGE_INFO": "Page {current} of {total}"
+    }
   },
   "MY_PROJECTS_PAGE": {
     "TITLE": "My projects",
@@ -28,7 +74,7 @@
   },
   "MY_PROJECTS_NGO": {
     "BADGE_MODULE": "NGO Administration Module",
-    "PAGE_TITLE": "My Projects (NGO)",
+    "PAGE_TITLE": "My Projects",
     "PAGE_SUBTITLE": "Coordinate civic initiatives, manage published events, and monitor community impact in real-time.",
     "LOADING": "Loading projects from database...",
     "METRICS": {

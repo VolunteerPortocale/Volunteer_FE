@@ -18,6 +18,7 @@ export const APP_ROUTES = {
   TERMS: 'termeni',
   PRIVACY: 'confidentialitate',
   COOKIES: 'cookies',
+  SCAN_QR: 'scanare-prezenta',
   NOT_FOUND: '**'
 } as const;
 
@@ -47,4 +48,5 @@ export const ROUTE_HELPERS = {
   adminEvent: (id?: string | number) =>
     id ? `/${APP_ROUTES.ADMIN_EVENT.replace(':id', String(id))}` : `/${APP_ROUTES.ADMIN_EVENT_DEFAULT}`,
   manageEvents: () => `/${APP_ROUTES.MANAGE_EVENTS}`,
+  scanQr: () => `/${APP_ROUTES.SCAN_QR}`,
 } as const;

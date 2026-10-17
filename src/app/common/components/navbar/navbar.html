@@ -98,10 +98,20 @@
               <mat-icon>person</mat-icon>
               <span>{{ 'NAV.MY_PROFILE' | translate }}</span>
             </button>
+            @if (authService.hasRole(USER_ROLES.MODERATOR)) {
+              <button mat-menu-item routerLink="/moderare">
+                <mat-icon>shield</mat-icon>
+                <span>{{ 'NAV.MODERATOR_DASHBOARD' | translate }}</span>
+              </button>
+            }
             @if (authService.canManageEvents()) {
               <button mat-menu-item routerLink="/administrare-eveniment">
                 <mat-icon>dashboard_customize</mat-icon>
                 <span>{{ 'NAV.MANAGE_PROJECTS_NGO' | translate }}</span>
+              </button>
+              <button mat-menu-item routerLink="/scanare-prezenta">
+                <mat-icon>qr_code_scanner</mat-icon>
+                <span>{{ 'NAV.SCAN_PRESENCE' | translate }}</span>
               </button>
             } @else {
               <button mat-menu-item routerLink="/proiecte">
