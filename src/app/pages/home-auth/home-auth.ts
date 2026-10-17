@@ -60,9 +60,15 @@ export class HomeAuthComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly getFilteredEventsGQL = inject(GetFilteredEventsGQL);
   private queryRef?: QueryRef<GetFilteredEventsQuery, GetFilteredEventsQueryVariables>;
-
   readonly availableCategories = Object.values(EventCategory);
-  readonly availableStatuses = Object.values(EventStatus);
+  readonly availableStatuses: EventStatus[] = [
+    EventStatus.Published,
+    EventStatus.Postponed,
+    EventStatus.InProgress,
+    EventStatus.Full,
+    EventStatus.ApplicationsClosed,
+    EventStatus.Completed,
+  ];
 
   readonly selectedCategory = signal<EventCategory | 'ALL'>('ALL');
   readonly selectedStatus = signal<EventStatus | 'ALL'>('ALL');
@@ -271,7 +277,7 @@ export class HomeAuthComponent implements OnInit {
       cat !== 'ALL' ? [cat] : undefined;
 
     const statuses: EventStatus[] | undefined =
-      st !== 'ALL' ? [st] : undefined;
+      st !== 'ALL' ? [st] : this.availableStatuses;
 
     return {
       page: this.currentPage(),

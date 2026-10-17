@@ -32,16 +32,16 @@
       [searchQuery]="searchQuery()"
       [selectedStatus]="selectedStatus()"
       [selectedCategory]="selectedCategory()"
-      (searchChange)="searchQuery.set($event)"
-      (statusChange)="selectedStatus.set($event)"
-      (categoryChange)="selectedCategory.set($event)"
+      (searchChange)="onSearchChange($event)"
+      (statusChange)="onStatusChange($event)"
+      (categoryChange)="onCategoryChange($event)"
       (clearFilters)="clearFilters()"
     />
 
     <!-- Projects Grid -->
     @if (filteredEvents().length > 0) {
       <section class="ngo-projects-grid">
-        @for (item of filteredEvents(); track item.id) {
+        @for (item of paginatedEvents(); track item.id) {
           <app-ngo-event-card
             [event]="item"
             (edit)="editEvent($event)"
@@ -49,6 +49,53 @@
           />
         }
       </section>
+
+      <!-- Pagination Controls with Arrow Buttons -->
+      @if (totalPages() > 1) {
+        <nav class="pagination-container" aria-label="Events pagination">
+          <div class="pagination-controls">
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() === 0 || isLoading()"
+              (click)="prevPage()"
+              [attr.aria-label]="'HOME_AUTH.PREV_PAGE' | translate"
+              [title]="'HOME_AUTH.PREV_PAGE' | translate"
+            >
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="pagination-pages">
+              @for (page of visiblePages(); track page) {
+                <button
+                  type="button"
+                  class="pagination-page-btn"
+                  [class.active]="currentPage() === page - 1"
+                  [disabled]="isLoading()"
+                  (click)="goToPage(page - 1)"
+                >
+                  {{ page }}
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() >= totalPages() - 1 || isLoading()"
+              (click)="nextPage()"
+              [attr.aria-label]="'HOME_AUTH.NEXT_PAGE' | translate"
+              [title]="'HOME_AUTH.NEXT_PAGE' | translate"
+            >
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <span class="pagination-indicator">
+            {{ 'HOME_AUTH.PAGE_INDICATOR' | translate: { current: currentPage() + 1, total: totalPages() } }}
+          </span>
+        </nav>
+      }
     } @else {
       <!-- Empty State -->
       <section class="ngo-empty-state">

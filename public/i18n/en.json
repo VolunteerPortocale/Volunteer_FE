@@ -25,6 +25,11 @@
     "PUBLISHED": "Published",
     "REJECTED": "Rejected"
   },
+  "ENROLLMENT_STATUS": {
+    "COMPLETED": "Completed",
+    "CONFIRMED": "Confirmed",
+    "ENROLLED": "Enrolled"
+  },
   "MY_PROJECTS_PAGE": {
     "TITLE": "My projects",
     "LOADING": "Loading your projects...",

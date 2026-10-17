@@ -25,6 +25,11 @@
     "PUBLISHED": "Опубликовано",
     "REJECTED": "Отклонено"
   },
+  "ENROLLMENT_STATUS": {
+    "COMPLETED": "Завершено",
+    "CONFIRMED": "Подтверждено",
+    "ENROLLED": "Записан"
+  },
   "MY_PROJECTS_PAGE": {
     "TITLE": "Мои проекты",
     "LOADING": "Загрузка ваших проектов...",

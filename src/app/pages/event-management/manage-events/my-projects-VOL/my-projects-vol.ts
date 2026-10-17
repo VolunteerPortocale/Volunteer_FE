@@ -14,8 +14,10 @@ import {
   GetAllEventsQuery,
   GetEventByIdGQL,
 } from '../../../../core/graphql/services.private';
-import { EventFileType, EnrollmentStatus, Enrollment, EventCategory, EventStatus } from '../../../../core/graphql/types';
+import { EventFileType, EnrollmentStatus, Enrollment, EventCategory } from '../../../../core/graphql/types';
 import { environment } from '../../../../../environments/environment';
+
+export const PAGE_SIZE = 6;
 
 type VolEvent = GetAllEventsQuery['getAllEvents'][number];
 
@@ -52,11 +54,15 @@ export class MyProjectsVolComponent implements OnInit {
 
   readonly searchQuery = signal('');
   readonly selectedCategory = signal<EventCategory | 'ALL'>('ALL');
-  readonly selectedStatus = signal<EventStatus | 'ALL'>('ALL');
+  readonly selectedStatus = signal<EnrollmentStatus | 'ALL'>('ALL');
   readonly isFilterOpen = signal(false);
 
   readonly availableCategories = Object.values(EventCategory);
-  readonly availableStatuses = Object.values(EventStatus);
+  readonly availableStatuses: EnrollmentStatus[] = [
+    EnrollmentStatus.Completed,
+    EnrollmentStatus.Confirmed,
+    EnrollmentStatus.Enrolled,
+  ];
 
   readonly activeFilterCount = computed<number>(() => {
     let count = 0;
@@ -64,6 +70,8 @@ export class MyProjectsVolComponent implements OnInit {
     if (this.selectedStatus() !== 'ALL') count++;
     return count;
   });
+
+  readonly currentPage = signal<number>(0);
 
   readonly enrolledEvents = computed<EnrolledEventItem[]>(() => {
     const enrolledIds = this.enrollmentService.enrolledEventIds();
@@ -106,9 +114,9 @@ export class MyProjectsVolComponent implements OnInit {
         if (item.event.category !== category) return false;
       }
 
-      // Status match
+      // Status match (filtering by enrollmentStatus)
       if (status !== 'ALL') {
-        if (item.event.status !== status) return false;
+        if (item.enrollmentStatus !== status) return false;
       }
 
       // Search match
@@ -123,6 +131,34 @@ export class MyProjectsVolComponent implements OnInit {
 
       return true;
     });
+  });
+
+  readonly totalPages = computed(() => {
+    const total = this.filteredEnrolledEvents().length;
+    return Math.max(1, Math.ceil(total / PAGE_SIZE));
+  });
+
+  readonly visiblePages = computed<number[]>(() => {
+    const total = this.totalPages();
+    const current = this.currentPage() + 1;
+    const pages: number[] = [];
+    const start = Math.max(1, current - 2);
+    const end = Math.min(total, start + 4);
+    const adjustedStart = Math.max(1, end - 4);
+    for (let i = adjustedStart; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  });
+
+  readonly paginatedEnrolledEvents = computed<EnrolledEventItem[]>(() => {
+    const list = this.filteredEnrolledEvents();
+    const page = Math.min(
+      this.currentPage(),
+      Math.max(0, Math.ceil(list.length / PAGE_SIZE) - 1)
+    );
+    const start = page * PAGE_SIZE;
+    return list.slice(start, start + PAGE_SIZE);
   });
 
   toggleFilterDropdown(): void {
@@ -140,28 +176,58 @@ export class MyProjectsVolComponent implements OnInit {
   onSearchInput(event: Event): void {
     const val = (event.target as HTMLInputElement).value;
     this.searchQuery.set(val);
+    this.currentPage.set(0);
   }
 
   clearSearch(): void {
     this.searchQuery.set('');
+    this.currentPage.set(0);
   }
 
   setCategory(category: EventCategory | 'ALL'): void {
     this.selectedCategory.set(category);
+    this.currentPage.set(0);
   }
 
-  setStatus(status: EventStatus | 'ALL'): void {
+  setStatus(status: EnrollmentStatus | 'ALL'): void {
     this.selectedStatus.set(status);
+    this.currentPage.set(0);
   }
 
   clearFilters(): void {
     this.selectedCategory.set('ALL');
     this.selectedStatus.set('ALL');
+    this.currentPage.set(0);
   }
 
   clearAllSearchAndFilters(): void {
     this.searchQuery.set('');
     this.clearFilters();
+  }
+
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages() || page === this.currentPage()) return;
+    this.currentPage.set(page);
+    this.scrollToEvents();
+  }
+
+  prevPage(): void {
+    if (this.currentPage() > 0) {
+      this.goToPage(this.currentPage() - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage() < this.totalPages() - 1) {
+      this.goToPage(this.currentPage() + 1);
+    }
+  }
+
+  private scrollToEvents(): void {
+    const el = document.querySelector('.vol-filter-toolbar-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   readonly isUnenrolling = this.enrollmentService.isUnenrolling;

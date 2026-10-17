@@ -243,7 +243,9 @@ export type UpdateEventInput = {
 
 export enum UpdateEventStatus {
   Draft = 'DRAFT',
-  PendingApproval = 'PENDING_APPROVAL'
+  PendingApproval = 'PENDING_APPROVAL',
+  Published = 'PUBLISHED',
+  Rejected = 'REJECTED'
 }
 
 export type UpdateUserInput = {

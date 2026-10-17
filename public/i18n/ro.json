@@ -25,6 +25,11 @@
     "PUBLISHED": "Publicat",
     "REJECTED": "Respins"
   },
+  "ENROLLMENT_STATUS": {
+    "COMPLETED": "Finalizat",
+    "CONFIRMED": "Confirmat",
+    "ENROLLED": "Înscris"
+  },
   "MY_PROJECTS_PAGE": {
     "TITLE": "Proiectele mele",
     "LOADING": "Se încarcă proiectele tale...",

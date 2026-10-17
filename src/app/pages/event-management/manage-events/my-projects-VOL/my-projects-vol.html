@@ -99,7 +99,7 @@
                       <option value="ALL">{{ 'HOME_AUTH.FILTERS.ALL_STATUSES' | translate }}</option>
                       @for (st of availableStatuses; track st) {
                         <option [value]="st">
-                          {{ 'EVENT_STATUS.' + st | translate }}
+                          {{ 'ENROLLMENT_STATUS.' + st | translate }}
                         </option>
                       }
                     </select>
@@ -137,7 +137,7 @@
           @if (selectedStatus() !== 'ALL') {
             <span class="filter-chip">
               <mat-icon class="chip-icon">flag</mat-icon>
-              <span>{{ 'EVENT_STATUS.' + selectedStatus() | translate }}</span>
+              <span>{{ 'ENROLLMENT_STATUS.' + selectedStatus() | translate }}</span>
               <button type="button" class="chip-remove-btn" (click)="setStatus('ALL')" aria-label="Remove status filter">
                 <mat-icon>close</mat-icon>
               </button>
@@ -152,19 +152,24 @@
 
     @if (filteredEnrolledEvents().length > 0) {
       <div class="projects-grid">
-        @for (item of filteredEnrolledEvents(); track item.event.id) {
+        @for (item of paginatedEnrolledEvents(); track item.event.id) {
           <article class="project-card" (click)="viewEvent(item)">
             <div class="card-media">
               <img [src]="getCoverImageUrl(item.event)" [alt]="item.event.details.title" class="card-image" loading="lazy" />
               @if (item.enrollmentStatus === 'CONFIRMED') {
                 <span class="enrolled-badge confirmed">
                   <mat-icon>verified</mat-icon>
-                  <span>{{ 'MY_PROJECTS_PAGE.STATUS_CONFIRMED' | translate }}</span>
+                  <span>{{ 'ENROLLMENT_STATUS.CONFIRMED' | translate }}</span>
+                </span>
+              } @else if (item.enrollmentStatus === 'COMPLETED') {
+                <span class="enrolled-badge completed">
+                  <mat-icon>task_alt</mat-icon>
+                  <span>{{ 'ENROLLMENT_STATUS.COMPLETED' | translate }}</span>
                 </span>
               } @else {
                 <span class="enrolled-badge">
                   <mat-icon>check_circle</mat-icon>
-                  <span>{{ 'MY_PROJECTS_PAGE.ENROLLED_BADGE' | translate }}</span>
+                  <span>{{ 'ENROLLMENT_STATUS.ENROLLED' | translate }}</span>
                 </span>
               }
             </div>
@@ -196,6 +201,53 @@
           </article>
         }
       </div>
+
+      <!-- Pagination Controls with Arrow Buttons -->
+      @if (totalPages() > 1) {
+        <nav class="pagination-container" aria-label="Events pagination">
+          <div class="pagination-controls">
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() === 0 || isLoading()"
+              (click)="prevPage()"
+              [attr.aria-label]="'HOME_AUTH.PREV_PAGE' | translate"
+              [title]="'HOME_AUTH.PREV_PAGE' | translate"
+            >
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+
+            <div class="pagination-pages">
+              @for (page of visiblePages(); track page) {
+                <button
+                  type="button"
+                  class="pagination-page-btn"
+                  [class.active]="currentPage() === page - 1"
+                  [disabled]="isLoading()"
+                  (click)="goToPage(page - 1)"
+                >
+                  {{ page }}
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="pagination-arrow-btn"
+              [disabled]="currentPage() >= totalPages() - 1 || isLoading()"
+              (click)="nextPage()"
+              [attr.aria-label]="'HOME_AUTH.NEXT_PAGE' | translate"
+              [title]="'HOME_AUTH.NEXT_PAGE' | translate"
+            >
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <span class="pagination-indicator">
+            {{ 'HOME_AUTH.PAGE_INDICATOR' | translate: { current: currentPage() + 1, total: totalPages() } }}
+          </span>
+        </nav>
+      }
     } @else {
       <!-- Filtered Empty State -->
       <div class="empty-state">

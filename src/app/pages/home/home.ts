@@ -1,10 +1,15 @@
-import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, signal, OnInit, DestroyRef, effect } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { QueryRef } from 'apollo-angular';
 import { ProjectCardComponent } from './project-card/project-card';
 import { FooterComponent } from '../../common/components/footer/footer';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
-import { GetLastThreeActiveEventsGQL } from '../../core/graphql/services.public';
+import {
+  GetLastThreeActiveEventsGQL,
+  GetLastThreeActiveEventsQuery,
+  GetLastThreeActiveEventsQueryVariables,
+} from '../../core/graphql/services.public';
 import { EventFileType } from '../../core/graphql/types';
 import { environment } from '../../../environments/environment';
 
@@ -14,7 +19,7 @@ export interface HomeProject {
   category: string;
   location: string;
   description: string;
-  imageUrl: File;
+  imageUrl: string | File;
 }
 
 const CATEGORY_IMAGES: Record<string, string> = {
@@ -36,41 +41,56 @@ const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778
 })
 export class HomeComponent implements OnInit {
   private readonly getLastThreeActiveEventsGQL = inject(GetLastThreeActiveEventsGQL);
-  private readonly translationService = inject(TranslationService);
+  readonly translationService = inject(TranslationService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly projects = signal<HomeProject[]>([]);
+  private queryRef?: QueryRef<GetLastThreeActiveEventsQuery, GetLastThreeActiveEventsQueryVariables>;
+
+  constructor() {
+    effect(() => {
+      // Re-fetch events when the user changes active language
+      this.translationService.currentLang();
+      if (this.queryRef) {
+        this.queryRef.refetch().catch((err) => {
+          console.warn('Could not refetch latest events on language change:', err);
+        });
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.getLastThreeActiveEventsGQL
-      .watch({ fetchPolicy: 'cache-and-network' })
-      .valueChanges
+    this.queryRef = this.getLastThreeActiveEventsGQL.watch({
+      fetchPolicy: 'network-only',
+    });
+
+    this.queryRef.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: async (result) => {
+        next: (result) => {
           const events = result.data?.getLastThreeActiveEvents;
           if (events && events.length > 0) {
             const validEvents = events.filter(
               (e): e is NonNullable<typeof e> => !!e && !!e.details
             );
 
-            const mapped: HomeProject[] = await Promise.all(
-              validEvents.map(async (e) => {
-                const coverFile = e?.files?.find((f) => f.type === EventFileType.Cover);
-                const file = await this.getEventCoverFile(coverFile, e.category);
+            const mapped: HomeProject[] = validEvents.map((e) => {
+              const coverFile = e.files?.find((f) => f.type === EventFileType.Cover);
+              const imageUrl = coverFile?.id
+                ? `${environment.apiUrl}/v1/files/${coverFile.id}/content`
+                : ((e.category && CATEGORY_IMAGES[e.category]) || DEFAULT_IMAGE);
 
-                return {
-                  id: e.id ?? '',
-                  title: e.details?.title ?? '',
-                  description: e.details?.description ?? '',
-                  location: e.details?.location || 'Chișinău, Moldova',
-                  category:
-                    this.translationService.translate(`PROFILE.TAGLINE_CATEGORY.${e.category}`) ||
-                    (e.category ?? ''),
-                  imageUrl: file,
-                };
-              })
-            );
+              return {
+                id: e.id ?? '',
+                title: e.details?.title || '',
+                description: e.details?.description || '',
+                location: e.details?.location || 'Chișinău, Moldova',
+                category:
+                  this.translationService.translate(`PROFILE.TAGLINE_CATEGORY.${e.category}`) ||
+                  (e.category ?? ''),
+                imageUrl,
+              };
+            });
 
             this.projects.set(mapped);
           } else {
@@ -81,34 +101,5 @@ export class HomeComponent implements OnInit {
           this.projects.set([]);
         },
       });
-  }
-
-  private async getEventCoverFile(
-    coverFile?: { id?: string; originalName?: string; contentType?: string } | null,
-    category?: string | null
-  ): Promise<File> {
-    if (coverFile?.id) {
-      try {
-        const res = await fetch(`${environment.apiUrl}/v1/files/${coverFile.id}/content`);
-        if (res.ok) {
-          const blob = await res.blob();
-          return new File([blob], coverFile.originalName || 'cover.jpg', {
-            type: coverFile.contentType || blob.type || 'image/jpeg',
-          });
-        }
-      } catch (err) {
-        console.warn('Could not fetch cover file from storage endpoint:', err);
-      }
-    }
-
-    // Default / fallback image converted to a File object
-    const fallbackUrl = (category && CATEGORY_IMAGES[category]) || DEFAULT_IMAGE;
-    try {
-      const res = await fetch(fallbackUrl);
-      const blob = await res.blob();
-      return new File([blob], 'cover.jpg', { type: blob.type || 'image/jpeg' });
-    } catch {
-      return new File([], 'cover.jpg', { type: 'image/jpeg' });
-    }
   }
 }

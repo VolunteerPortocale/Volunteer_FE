@@ -107,12 +107,12 @@ export class AddEvent {
       return;
     }
 
-    const titleStrEn = this.eventForm.value.titleEn?.trim() || '';
+    const titleStrEn = this.eventForm.value.titleEn?.trim() || null;
     const titleStrRo = this.eventForm.value.titleRo?.trim() || '';
-    const titleStrRu = this.eventForm.value.titleRu?.trim() || '';
-    const descStrEn = this.eventForm.value.descriptionEn?.trim() || '';
+    const titleStrRu = this.eventForm.value.titleRu?.trim() || null;
+    const descStrEn = this.eventForm.value.descriptionEn?.trim() || null;
     const descStrRo = this.eventForm.value.descriptionRo?.trim() || '';
-    const descStrRu = this.eventForm.value.descriptionRu?.trim() || '';
+    const descStrRu = this.eventForm.value.descriptionRu?.trim() || null;
     const startTimeIso = this.toIsoString(this.eventForm.value.startDateTime);
 
     if (!startTimeIso) {

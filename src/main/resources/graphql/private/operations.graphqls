@@ -305,3 +305,18 @@ mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
   }
 }
 
+mutation ApproveEvent($eventId: String!) {
+  approveEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+
+mutation RejectEvent($eventId: String!) {
+  rejectEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+
+

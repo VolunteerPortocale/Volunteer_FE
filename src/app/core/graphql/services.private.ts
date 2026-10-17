@@ -142,6 +142,20 @@ export type ConfirmEnrollmentMutationVariables = Exact<{
 
 export type ConfirmEnrollmentMutation = { confirmEnrollment: { status: Types.GenericStatus | null } };
 
+export type ApproveEventMutationVariables = Exact<{
+  eventId: string;
+}>;
+
+
+export type ApproveEventMutation = { approveEvent: { id: string, status: Types.EventStatus } };
+
+export type RejectEventMutationVariables = Exact<{
+  eventId: string;
+}>;
+
+
+export type RejectEventMutation = { rejectEvent: { id: string, status: Types.EventStatus } };
+
 export const GetAllUsersDocument = gql`
     query GetAllUsers {
   getAllUsers {
@@ -696,6 +710,44 @@ export const ConfirmEnrollmentDocument = gql`
   })
   export class ConfirmEnrollmentGQL extends Apollo.Mutation<ConfirmEnrollmentMutation, ConfirmEnrollmentMutationVariables> {
     override document = ConfirmEnrollmentDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const ApproveEventDocument = gql`
+    mutation ApproveEvent($eventId: String!) {
+  approveEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class ApproveEventGQL extends Apollo.Mutation<ApproveEventMutation, ApproveEventMutationVariables> {
+    override document = ApproveEventDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RejectEventDocument = gql`
+    mutation RejectEvent($eventId: String!) {
+  rejectEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class RejectEventGQL extends Apollo.Mutation<RejectEventMutation, RejectEventMutationVariables> {
+    override document = RejectEventDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
