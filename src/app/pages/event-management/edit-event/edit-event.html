@@ -407,7 +407,7 @@
           <button 
             type="button" 
             class="btn-primary submit-btn" 
-            (click)="onSubmit(EventStatus.PendingApproval)"
+            (click)="onSubmit(UpdateEventStatus.PendingApproval)"
             [disabled]="isSubmitting()">
             @if (isSubmitting()) {
               <span>Se procesează...</span>
@@ -420,7 +420,7 @@
           <button 
             type="button" 
             class="btn-outline draft-btn" 
-            (click)="onSubmit(EventStatus.Draft)" 
+            (click)="onSubmit(UpdateEventStatus.Draft)" 
             [disabled]="isSubmitting()">
             {{ 'ADD_EVENT.DRAFT_BTN' | translate }}
           </button>

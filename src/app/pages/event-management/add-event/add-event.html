@@ -402,7 +402,7 @@
           <button 
           type="button" 
           class="btn-primary submit-btn" 
-          (click)="onSubmit(EventStatus.PendingApproval)"
+          (click)="onSubmit(CreateEventStatus.PendingApproval)"
           [disabled]="isSubmitting()">
             @if (isSubmitting()) {
               <span>Se procesează...</span>
@@ -410,7 +410,7 @@
               {{ (isEditMode() ? 'ADD_EVENT.SAVE_BTN' : 'ADD_EVENT.SUBMIT_BTN') | translate }}
             }
           </button>
-          <button type="button" class="btn-outline draft-btn" (click)="onSubmit(EventStatus.Draft)" [disabled]="isSubmitting()">
+          <button type="button" class="btn-outline draft-btn" (click)="onSubmit(CreateEventStatus.Draft)" [disabled]="isSubmitting()">
             {{ 'ADD_EVENT.DRAFT_BTN' | translate }}
           </button>
         </div>

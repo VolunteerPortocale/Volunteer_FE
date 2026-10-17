@@ -10,7 +10,7 @@ import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
 import { of, switchMap, Observable, forkJoin } from 'rxjs';
 import { CreateEventGQL } from '../../../core/graphql/services.private';
-import { CreateEventInput, EventCategory, EventDressCode, EventStatus } from '../../../core/graphql/types';
+import { CreateEventInput, EventCategory, EventDressCode, CreateEventStatus } from '../../../core/graphql/types';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
@@ -51,7 +51,7 @@ export class AddEvent {
   readonly eventTypesArray = Object.values(EventCategory);
   readonly dressCodes = EventDressCode;
   readonly dressCodesArray = Object.values(EventDressCode);
-  readonly EventStatus = EventStatus;
+  readonly CreateEventStatus = CreateEventStatus;
 
   // Edit Mode state
   readonly eventId = signal<string | null>(null);
@@ -101,7 +101,7 @@ export class AddEvent {
     return isNaN(date.getTime()) ? null : date.toISOString();
   }
 
-  onSubmit(buttonStatus: EventStatus): void {
+  onSubmit(buttonStatus:CreateEventStatus = CreateEventStatus.PendingApproval): void {
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
       this.errorMessage.set('Vă rugăm să completați toate câmpurile obligatorii corect.');

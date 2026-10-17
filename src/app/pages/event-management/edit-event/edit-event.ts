@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { TranslatePipe } from '../../../common/pipes/translate-pipe';
 import { TranslationService } from '../../../service/translation.service';
 import { GetEventByIdGQL, UpdateEventGQL } from '../../../core/graphql/services.private';
-import { EventCategory, EventDressCode, EventStatus, UpdateEventInput } from '../../../core/graphql/types';
+import { EventCategory, EventDressCode, EventStatus, UpdateEventInput, UpdateEventStatus } from '../../../core/graphql/types';
 import { environment } from '../../../../environments/environment';
 import { of, switchMap, Observable, forkJoin } from 'rxjs';
 
@@ -51,7 +51,7 @@ export class EditEvent {
   readonly translationService = inject(TranslationService);
   private readonly getEventByIdGQL = inject(GetEventByIdGQL);
   private readonly updateEventGQL = inject(UpdateEventGQL);
-  
+  readonly UpdateEventStatus = UpdateEventStatus;
 
   // State Signals
   readonly eventId = signal<string | null>(null);
@@ -59,7 +59,7 @@ export class EditEvent {
   readonly isSubmitting = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
   readonly EventStatus = EventStatus;
-  readonly currentStatus = signal<EventStatus>(EventStatus.Draft);
+  readonly currentStatus = signal<EventStatus | UpdateEventStatus>(EventStatus.Draft);
   readonly filesToDelete = signal<string[]>([]);
 
   // Form selections and language
@@ -182,7 +182,7 @@ export class EditEvent {
           this.selectedDressCode.set(roDetails.dressCode);
         }
 
-        // patch all 6 translation fields and the shared event fields
+        // patch all 6 translation fields andthe shared event fields
         this.eventForm.patchValue({
           titleRo: roDetails.title ?? '',
           titleEn: enDetails?.title ?? '',
@@ -324,7 +324,7 @@ export class EditEvent {
   }
 
 
-  onSubmit(targetStatus: EventStatus = EventStatus.PendingApproval): void {
+  onSubmit(targetStatus: UpdateEventStatus = UpdateEventStatus.PendingApproval): void {
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
       this.errorMessage.set('Vă rugăm să completați toate câmpurile obligatorii corect.');
