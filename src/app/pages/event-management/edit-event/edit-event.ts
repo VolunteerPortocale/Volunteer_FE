@@ -133,70 +133,92 @@ export class EditEvent {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.getEventByIdGQL
-      .fetch({
+    forkJoin({
+       ro: this.getEventByIdGQL.fetch({
         variables: { id },
-        fetchPolicy: 'network-only', // ensure that data is fresh
-      })
-      .subscribe({
-        next: (result) => {
-          this.isLoading.set(false);
-          const event = result.data?.getEventById;
-          if (!event) {
-            this.errorMessage.set('Evenimentul nu a fost găsit.');
-            return;
-          }
-            // read event.status
-          if (event.status) {
-            this.currentStatus.set(event.status);
-          }
-
-          const details = event.details;
-
-          // Update dress code signal
-          if (details.dressCode) {
-            this.selectedDressCode.set(details.dressCode);
-          }
-
-          // Populate the form values
-          this.eventForm.patchValue({
-            titleRo: details.title ?? '',
-            titleEn: '', // If localized titles exist or are separated
-            titleRu: '',
-            descriptionRo: details.description ?? '',
-            descriptionEn: '',
-            descriptionRu: '',
-            startDateTime: this.toInputDateTime(details.startTime),
-            endDateTime: this.toInputDateTime(details.endTime),
-            location: details.location ?? '',
-            volunteers: details.nrVolunteers ?? 1,
-            category: event.category,
-            email: details.contactEmail ?? '',
-            phone: details.contactPhone ?? '',
-          });
-        //populate existing backend files
-          if (event.files && event.files.length > 0) {
-            const existingFiles: AttachedFile[] = event.files.map((file) => ({
-             id: file.id,
-             name: file.type === 'COVER' ? 'Copertă actuală' : `Fișier ${file.type.toLowerCase()}`,
-             size: 0,
-             formattedSize: 'Salvat',
-             type: file.type as unknown as EventFileType,
-             isExisting: true,
-            }));
-            this.attachedFiles.set(existingFiles);
-          }
-        
+        fetchPolicy: 'no-cache',
+        context: {
+          queryDeduplication: false,
+          headers: { 'Accept-Language': 'ro' },
         },
-        
-        error: (err) => {
-          this.isLoading.set(false);
-          this.errorMessage.set(
-            err.message || 'A apărut o eroare la încărcarea datelor evenimentului.'
-          );
+      }),
+      en: this.getEventByIdGQL.fetch({
+        variables: { id },
+        fetchPolicy: 'no-cache',
+        context: {
+          queryDeduplication: false,
+          headers: { 'Accept-Language': 'en' },
         },
+      }),
+      ru: this.getEventByIdGQL.fetch({
+        variables: { id },
+        fetchPolicy: 'no-cache',
+        context: {
+          queryDeduplication: false,
+          headers: { 'Accept-Language': 'ru' },
+        },
+      }),
+    })
+        .subscribe({
+      next: ({ ro, en, ru }) => {
+        this.isLoading.set(false);
 
-      });
+        const event = ro.data?.getEventById;
+        if (!event) {
+          this.errorMessage.set('Evenimentul nu a fost găsit.');
+          return;
+        }
+
+        if (event.status) {
+          this.currentStatus.set(event.status);
+        }
+
+        // grab the details from each language response
+        const roDetails = event.details;
+        const enDetails = en.data?.getEventById?.details;
+        const ruDetails = ru.data?.getEventById?.details;
+
+        if (roDetails.dressCode) {
+          this.selectedDressCode.set(roDetails.dressCode);
+        }
+
+        // patch all 6 translation fields and the shared event fields
+        this.eventForm.patchValue({
+          titleRo: roDetails.title ?? '',
+          titleEn: enDetails?.title ?? '',
+          titleRu: ruDetails?.title ?? '',
+          descriptionRo: roDetails.description ?? '',
+          descriptionEn: enDetails?.description ?? '',
+          descriptionRu: ruDetails?.description ?? '',
+          startDateTime: this.toInputDateTime(roDetails.startTime),
+          endDateTime: this.toInputDateTime(roDetails.endTime),
+          location: roDetails.location ?? '',
+          volunteers: roDetails.nrVolunteers ?? 1,
+          category: event.category,
+          email: roDetails.contactEmail ?? '',
+          phone: roDetails.contactPhone ?? '',
+        });
+
+        // populate existing backend files
+        if (event.files && event.files.length > 0) {
+          const existingFiles: AttachedFile[] = event.files.map((file) => ({
+            id: file.id,
+            name: file.type === 'COVER' ? 'Copertă actuală' : `Fișier ${file.type.toLowerCase()}`,
+            size: 0,
+            formattedSize: 'Salvat',
+            type: file.type as unknown as EventFileType,
+            isExisting: true,
+          }));
+          this.attachedFiles.set(existingFiles);
+        }
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(
+          err.message || 'A apărut o eroare la încărcarea datelor evenimentului.'
+        );
+      },
+    });
   }
 
   onDragOver(event: DragEvent): void {
