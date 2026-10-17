@@ -110,6 +110,20 @@ mutation UpdateEvent($id: String!, $input: UpdateEventInput!) {
   }
 }
 
+mutation ApproveEvent($eventId: String!) {
+  approveEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+
+mutation RejectEvent($eventId: String!) {
+  rejectEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+
 mutation Enroll($input: CreateEnrollmentInput!) {
   enroll(input: $input) {
     id
@@ -121,6 +135,12 @@ mutation Enroll($input: CreateEnrollmentInput!) {
 
 mutation Unenroll($input: UnenrollInput!) {
   unenroll(input: $input) {
+    status
+  }
+}
+
+mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
+  confirmEnrollment(input: $input) {
     status
   }
 }
@@ -261,6 +281,10 @@ query GetFilteredEvents($input: EventFilterInput) {
       createdBy
       lastModifiedAt
       lastModifiedBy
+      files {
+        id
+        type
+      }
       details {
         title
         description
@@ -271,16 +295,6 @@ query GetFilteredEvents($input: EventFilterInput) {
         contactPhone
         contactEmail
         dressCode
-      }
-      files {
-        id
-        eventId
-        type
-        originalName
-        contentType
-        size
-        index
-        createdAt
       }
     }
   }
@@ -299,24 +313,5 @@ query GetUserById($id: String!) {
   }
 }
 
-mutation ConfirmEnrollment($input: ConfirmEnrollmentInput!) {
-  confirmEnrollment(input: $input) {
-    status
-  }
-}
-
-mutation ApproveEvent($eventId: String!) {
-  approveEvent(eventId: $eventId) {
-    id
-    status
-  }
-}
-
-mutation RejectEvent($eventId: String!) {
-  rejectEvent(eventId: $eventId) {
-    id
-    status
-  }
-}
 
 

@@ -276,3 +276,4 @@ input EventFilterInput {
     statuses: [EventStatus]
     categories: [EventCategory]
 }
+

@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   EnrollGQL,
   UnenrollGQL,
+  ConfirmEnrollmentGQL,
   GetCurrentUserEnrollmentsGQL,
   GetEventEnrollmentByIdGQL,
 } from '../core/graphql/services.private';
@@ -15,6 +16,7 @@ import { USER_ROLES } from '../config/roles.config';
 export class EnrollmentService {
   private readonly enrollGQL = inject(EnrollGQL);
   private readonly unenrollGQL = inject(UnenrollGQL);
+  private readonly confirmEnrollmentGQL = inject(ConfirmEnrollmentGQL);
   private readonly getCurrentUserEnrollmentsGQL = inject(GetCurrentUserEnrollmentsGQL);
   private readonly getEventEnrollmentByIdGQL = inject(GetEventEnrollmentByIdGQL);
   private readonly authService = inject(AuthService);
@@ -90,6 +92,23 @@ export class EnrollmentService {
       console.warn(`Failed to fetch enrollment by id ${id}:`, err);
       return null;
     }
+  }
+
+  async confirmVolunteerPresence(code: string): Promise<boolean> {
+    let enrollmentId = code.trim();
+    try {
+      const decoded = atob(enrollmentId);
+      if (decoded && /^[\w-]+$/.test(decoded)) {
+        enrollmentId = decoded;
+      }
+    } catch {
+      // fallback to original code if not base64 encoded
+    }
+
+    const res = await firstValueFrom(
+      this.confirmEnrollmentGQL.mutate({ variables: { input: { enrollmentId } } })
+    );
+    return res.data?.confirmEnrollment?.status === GenericStatus.Ok;
   }
 
   async enrollToEvent(eventId: string): Promise<Enrollment> {

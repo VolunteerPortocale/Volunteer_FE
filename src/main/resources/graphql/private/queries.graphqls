@@ -11,4 +11,5 @@ type Query {
 
     getCurrentUserEnrollments: [Enrollment!]!
     getEventEnrollmentById(id: String!): Enrollment
+    getFilteredEvents(input: EventFilterInput): PagedEventData!
 }
