@@ -98,6 +98,12 @@
               <mat-icon>person</mat-icon>
               <span>{{ 'NAV.MY_PROFILE' | translate }}</span>
             </button>
+            @if (authService.hasRole(USER_ROLES.MODERATOR)) {
+              <button mat-menu-item routerLink="/moderare">
+                <mat-icon>shield</mat-icon>
+                <span>{{ 'NAV.MODERATOR_DASHBOARD' | translate }}</span>
+              </button>
+            }
             @if (authService.canManageEvents()) {
               <button mat-menu-item routerLink="/administrare-eveniment">
                 <mat-icon>dashboard_customize</mat-icon>

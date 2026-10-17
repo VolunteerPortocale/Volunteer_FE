@@ -123,7 +123,7 @@ export class AddEvent {
     // payload matching CreateEventInput
     const input: CreateEventInput = {
       category: this.eventForm.value.category as EventCategory,
-      status: EventStatus.Published,
+      status: EventStatus.PendingApproval,
       details: {
         title: { ro: titleStrRo, en: titleStrEn, ru: titleStrRu },
         description: { ro: descStrRo, en: descStrEn, ru: descStrRu },

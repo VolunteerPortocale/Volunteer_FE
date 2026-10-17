@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TranslationService, SupportedLanguage } from "../../../service/translation.service";
 import { AuthService } from '../../../service/auth.service';
 import { TranslatePipe } from '../../pipes/translate-pipe';
+import { USER_ROLES } from '../../../config/roles.config';
 
 @Component({
   selector: 'app-navbar',
@@ -28,6 +29,7 @@ import { TranslatePipe } from '../../pipes/translate-pipe';
 export class NavbarComponent {
   readonly translationService = inject(TranslationService);
   readonly authService = inject(AuthService);
+  readonly USER_ROLES = USER_ROLES;
 
   readonly brandRoute = computed(() => this.authService.isAuthenticated() ? '/' : '/guest');
   readonly projectsRoute = computed(() => this.authService.canManageEvents() ? '/administrare-eveniment' : '/proiecte');
