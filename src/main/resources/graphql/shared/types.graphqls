@@ -164,7 +164,17 @@ input UpdateUserPreferencesInput {
 input CreateEventInput {
     details: CreateEventDetailsInput!
     category: EventCategory!
-    status: EventStatus!
+    status: CreateEventStatus!
+}
+
+enum CreateEventStatus {
+    PENDING_APPROVAL,
+    DRAFT
+}
+
+enum UpdateEventStatus {
+    PENDING_APPROVAL,
+    DRAFT
 }
 
 input CreateEventDetailsInput {
@@ -193,7 +203,7 @@ input EventDescriptionInput {
 input UpdateEventInput{
     details: UpdateEventDetailsInput!
     category: EventCategory!
-    status: EventStatus!
+    status: UpdateEventStatus!
 }
 
 input UpdateEventDetailsInput{
@@ -249,4 +259,18 @@ enum EventFileType {
     COVER
     GALLERY
     ATTACHMENT
+}
+
+type PagedEventData {
+    page: Int!
+    size: Int!
+    total: Int!
+    events: [Event!]!
+}
+
+input EventFilterInput {
+    page: Int
+    size: Int
+    statuses: [EventStatus!]
+    categories: [EventCategory!]
 }

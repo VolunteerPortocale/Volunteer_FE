@@ -1,1 +1,432 @@
-<p>edit-event works!</p>
+<div class="add-event-page">
+
+  <!-- ── TOP BAR ── -->
+  <div class="moderator-topbar">
+    <div class="topbar-container">
+      <button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        <span>{{ 'ADD_EVENT.BACK' | translate }}</span>
+      </button>
+      <div class="topbar-divider"></div>
+      <span class="topbar-title">
+        {{ 'ADD_EVENT.TOPBAR_TITLE_EDIT' | translate }}
+      </span>
+      <span class="badge-ngo">NGO</span>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-icon class="spinner-icon">sync</mat-icon>
+      <p>Se încarcă detaliile evenimentului...</p>
+    </div>
+  } @else {
+    <!-- ── MAIN FORM CONTAINER ── -->
+    <div class="form-container">
+      <div class="form-header">
+        <span class="header-role">
+          {{ 'ADD_EVENT.HEADER_ROLE_EDIT' | translate }}
+        </span>
+        <h1>{{ 'ADD_EVENT.HEADER_TITLE_EDIT' | translate }}</h1>
+        <p class="header-subtitle">
+          {{ 'ADD_EVENT.HEADER_SUBTITLE_EDIT' | translate }}
+        </p>
+      </div>
+
+      <form [formGroup]="eventForm" class="event-form">
+
+        <!-- 1. BASIC INFORMATION -->
+        <div class="form-card">
+          <div class="card-header-row">
+            <span class="section-badge">{{ 'ADD_EVENT.SECTION_BASIC' | translate }}</span>
+            <div class="lang-switcher-pills">
+              <button
+                type="button"
+                class="lang-pill"
+                [class.active]="activeLang() === 'ro'"
+                (click)="activeLang.set('ro')"
+              >
+                RO
+              </button>
+              <button
+                type="button"
+                class="lang-pill"
+                [class.active]="activeLang() === 'en'"
+                (click)="activeLang.set('en')"
+              >
+                EN
+              </button>
+              <button
+                type="button"
+                class="lang-pill"
+                [class.active]="activeLang() === 'ru'"
+                (click)="activeLang.set('ru')"
+              >
+                RU
+              </button>
+            </div>
+          </div>
+
+          <!-- TITLE -->
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.TITLE_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.TITLE_HINT' | translate }}</span>
+            @if (activeLang() === 'ro') {
+              <input
+                type="text"
+                formControlName="titleRo"
+                [placeholder]="'ADD_EVENT.TITLE_PLACEHOLDER' | translate"
+                class="form-input"
+              />
+            } @else if (activeLang() === 'en') {
+              <input
+                type="text"
+                formControlName="titleEn"
+                placeholder="Event Title (English)"
+                class="form-input"
+              />
+            } @else if (activeLang() === 'ru') {
+              <input
+                type="text"
+                formControlName="titleRu"
+                placeholder="Название события (Русский)"
+                class="form-input"
+              />
+            }
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.DESC_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.DESC_HINT' | translate }}</span>
+            @if (activeLang() === 'ro') {
+              <textarea
+                formControlName="descriptionRo"
+                rows="4"
+                [placeholder]="'ADD_EVENT.DESC_PLACEHOLDER' | translate"
+                class="form-input textarea"
+              ></textarea>
+            } @else if (activeLang() === 'en') {
+              <textarea
+                formControlName="descriptionEn"
+                rows="4"
+                placeholder="Event Description (English)"
+                class="form-input textarea"
+              ></textarea>
+            } @else if (activeLang() === 'ru') {
+              <textarea
+                formControlName="descriptionRu"
+                rows="4"
+                placeholder="Описание события (Русский)"
+                class="form-input textarea"
+              ></textarea>
+            }
+          </div>
+        </div>
+
+        <!-- 2. DATE AND TIME -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_DATETIME' | translate }}</span>
+
+          <div class="grid-2-cols">
+            <div class="field-group">
+              <label>{{ 'ADD_EVENT.START_LABEL' | translate }}</label>
+              <span class="field-hint">{{ 'ADD_EVENT.START_HINT' | translate }}</span>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">calendar_today</mat-icon>
+                <input
+                  type="datetime-local"
+                  formControlName="startDateTime"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>{{ 'ADD_EVENT.END_LABEL' | translate }}</label>
+              <span class="field-hint">{{ 'ADD_EVENT.END_HINT' | translate }}</span>
+              <div class="input-with-icon">
+                <mat-icon class="prefix-icon">event</mat-icon>
+                <input
+                  type="datetime-local"
+                  formControlName="endDateTime"
+                  [min]="eventForm.get('startDateTime')?.value || ''"
+                  class="form-input with-icon"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Date Summary Pill -->
+          @if (formattedDateSummary) {
+            <div class="date-summary-banner">
+              <mat-icon class="summary-icon">schedule</mat-icon>
+              <span>{{ formattedDateSummary }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- 3. LOCATION AND CAPACITY -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_LOCATION' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.LOCATION_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.LOCATION_HINT' | translate }}</span>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">location_on</mat-icon>
+              <input
+                type="text"
+                formControlName="location"
+                [placeholder]="'ADD_EVENT.LOCATION_PLACEHOLDER' | translate"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.VOLUNTEERS_LABEL' | translate }}</label>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">group</mat-icon>
+              <input
+                type="number"
+                min="1"
+                formControlName="volunteers"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. FILTERS AND CATEGORIZATION -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_FILTERS' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.EVENT_TYPES_LABEL' | translate }}</label>
+            <span class="field-hint">{{ 'ADD_EVENT.EVENT_TYPES_HINT' | translate }}</span>
+
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-select formControlName="category">
+                @for (type of eventTypesArray; track type) {
+                  <mat-option [value]="type">
+                    {{ ('ADD_EVENT.TYPES.' + type) | translate }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Dress Code -->
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.DRESS_CODE_LABEL' | translate }}</label>
+            <div class="toggle-group">
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedDressCode() === dressCodes.Casual"
+                (click)="selectedDressCode.set(dressCodes.Casual)"
+              >
+                {{ 'ADD_EVENT.DRESS_CODES.CASUAL' | translate }}
+              </button>
+
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedDressCode() === dressCodes.Formal"
+                (click)="selectedDressCode.set(dressCodes.Formal)"
+              >
+                {{ 'ADD_EVENT.DRESS_CODES.FORMAL' | translate }}
+              </button>
+
+              <button
+                type="button"
+                class="pill-toggle-btn"
+                [class.active]="selectedDressCode() === dressCodes.Costume"
+                (click)="selectedDressCode.set(dressCodes.Costume)"
+              >
+                {{ 'ADD_EVENT.DRESS_CODES.COSTUME' | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. VOLUNTEER CONTACT -->
+        <div class="form-card">
+          <span class="section-badge">{{ 'ADD_EVENT.SECTION_CONTACT' | translate }}</span>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.EMAIL_LABEL' | translate }}</label>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">mail</mat-icon>
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="contact@ong.md"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>{{ 'ADD_EVENT.PHONE_LABEL' | translate }}</label>
+            <div class="input-with-icon">
+              <mat-icon class="prefix-icon">call</mat-icon>
+              <input
+                type="tel"
+                formControlName="phone"
+                placeholder="+373 69 xxx xxx"
+                class="form-input with-icon"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. ATTACHMENTS & DOCUMENTS -->
+        <div class="form-card">
+          <div class="card-header-row">
+            <span class="section-badge">{{ 'ADD_EVENT.SECTION_ATTACHMENTS' | translate }}</span>
+
+            <div class="lang-switcher-pills">
+              <button
+                type="button"
+                class="lang-pill"
+                [class.active]="activeFileType() === EventFileType.COVER"
+                (click)="activeFileType.set(EventFileType.COVER)"
+              >
+                Cover (1)
+              </button>
+
+              <button
+                type="button"
+                class="lang-pill"
+                [class.active]="activeFileType() === EventFileType.GALLERY"
+                (click)="activeFileType.set(EventFileType.GALLERY)"
+              >
+                Gallery (3)
+              </button>
+
+              <button
+                type="button"
+                class="lang-pill"
+                [class.active]="activeFileType() === EventFileType.ATTACHMENT"
+                (click)="activeFileType.set(EventFileType.ATTACHMENT)"
+              >
+                Attachment (2)
+              </button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>
+              @if (activeFileType() === EventFileType.COVER) {
+                Copertă eveniment (Max 1 imagine)
+              } @else if (activeFileType() === EventFileType.GALLERY) {
+                Galerie foto (Max 3 imagini)
+              } @else {
+                Documente și atașamente (Max 2 fișiere)
+              }
+            </label>
+
+            <!-- Dropzone Area -->
+            <div
+              class="file-dropzone"
+              [class.dragging]="isDragging()"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave($event)"
+              (drop)="onDrop($event)"
+              (click)="fileInput.click()"
+            >
+              <input
+                #fileInput
+                type="file"
+                multiple
+                class="hidden-file-input"
+                [accept]="activeFileType() === EventFileType.ATTACHMENT ? '*/*' : 'image/*'"
+                (change)="onFileSelected($event)"
+              />
+              <div class="dropzone-content">
+                <div class="dropzone-icon-wrap">
+                  <mat-icon class="dropzone-icon">cloud_upload</mat-icon>
+                </div>
+                <div class="dropzone-text">
+                  <p class="dropzone-main">
+                    {{ 'ADD_EVENT.DROPZONE_TITLE' | translate }}
+                    <span class="browse-link">{{ 'ADD_EVENT.DROPZONE_BROWSE' | translate }}</span>
+                  </p>
+                  <p class="dropzone-sub">
+                    @if (activeFileType() === EventFileType.ATTACHMENT) {
+                      PDF, DOC, XLS până la 10MB
+                    } @else {
+                      PNG, JPG, WEBP până la 5MB
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attached Files for Current Tab -->
+            @if (currentTabFiles().length > 0) {
+              <div class="attached-files-list">
+                @for (file of currentTabFiles(); track file.id) {
+                  <div class="file-item-card">
+                    <div class="file-info-group">
+                      <div class="file-icon-box">
+                        <mat-icon class="file-type-icon">{{ getFileIcon(file.name) }}</mat-icon>
+                      </div>
+                      <div class="file-details">
+                        <span class="file-name" [title]="file.name">{{ file.name }}</span>
+                        <span class="file-size">{{ file.formattedSize }}</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      class="remove-file-btn"
+                      (click)="removeFile(file.id); $event.stopPropagation()"
+                      [title]="'ADD_EVENT.REMOVE_FILE' | translate"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (errorMessage()) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+
+        <!-- 7. ACTIONS -->
+        <div class="form-actions">
+          <!-- Button 1: Save and Send for Approval -->
+          <button 
+            type="button" 
+            class="btn-primary submit-btn" 
+            (click)="onSubmit(EventStatus.PendingApproval)"
+            [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span>Se procesează...</span>
+            } @else {
+              {{ 'ADD_EVENT.SAVE_BTN' | translate }}
+            }
+          </button>
+
+          <!-- Button 2: Save as Draft -->
+          <button 
+            type="button" 
+            class="btn-outline draft-btn" 
+            (click)="onSubmit(EventStatus.Draft)" 
+            [disabled]="isSubmitting()">
+            {{ 'ADD_EVENT.DRAFT_BTN' | translate }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  }
+</div>

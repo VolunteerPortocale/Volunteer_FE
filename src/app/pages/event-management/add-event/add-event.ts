@@ -51,6 +51,7 @@ export class AddEvent {
   readonly eventTypesArray = Object.values(EventCategory);
   readonly dressCodes = EventDressCode;
   readonly dressCodesArray = Object.values(EventDressCode);
+  readonly EventStatus = EventStatus;
 
   // Edit Mode state
   readonly eventId = signal<string | null>(null);
@@ -100,7 +101,7 @@ export class AddEvent {
     return isNaN(date.getTime()) ? null : date.toISOString();
   }
 
-  onSubmit(): void {
+  onSubmit(buttonStatus: EventStatus): void {
     if (this.eventForm.invalid) {
       this.eventForm.markAllAsTouched();
       this.errorMessage.set('Vă rugăm să completați toate câmpurile obligatorii corect.');
@@ -123,7 +124,7 @@ export class AddEvent {
     // payload matching CreateEventInput
     const input: CreateEventInput = {
       category: this.eventForm.value.category as EventCategory,
-      status: EventStatus.Published,
+      status: buttonStatus,
       details: {
         title: { ro: titleStrRo, en: titleStrEn, ru: titleStrRu },
         description: { ro: descStrRo, en: descStrEn, ru: descStrRu },
