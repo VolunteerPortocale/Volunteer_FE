@@ -164,6 +164,13 @@ export enum EventFileType {
   Gallery = 'GALLERY'
 }
 
+export type EventFilterInput = {
+  categories?: InputMaybe<Array<InputMaybe<EventCategory>>>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  size?: InputMaybe<Scalars['Int']['input']>;
+  statuses?: InputMaybe<Array<InputMaybe<EventStatus>>>;
+};
+
 export enum EventStatus {
   ApplicationsClosed = 'APPLICATIONS_CLOSED',
   Cancelled = 'CANCELLED',
@@ -198,6 +205,14 @@ export enum Language {
   Ro = 'RO',
   Ru = 'RU'
 }
+
+export type PagedEventData = {
+  __typename?: 'PagedEventData';
+  events: Array<Event>;
+  page: Scalars['Int']['output'];
+  size: Scalars['Int']['output'];
+  total: Scalars['Int']['output'];
+};
 
 export type UnenrollInput = {
   eventId: Scalars['String']['input'];

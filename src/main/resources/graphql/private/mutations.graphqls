@@ -5,6 +5,8 @@ type Mutation {
     deleteUser(id: String!): Boolean!
     createEvent(input: CreateEventInput!): Event!
     updateEvent(id: String!, input: UpdateEventInput!): Event!
+    approveEvent(eventId: String!): Event!
+    rejectEvent(eventId: String!): Event!
     enroll(input: CreateEnrollmentInput!): Enrollment!
     confirmEnrollment(input: ConfirmEnrollmentInput!): GenericPayload!
     unenroll(input: UnenrollInput!): GenericPayload!

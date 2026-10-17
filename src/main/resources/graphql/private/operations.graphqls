@@ -110,6 +110,20 @@ mutation UpdateEvent($id: String!, $input: UpdateEventInput!) {
   }
 }
 
+mutation ApproveEvent($eventId: String!) {
+  approveEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+
+mutation RejectEvent($eventId: String!) {
+  rejectEvent(eventId: $eventId) {
+    id
+    status
+  }
+}
+
 mutation Enroll($input: CreateEnrollmentInput!) {
   enroll(input: $input) {
     id
@@ -248,5 +262,39 @@ query GetEventsCreatedByCurrentUser {
     createdBy
   }
 }
+
+query GetFilteredEvents($input: EventFilterInput) {
+  getFilteredEvents(input: $input) {
+    page
+    size
+    total
+    events {
+      id
+      category
+      storageFolderId
+      status
+      createdAt
+      createdBy
+      lastModifiedAt
+      lastModifiedBy
+      files {
+        id
+        type
+      }
+      details {
+        title
+        description
+        startTime
+        endTime
+        location
+        nrVolunteers
+        contactPhone
+        contactEmail
+        dressCode
+      }
+    }
+  }
+}
+
 
 

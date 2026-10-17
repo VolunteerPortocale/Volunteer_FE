@@ -1,0 +1,278 @@
+<div class="moderator-container">
+  <header class="moderator-header">
+    <div class="moderator-badge">
+      <mat-icon class="badge-icon">shield</mat-icon>
+      <span>{{ 'MODERATOR_DASHBOARD.BADGE' | translate }}</span>
+    </div>
+    <h1 class="moderator-title">{{ 'MODERATOR_DASHBOARD.TITLE' | translate }}</h1>
+    <p class="moderator-subtitle">{{ 'MODERATOR_DASHBOARD.SUBTITLE' | translate }}</p>
+
+    <div class="tab-controls">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'pending'"
+        (click)="activeTab.set('pending')"
+      >
+        <mat-icon>pending_actions</mat-icon>
+        <span>{{ 'MODERATOR_DASHBOARD.TABS.PENDING' | translate }}</span>
+        <span class="count-pill">{{ totalEvents() }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="activeTab() === 'scanner'"
+        (click)="activeTab.set('scanner')"
+      >
+        <mat-icon>qr_code_scanner</mat-icon>
+        <span>{{ 'MODERATOR_DASHBOARD.TABS.SCANNER' | translate }}</span>
+      </button>
+    </div>
+  </header>
+
+  @if (actionError()) {
+    <div class="alert-banner">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ actionError()! | translate }}</span>
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert-banner success">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ successMessage()! | translate }}</span>
+    </div>
+  }
+
+  @if (activeTab() === 'pending') {
+    <section class="tab-content">
+      <div class="toolbar">
+        <button type="button" class="refresh-btn" (click)="loadEvents()" [disabled]="isLoading()">
+          <mat-icon [class.spin]="isLoading()">refresh</mat-icon>
+          <span>{{ 'MODERATOR_DASHBOARD.REFRESH' | translate }}</span>
+        </button>
+      </div>
+
+      @if (isLoading()) {
+        <div class="state-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>{{ 'MODERATOR_DASHBOARD.LOADING' | translate }}</p>
+        </div>
+      } @else if (events().length === 0) {
+        <div class="state-container">
+          <mat-icon class="empty-icon">task_alt</mat-icon>
+          <h2>{{ 'MODERATOR_DASHBOARD.EMPTY_TITLE' | translate }}</h2>
+          <p>{{ 'MODERATOR_DASHBOARD.EMPTY_DESC' | translate }}</p>
+        </div>
+      } @else {
+        <div class="events-grid">
+          @for (item of events(); track item.id) {
+            <article class="event-card">
+              <div class="card-media" [style.background-image]="'url(' + getImageUrl(item) + ')'">
+                <span class="category-badge">{{ 'PROFILE.TAGLINE_CATEGORY.' + item.category | translate }}</span>
+                <span class="status-badge pending">{{ 'MODERATOR_DASHBOARD.STATUS_PENDING' | translate }}</span>
+              </div>
+
+              <div class="card-body">
+                <h3 class="card-title" (click)="selectedEvent.set(item)">{{ item.details.title }}</h3>
+                <p class="card-desc">{{ item.details.description }}</p>
+
+                <div class="card-meta">
+                  <div class="meta-row">
+                    <mat-icon>calendar_today</mat-icon>
+                    <span>{{ item.details.startTime | date: 'dd MMM yyyy, HH:mm' }}</span>
+                  </div>
+                  @if (item.details.location) {
+                    <div class="meta-row">
+                      <mat-icon>location_on</mat-icon>
+                      <span>{{ item.details.location }}</span>
+                    </div>
+                  }
+                  <div class="meta-row">
+                    <mat-icon>group</mat-icon>
+                    <span>{{ 'MODERATOR_DASHBOARD.VOLUNTEERS_NEEDED' | translate: { count: item.details.nrVolunteers } }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-actions">
+                <button
+                  type="button"
+                  class="btn-reject"
+                  [disabled]="isProcessing() === item.id"
+                  (click)="updateEventStatus(item, EventStatus.Rejected)"
+                >
+                  <mat-icon>close</mat-icon>
+                  <span>{{ 'MODERATOR_DASHBOARD.ACTIONS.REJECT' | translate }}</span>
+                </button>
+
+                <button type="button" class="btn-preview" (click)="selectedEvent.set(item)">
+                  <mat-icon>visibility</mat-icon>
+                  <span>{{ 'MODERATOR_DASHBOARD.ACTIONS.DETAILS' | translate }}</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="btn-approve"
+                  [disabled]="isProcessing() === item.id"
+                  (click)="updateEventStatus(item, EventStatus.Published)"
+                >
+                  @if (isProcessing() === item.id) {
+                    <mat-spinner diameter="18"></mat-spinner>
+                  } @else {
+                    <mat-icon>check</mat-icon>
+                  }
+                  <span>{{ 'MODERATOR_DASHBOARD.ACTIONS.APPROVE' | translate }}</span>
+                </button>
+              </div>
+            </article>
+          }
+        </div>
+
+        @if (totalPages() > 1) {
+          <div class="pagination-bar">
+            <button
+              type="button"
+              class="page-btn"
+              [disabled]="currentPage() === 0"
+              (click)="prevPage()"
+            >
+              <mat-icon>chevron_left</mat-icon>
+              <span>{{ 'MODERATOR_DASHBOARD.PAGINATION.PREV' | translate }}</span>
+            </button>
+
+            <span class="page-info">
+              {{ 'MODERATOR_DASHBOARD.PAGINATION.PAGE_INFO' | translate: { current: currentPage() + 1, total: totalPages() } }}
+            </span>
+
+            <button
+              type="button"
+              class="page-btn"
+              [disabled]="currentPage() + 1 >= totalPages()"
+              (click)="nextPage()"
+            >
+              <span>{{ 'MODERATOR_DASHBOARD.PAGINATION.NEXT' | translate }}</span>
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+        }
+      }
+    </section>
+  }
+
+  @if (activeTab() === 'scanner') {
+    <section class="tab-content scanner-tab-wrapper">
+      <div class="scanner-card">
+        <app-qr-scanner></app-qr-scanner>
+      </div>
+    </section>
+  }
+</div>
+
+@if (selectedEvent(); as selected) {
+  <div class="modal-backdrop" (click)="selectedEvent.set(null)">
+    <div class="modal-panel" (click)="$event.stopPropagation()">
+      <header class="modal-header">
+        <div>
+          <span class="modal-category">{{ 'PROFILE.TAGLINE_CATEGORY.' + selected.category | translate }}</span>
+          <h2 class="modal-title">{{ selected.details.title }}</h2>
+        </div>
+        <button type="button" class="modal-close" (click)="selectedEvent.set(null)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <div class="modal-image" [style.background-image]="'url(' + getImageUrl(selected) + ')'"></div>
+
+        <div class="modal-details-grid">
+          <div class="detail-item">
+            <mat-icon>calendar_today</mat-icon>
+            <div>
+              <strong>{{ 'MODERATOR_DASHBOARD.MODAL.START_DATE' | translate }}</strong>
+              <p>{{ selected.details.startTime | date: 'dd MMMM yyyy, HH:mm' }}</p>
+            </div>
+          </div>
+
+          @if (selected.details.endTime) {
+            <div class="detail-item">
+              <mat-icon>alarm_on</mat-icon>
+              <div>
+                <strong>{{ 'MODERATOR_DASHBOARD.MODAL.END_DATE' | translate }}</strong>
+                <p>{{ selected.details.endTime | date: 'dd MMMM yyyy, HH:mm' }}</p>
+              </div>
+            </div>
+          }
+
+          @if (selected.details.location) {
+            <div class="detail-item">
+              <mat-icon>location_on</mat-icon>
+              <div>
+                <strong>{{ 'MODERATOR_DASHBOARD.MODAL.LOCATION' | translate }}</strong>
+                <p>{{ selected.details.location }}</p>
+              </div>
+            </div>
+          }
+
+          <div class="detail-item">
+            <mat-icon>group</mat-icon>
+            <div>
+              <strong>{{ 'MODERATOR_DASHBOARD.MODAL.CAPACITY' | translate }}</strong>
+              <p>{{ 'MODERATOR_DASHBOARD.VOLUNTEERS_NEEDED' | translate: { count: selected.details.nrVolunteers } }}</p>
+            </div>
+          </div>
+
+          @if (selected.details.contactEmail) {
+            <div class="detail-item">
+              <mat-icon>email</mat-icon>
+              <div>
+                <strong>{{ 'MODERATOR_DASHBOARD.MODAL.EMAIL' | translate }}</strong>
+                <p>{{ selected.details.contactEmail }}</p>
+              </div>
+            </div>
+          }
+
+          @if (selected.details.contactPhone) {
+            <div class="detail-item">
+              <mat-icon>phone</mat-icon>
+              <div>
+                <strong>{{ 'MODERATOR_DASHBOARD.MODAL.PHONE' | translate }}</strong>
+                <p>{{ selected.details.contactPhone }}</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="modal-description">
+          <h3>{{ 'MODERATOR_DASHBOARD.MODAL.DESCRIPTION_TITLE' | translate }}</h3>
+          <p>{{ selected.details.description }}</p>
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <button
+          type="button"
+          class="btn-reject"
+          [disabled]="isProcessing() === selected.id"
+          (click)="updateEventStatus(selected, EventStatus.Rejected)"
+        >
+          <mat-icon>close</mat-icon>
+          <span>{{ 'MODERATOR_DASHBOARD.ACTIONS.REJECT_EVENT' | translate }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="btn-approve"
+          [disabled]="isProcessing() === selected.id"
+          (click)="updateEventStatus(selected, EventStatus.Published)"
+        >
+          <mat-icon>check</mat-icon>
+          <span>{{ 'MODERATOR_DASHBOARD.ACTIONS.APPROVE_AND_PUBLISH' | translate }}</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}
+
+<app-footer></app-footer>
