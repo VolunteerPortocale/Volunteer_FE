@@ -1,0 +1,34 @@
+@if (!loadingService.isDone()) {
+  <aside
+    class="global-loader-backdrop"
+    [class.is-exiting]="loadingService.isExiting()"
+    aria-label="Loading Volunteerio Platform"
+    aria-live="polite"
+  >
+    <div class="loader-ambient-glow" aria-hidden="true"></div>
+
+    <div class="loader-card">
+      <!-- Animated Brand Badge with Dual Pulse Rings -->
+      <div class="brand-badge" aria-hidden="true">
+        <div class="pulse-ring ring-1"></div>
+        <div class="pulse-ring ring-2"></div>
+        <div class="logo-box">
+          <img src="favicon.ico" alt="Volunteerio Logo" class="brand-logo-img" />
+        </div>
+      </div>
+
+      <!-- Brand Identity -->
+      <div class="brand-identity">
+        <div class="brand-title">VOLUNTEERIO</div>
+        <div class="loading-status">
+          <span>{{ loadingService.loadingMessage() }}</span>
+        </div>
+      </div>
+
+      <!-- Shimmering Progress Track -->
+      <div class="progress-track" role="progressbar" aria-label="Loading progress" aria-busy="true">
+        <div class="progress-indicator"></div>
+      </div>
+    </div>
+  </aside>
+}

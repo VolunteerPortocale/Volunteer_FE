@@ -9,6 +9,7 @@ import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
 import { TranslationService } from '../../service/translation.service';
 import { EnrollmentService } from '../../service/enrollment.service';
+import { InitialLoadingService } from '../../service/initial-loading.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   GetFilteredEventsGQL,
@@ -55,6 +56,7 @@ export interface AuthProject {
 export class HomeAuthComponent implements OnInit {
   readonly authService = inject(AuthService);
   readonly translationService = inject(TranslationService);
+  private readonly initialLoadingService = inject(InitialLoadingService);
   private readonly router = inject(Router);
   private readonly enrollmentService = inject(EnrollmentService);
   private readonly destroyRef = inject(DestroyRef);
@@ -183,6 +185,7 @@ export class HomeAuthComponent implements OnInit {
       return;
     }
 
+    this.initialLoadingService.registerTask('home-auth-events');
     this.initEventsQuery();
   }
 
@@ -215,10 +218,12 @@ export class HomeAuthComponent implements OnInit {
         next: (result) => {
           this.isLoading.set(result.loading);
           this.handleEventsResponse(result.data?.getFilteredEvents);
+          this.initialLoadingService.markReady('home-auth-events');
         },
         error: (err) => {
           this.isLoading.set(false);
           console.warn('Could not load events from database:', err);
+          this.initialLoadingService.markReady('home-auth-events');
         },
       });
   }

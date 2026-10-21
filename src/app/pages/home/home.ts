@@ -13,6 +13,8 @@ import {
 import { EventFileType } from '../../core/graphql/types';
 import { environment } from '../../../environments/environment';
 
+import { InitialLoadingService } from '../../service/initial-loading.service';
+
 export interface HomeProject {
   id: string;
   title: string;
@@ -42,6 +44,7 @@ const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778
 export class HomeComponent implements OnInit {
   private readonly getLastThreeActiveEventsGQL = inject(GetLastThreeActiveEventsGQL);
   readonly translationService = inject(TranslationService);
+  private readonly initialLoadingService = inject(InitialLoadingService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly projects = signal<HomeProject[]>([]);
@@ -60,6 +63,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initialLoadingService.registerTask('home-events');
+
     this.queryRef = this.getLastThreeActiveEventsGQL.watch({
       fetchPolicy: 'network-only',
     });
@@ -96,9 +101,11 @@ export class HomeComponent implements OnInit {
           } else {
             this.projects.set([]);
           }
+          this.initialLoadingService.markReady('home-events');
         },
         error: () => {
           this.projects.set([]);
+          this.initialLoadingService.markReady('home-events');
         },
       });
   }
