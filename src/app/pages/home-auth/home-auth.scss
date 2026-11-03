@@ -341,6 +341,23 @@
     flex-wrap: wrap;
     margin-bottom: 24px;
 
+    @media (max-width: 600px) {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      padding-bottom: 4px;
+
+      .filter-chip,
+      .clear-all-filters-btn {
+        flex-shrink: 0;
+      }
+    }
+
     .filter-chip {
       display: inline-flex;
       align-items: center;

@@ -79,6 +79,15 @@ html {
   --section-padding-desktop: 80px;
   --section-padding-mobile: 40px;
 
+  // Safe area insets (iOS notches, dynamic islands, home bars)
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
+  // Touch target minimum (Apple & Google guideline: 44-48px)
+  --touch-target-min: 44px;
+
   // Component metrics
   --btn-height: 48px;
   --btn-padding: 12px 28px;
@@ -94,6 +103,17 @@ html {
 // Reset and base typography
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+// Enforce 16px minimum font size on form inputs to prevent iOS Safari auto-zoom
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+// Prevent images, video, svg from overflowing their containers
+img, video, svg {
+  max-width: 100%;
+  height: auto;
 }
 
 body {
@@ -145,8 +165,9 @@ p {
   max-width: var(--layout-max-width);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: clamp(1rem, 3.5vw, 1.5rem);
+  padding-right: clamp(1rem, 3.5vw, 1.5rem);
+  width: 100%;
 }
 
 .section {
