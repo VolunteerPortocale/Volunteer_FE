@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
-import { FooterComponent } from '../../common/components/footer/footer';
 import { ProfileOverview } from './profile-overview/profile-overview';
 import { EditPersonalDetails } from './edit-personal-details/edit-personal-details';
 import { ProfileSettingsComponent } from './profile-settings/profile-settings';
@@ -15,7 +14,6 @@ import { ProfileSettingsComponent } from './profile-settings/profile-settings';
     RouterLink,
     MatIcon,
     TranslatePipe,
-    FooterComponent,
     ProfileOverview,
     EditPersonalDetails,
     ProfileSettingsComponent,

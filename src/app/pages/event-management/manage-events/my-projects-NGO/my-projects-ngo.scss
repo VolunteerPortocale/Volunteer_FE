@@ -176,6 +176,11 @@
     display: flex;
     align-items: center;
     gap: 8px;
+
+    @media (max-width: 600px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
 
   .pagination-arrow-btn {
@@ -217,6 +222,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
+
+    @media (max-width: 600px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
 
   .pagination-page-btn {

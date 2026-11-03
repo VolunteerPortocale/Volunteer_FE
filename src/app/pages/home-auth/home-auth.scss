@@ -136,6 +136,22 @@
     .filter-dropdown-container {
       position: relative;
 
+      @media (max-width: 640px) {
+        width: 100%;
+
+        .filter-dropdown-btn {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .filter-dropdown-menu {
+          width: 100%;
+          left: 0;
+          right: 0;
+          max-width: 100%;
+        }
+      }
+
       .filter-dropdown-btn {
         display: inline-flex;
         align-items: center;
@@ -657,6 +673,11 @@
     display: flex;
     align-items: center;
     gap: 8px;
+
+    @media (max-width: 600px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
 
   .pagination-arrow-btn {
@@ -698,6 +719,11 @@
     display: flex;
     align-items: center;
     gap: 6px;
+
+    @media (max-width: 600px) {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
   }
 
   .pagination-page-btn {
@@ -756,6 +782,11 @@
   justify-content: center;
   padding: 20px;
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @media (max-width: 600px) {
+    padding: 0;
+    align-items: flex-end;
+  }
 }
 
 .event-modal-dialog {
@@ -770,6 +801,33 @@
   box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @media (max-width: 600px) {
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+    max-width: 100%;
+
+    .modal-content-body {
+      padding: 18px 16px;
+    }
+
+    .modal-actions-footer {
+      flex-direction: column-reverse;
+      gap: 10px;
+
+      button,
+      a {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .non-volunteer-hint {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+    }
+  }
 
   .modal-close-btn {
     position: absolute;

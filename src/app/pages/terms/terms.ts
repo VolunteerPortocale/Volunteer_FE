@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
-import { FooterComponent } from '../../common/components/footer/footer';
 
 export type LegalTab = 'terms' | 'privacy' | 'cookies';
 
@@ -17,8 +16,7 @@ export type LegalTab = 'terms' | 'privacy' | 'cookies';
     MatIconModule,
     MatButtonModule,
     MatDividerModule,
-    TranslatePipe,
-    FooterComponent
+    TranslatePipe
   ],
   templateUrl: './terms.html',
   styleUrl: './terms.scss'

@@ -119,6 +119,11 @@
   border-bottom: 1px solid #e2e8e4;
   position: sticky;
   top: 0;
+  top: 72px;
+
+  @media (max-width: 768px) {
+    top: 64px;
+  }
   z-index: 20;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
@@ -267,6 +272,11 @@
     border: 1px solid #e6eae7;
     position: sticky;
     top: 76px;
+  top: 130px;
+
+  @media (max-width: 992px) {
+    position: static;
+  }
 
     .toc-title {
       display: flex;

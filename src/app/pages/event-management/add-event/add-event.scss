@@ -44,7 +44,11 @@
   background-color: var(--color-white);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   position: sticky;
-  top: 72px; // Sits right below the navbar
+  top: 72px;
+
+  @media (max-width: 768px) {
+    top: 64px;
+  } // Sits right below the navbar
   z-index: 10;
   width: 100%; // Spans the full length of the screen
 
@@ -113,6 +117,10 @@
   margin: 0 auto;
   padding: 40px 1.5rem 80px 1.5rem;
 
+  @media (max-width: 600px) {
+    padding: 24px 1rem 60px 1rem;
+  }
+
   .form-header {
     margin-bottom: 32px;
 
@@ -150,6 +158,10 @@
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 24px;
+
+  @media (max-width: 600px) {
+    padding: 18px 14px;
+  }
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -666,6 +678,10 @@
     border-radius: 24px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     padding: 48px;
+
+    @media (max-width: 600px) {
+      padding: 28px 16px;
+    }
     max-width: 480px;
     width: 100%;
     text-align: center;

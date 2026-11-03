@@ -99,3 +99,14 @@
     }
   }
 }
+@media (max-width: 480px) {
+  .project-card {
+    .card-body {
+      padding: 16px;
+    }
+
+    .card-actions {
+      padding: 0 16px 16px 16px;
+    }
+  }
+}

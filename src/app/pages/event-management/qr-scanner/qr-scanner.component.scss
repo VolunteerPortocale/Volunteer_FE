@@ -64,3 +64,15 @@
     }
   }
 }
+
+@media (max-width: 480px) {
+  .scanner-container {
+    margin: 16px 12px;
+    width: auto;
+    padding: 16px 12px;
+
+    .result button {
+      width: 100%;
+    }
+  }
+}

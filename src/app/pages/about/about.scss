@@ -455,6 +455,11 @@
     background: #ffffff;
     border-radius: 16px;
     padding: 36px;
+
+    @media (max-width: 600px) {
+      padding: 24px 18px;
+    }
+
     box-shadow: var(--card-shadow);
     border: 1px solid #eee;
     display: flex;
@@ -511,6 +516,11 @@
 
     .box-btn {
       align-self: flex-start;
+
+      @media (max-width: 600px) {
+        width: 100%;
+        justify-content: center;
+      }
     }
   }
 }
@@ -528,6 +538,10 @@
     padding: 48px;
     text-align: center;
     box-shadow: 0 14px 36px rgba(31, 58, 46, 0.2);
+
+    @media (max-width: 600px) {
+      padding: 32px 16px;
+    }
 
     h2 {
       font-size: 2.1rem;
@@ -552,6 +566,10 @@
       display: flex;
       justify-content: center;
 
+      @media (max-width: 480px) {
+        width: 100%;
+      }
+
       .cta-btn {
         display: inline-flex;
         align-items: center;
@@ -564,6 +582,11 @@
 
         &:hover {
           background: #eaf2ed !important;
+        }
+
+        @media (max-width: 480px) {
+          width: 100%;
+          justify-content: center;
         }
       }
     }

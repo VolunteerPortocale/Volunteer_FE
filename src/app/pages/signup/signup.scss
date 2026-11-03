@@ -8,7 +8,11 @@
   background-color: var(--color-white);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   position: sticky;
-  top: 72px; // Sticks directly below the 72px navbar when scrolling
+  top: 72px;
+
+  @media (max-width: 768px) {
+    top: 64px;
+  } // Sticks directly below the 72px navbar when scrolling
   z-index: 10;
   width: 100%; // Spans the full length of the screen
 
@@ -78,6 +82,10 @@
   margin: 0 auto;
   padding: 40px 1.5rem 80px 1.5rem;
 
+  @media (max-width: 600px) {
+    padding: 24px 1rem 60px 1rem;
+  }
+
   .signup-header {
     margin-bottom: 32px;
 
@@ -142,6 +150,10 @@
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 24px;
+
+  @media (max-width: 600px) {
+    padding: 18px 14px;
+  }
   display: flex;
   flex-direction: column;
   gap: 20px;

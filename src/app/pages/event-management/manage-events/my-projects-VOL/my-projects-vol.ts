@@ -8,7 +8,6 @@ import { firstValueFrom } from 'rxjs';
 
 import { EnrollmentService } from '../../../../service/enrollment.service';
 import { TranslatePipe } from '../../../../common/pipes/translate-pipe';
-import { FooterComponent } from '../../../../common/components/footer/footer';
 import {
   GetAllEventsGQL,
   GetAllEventsQuery,
@@ -36,8 +35,7 @@ type EnrolledEventItem = {
     DatePipe,
     MatIconModule,
     MatProgressSpinnerModule,
-    TranslatePipe,
-    FooterComponent,
+    TranslatePipe
   ],
   templateUrl: './my-projects-vol.html',
   styleUrl: './my-projects-vol.scss',

@@ -76,3 +76,15 @@
   color: var(--color-dark-grey);
 }
 
+
+@media (max-width: 480px) {
+  .ngo-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .metric-card {
+    padding: 1rem 1.25rem;
+    gap: 1rem;
+  }
+}

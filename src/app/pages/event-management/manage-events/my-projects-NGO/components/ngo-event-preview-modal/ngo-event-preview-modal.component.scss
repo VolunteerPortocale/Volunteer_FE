@@ -195,3 +195,45 @@
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 600px) {
+  .modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal-panel {
+    max-height: 94vh;
+    border-radius: 20px 20px 0 0;
+    max-width: 100%;
+  }
+
+  .modal-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .modal-body {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .modal-hero-image {
+    height: 180px;
+  }
+
+  .modal-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-footer {
+    padding: 1rem 1.25rem;
+    flex-direction: column-reverse;
+    gap: 0.6rem;
+
+    .btn-outline,
+    .btn-primary {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

@@ -111,14 +111,14 @@ export type ConfirmEnrollmentMutation = { confirmEnrollment: { status: Types.Gen
 export type GetAllEventsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllEventsQuery = { getAllEvents: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, type: Types.EventFileType }> | null }> };
+export type GetAllEventsQuery = { getAllEvents: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number }> | null }> };
 
 export type GetEventByIdQueryVariables = Exact<{
   id: string;
 }>;
 
 
-export type GetEventByIdQuery = { getEventById: { id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, type: Types.EventFileType }> | null } };
+export type GetEventByIdQuery = { getEventById: { id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number }> | null } };
 
 export type GetCurrentUserEnrollmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -140,14 +140,14 @@ export type GetCurrentUserEventsQuery = { getCurrentUserEvents: Array<{ id: stri
 export type GetEventsCreatedByCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetEventsCreatedByCurrentUserQuery = { getEventsCreatedByCurrentUser: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, type: Types.EventFileType }> | null }> };
+export type GetEventsCreatedByCurrentUserQuery = { getEventsCreatedByCurrentUser: Array<{ id: string, category: Types.EventCategory, status: Types.EventStatus, createdAt: string, createdBy: string | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode }, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number }> | null }> };
 
 export type GetFilteredEventsQueryVariables = Exact<{
   input?: Types.EventFilterInput | null | undefined;
 }>;
 
 
-export type GetFilteredEventsQuery = { getFilteredEvents: { page: number, size: number, total: number, events: Array<{ id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, lastModifiedAt: string, lastModifiedBy: string | null, files: Array<{ id: string, type: Types.EventFileType }> | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } }> } };
+export type GetFilteredEventsQuery = { getFilteredEvents: { page: number, size: number, total: number, events: Array<{ id: string, category: Types.EventCategory, storageFolderId: string, status: Types.EventStatus, createdAt: string, createdBy: string | null, lastModifiedAt: string, lastModifiedBy: string | null, files: Array<{ id: string, eventId: string, type: Types.EventFileType, originalName: string, contentType: string, size: number }> | null, details: { title: string, description: string, startTime: string, endTime: string | null, location: string | null, nrVolunteers: number, contactPhone: string | null, contactEmail: string | null, dressCode: Types.EventDressCode } }> } };
 
 export type GetUserByIdQueryVariables = Exact<{
   id: string;
@@ -500,7 +500,11 @@ export const GetAllEventsDocument = gql`
     }
     files {
       id
+      eventId
       type
+      originalName
+      contentType
+      size
     }
     category
     status
@@ -537,7 +541,11 @@ export const GetEventByIdDocument = gql`
     }
     files {
       id
+      eventId
       type
+      originalName
+      contentType
+      size
     }
     category
     status
@@ -657,7 +665,11 @@ export const GetEventsCreatedByCurrentUserDocument = gql`
     }
     files {
       id
+      eventId
       type
+      originalName
+      contentType
+      size
     }
     category
     status
@@ -694,7 +706,11 @@ export const GetFilteredEventsDocument = gql`
       lastModifiedBy
       files {
         id
+        eventId
         type
+        originalName
+        contentType
+        size
       }
       details {
         title
