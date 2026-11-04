@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
-import { FooterComponent } from '../../common/components/footer/footer';
 import { AuthService } from '../../service/auth.service';
 import { TranslationService } from '../../service/translation.service';
 import { EnrollmentService } from '../../service/enrollment.service';
@@ -47,8 +46,7 @@ export interface AuthProject {
     FormsModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    TranslatePipe,
-    FooterComponent,
+    TranslatePipe
   ],
   templateUrl: './home-auth.html',
   styleUrl: './home-auth.scss',

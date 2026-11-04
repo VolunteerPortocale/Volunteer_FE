@@ -504,3 +504,33 @@
     }
   }
 }
+
+@media (max-width: 600px) {
+  .modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal-panel {
+    max-height: 94vh;
+    border-radius: 18px 18px 0 0;
+
+    .modal-body {
+      padding: 16px;
+
+      .modal-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .modal-footer {
+      flex-direction: column-reverse;
+      gap: 8px;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

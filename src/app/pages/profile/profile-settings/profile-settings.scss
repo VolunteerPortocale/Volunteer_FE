@@ -9,6 +9,11 @@
   padding: 32px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   color: #334155;
+
+
+  @media (max-width: 600px) {
+    padding: 20px 16px;
+  }
 }
 
 .edit-header {
@@ -201,6 +206,15 @@
   margin-top: 8px;
   padding-top: 20px;
   border-top: 1px solid var(--color-border, #f1f5f9);
+
+  @media (max-width: 600px) {
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 
   button {
     display: inline-flex;

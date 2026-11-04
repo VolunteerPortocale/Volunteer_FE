@@ -6,7 +6,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
-import { FooterComponent } from '../../common/components/footer/footer';
 import { QrScannerComponent } from '../event-management/qr-scanner/qr-scanner.component';
 
 import {
@@ -32,7 +31,6 @@ export type EventItem = GetFilteredEventsQuery['getFilteredEvents']['events'][nu
     MatIconModule,
     MatProgressSpinnerModule,
     TranslatePipe,
-    FooterComponent,
     QrScannerComponent,
   ],
   templateUrl: './moderator-dashboard.html',

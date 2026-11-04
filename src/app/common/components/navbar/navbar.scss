@@ -9,6 +9,10 @@
     background-color: transparent;
     padding: 0;
     height: 72px;
+
+    @media (max-width: 768px) {
+      height: 64px;
+    }
   }
 }
 
@@ -88,12 +92,18 @@
     gap: 6px;
 
     .brand-logo-img {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
     }
 
     .brand-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 340px) {
+    .brand-title {
+      display: none;
     }
   }
 }
@@ -103,15 +113,19 @@
   align-items: center;
   gap: 12px;
 
-  @media (max-width: 600px) {
-    gap: 4px;
+  @media (max-width: 768px) {
+    gap: 6px;
 
     .desktop-only-action {
       display: none !important;
     }
+  }
+
+  @media (max-width: 480px) {
+    gap: 4px;
 
     .lang-selector-btn {
-      padding: 0 6px;
+      padding: 0 4px;
 
       .arrow-icon {
         display: none;

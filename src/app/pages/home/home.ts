@@ -2,7 +2,6 @@ import { Component, inject, signal, OnInit, DestroyRef, effect } from '@angular/
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { QueryRef } from 'apollo-angular';
 import { ProjectCardComponent } from './project-card/project-card';
-import { FooterComponent } from '../../common/components/footer/footer';
 import { TranslatePipe } from '../../common/pipes/translate-pipe';
 import { TranslationService } from '../../service/translation.service';
 import {
@@ -37,7 +36,7 @@ const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1542601906990-b4d3fb778
 
 @Component({
   selector: 'app-home',
-  imports: [ProjectCardComponent, FooterComponent, TranslatePipe],
+  imports: [ProjectCardComponent, TranslatePipe],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

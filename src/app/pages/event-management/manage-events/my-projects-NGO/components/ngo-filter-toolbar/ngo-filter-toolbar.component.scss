@@ -87,6 +87,22 @@
 .filter-dropdown-container {
   position: relative;
 
+  @media (max-width: 640px) {
+    width: 100%;
+
+    .filter-dropdown-btn {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .filter-dropdown-menu {
+      width: 100%;
+      left: 0;
+      right: 0;
+      max-width: 100%;
+    }
+  }
+
   .filter-dropdown-btn {
     display: inline-flex;
     align-items: center;

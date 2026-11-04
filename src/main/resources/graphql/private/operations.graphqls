@@ -160,9 +160,13 @@ query GetAllEvents {
       dressCode
     }
     files {
-      id
-      type
-    }
+            id
+            eventId
+            type
+            originalName
+            contentType
+            size
+        }
     category
     status
     createdAt
@@ -185,9 +189,13 @@ query GetEventById($id: String!) {
       dressCode
     }
     files {
-      id
-      type
-    }
+            id
+            eventId
+            type
+            originalName
+            contentType
+            size
+        }
     category
     status
     createdAt
@@ -257,9 +265,13 @@ query GetEventsCreatedByCurrentUser {
       dressCode
     }
     files {
-      id
-      type
-    }
+            id
+            eventId
+            type
+            originalName
+            contentType
+            size
+        }
     category
     status
     createdAt
@@ -281,10 +293,14 @@ query GetFilteredEvents($input: EventFilterInput) {
       createdBy
       lastModifiedAt
       lastModifiedBy
-      files {
-        id
-        type
-      }
+     files {
+            id
+            eventId
+            type
+            originalName
+            contentType
+            size
+        }
       details {
         title
         description

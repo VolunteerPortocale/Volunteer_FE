@@ -7,7 +7,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 
 import { TranslatePipe } from '../../../../common/pipes/translate-pipe';
-import { FooterComponent } from '../../../../common/components/footer/footer';
 import { EventCategory, EventStatus } from '../../../../core/graphql/types';
 import {
   GetEventsCreatedByCurrentUserGQL,
@@ -32,7 +31,6 @@ type NgoEvent = GetEventsCreatedByCurrentUserQuery['getEventsCreatedByCurrentUse
     MatIconModule,
     MatProgressSpinnerModule,
     TranslatePipe,
-    FooterComponent,
     NgoMetricsComponent,
     NgoFilterToolbarComponent,
     NgoEventCardComponent,
